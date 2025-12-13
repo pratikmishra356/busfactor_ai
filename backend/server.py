@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Query
+from fastapi import FastAPI, APIRouter, Query, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,7 +6,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Literal
 import uuid
 from datetime import datetime, timezone
 
@@ -21,6 +21,16 @@ from mcp_api import (
     SummarizedEntity,
     GraphNode,
     GraphEdge
+)
+
+# Import Application Layer functions
+from app_layer import (
+    generate_context,
+    generate_incident_report,
+    generate_role_task,
+    ContextResponse,
+    IncidentReport,
+    RoleTaskResponse
 )
 
 
