@@ -1,146 +1,128 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Database, AlertTriangle, Users, ArrowRight, Sparkles, Activity } from 'lucide-react';
+import { Search, AlertTriangle, Bot, ArrowRight, Database, MessageSquare, GitBranch, FileText, Users } from 'lucide-react';
 
-const useCases = [
+const USE_CASES = [
   {
     id: 'knowledge',
     title: 'Knowledge Base',
-    description: 'Search and explore organizational context from Slack, Jira, GitHub, Docs, and Meetings.',
-    icon: Database,
+    description: 'Search and explore organizational context from all your data sources.',
+    icon: Search,
+    color: 'bg-info/20 text-info',
     path: '/knowledge',
-    color: 'primary',
-    features: ['Semantic Search', 'Weekly Summaries', 'Multi-source Context']
+    features: ['Vector search', 'Multi-source', 'Weekly summaries'],
   },
   {
     id: 'incident',
-    title: 'Incident Analysis',
-    description: 'Generate comprehensive RCA reports with timeline, root cause, and recommendations.',
+    title: 'Analyse Incident',
+    description: 'Generate comprehensive RCA reports with timeline and recommendations.',
     icon: AlertTriangle,
+    color: 'bg-error/20 text-error',
     path: '/incident',
-    color: 'error',
-    features: ['RCA Reports', 'Timeline View', 'Related Tickets & PRs']
+    features: ['RCA reports', 'Timeline view', 'Related items'],
   },
   {
     id: 'companion',
     title: 'AI Companion',
-    description: 'Get role-specific insights and action items for Engineers, PMs, and EMs.',
-    icon: Users,
+    description: 'Your role-based intelligent assistant for contextual insights.',
+    icon: Bot,
+    color: 'bg-primary/20 text-primary',
     path: '/companion',
-    color: 'info',
-    features: ['Role-based Views', 'Priority Items', 'Action Items']
-  }
+    features: ['Engineer', 'Product Manager', 'Eng Manager'],
+  },
 ];
 
-function UseCaseCard({ useCase }) {
-  const Icon = useCase.icon;
-  
-  return (
-    <Link
-      to={useCase.path}
-      data-testid={`usecase-card-${useCase.id}`}
-      className="
-        group bg-surface border border-border rounded-sm p-6
-        hover:border-primary/50 transition-all duration-300
-        flex flex-col h-full
-      "
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-sm flex items-center justify-center bg-${useCase.color}/20`}>
-          <Icon className={`w-6 h-6 text-${useCase.color}`} />
-        </div>
-        <ArrowRight className="w-5 h-5 text-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all" />
-      </div>
-      
-      <h3 className="font-heading font-bold text-xl mb-2 text-white group-hover:text-primary transition-colors">
-        {useCase.title}
-      </h3>
-      
-      <p className="text-text-muted text-sm mb-4 flex-1">
-        {useCase.description}
-      </p>
-      
-      <div className="flex flex-wrap gap-2">
-        {useCase.features.map((feature, idx) => (
-          <span key={idx} className="text-xs bg-border/50 text-text-muted px-2 py-1 rounded-sm">
-            {feature}
-          </span>
-        ))}
-      </div>
-    </Link>
-  );
-}
-
-function StatCard({ label, value, icon: Icon }) {
-  return (
-    <div className="bg-surface border border-border rounded-sm p-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <p className="text-2xl font-heading font-bold text-white">{value}</p>
-          <p className="text-xs text-text-muted uppercase tracking-widest">{label}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+const STATS = [
+  { label: 'Data Sources', value: '5', icon: Database },
+  { label: 'Entities Indexed', value: '148', icon: FileText },
+  { label: 'Connections', value: '212', icon: GitBranch },
+  { label: 'Weekly Summaries', value: '9', icon: MessageSquare },
+];
 
 export default function Dashboard() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* Hero Section */}
       <div className="mb-12">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <span className="text-xs uppercase tracking-widest text-primary font-semibold">Context Intelligence Platform</span>
-        </div>
-        <h1 className="font-heading font-black text-4xl md:text-5xl mb-4 tracking-tight">
-          Your Organization's<br />
-          <span className="text-primary">Knowledge Hub</span>
+        <h1 className="font-heading font-black text-5xl md:text-6xl tracking-tight mb-4">
+          Context <span className="text-primary">Intelligence</span>
         </h1>
-        <p className="text-text-muted text-lg max-w-2xl">
-          Unified intelligence from Slack, Jira, GitHub, Documentation, and Meetings. 
-          Search, analyze incidents, and get role-specific insights powered by AI.
+        <p className="text-text-muted text-lg max-w-2xl leading-relaxed">
+          Unified intelligence across Slack, Jira, GitHub, Docs, and Meetings. 
+          Search, analyze, and get AI-powered insights from your organization's knowledge.
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-        <StatCard label="Entities Indexed" value="148" icon={Database} />
-        <StatCard label="Connections" value="212" icon={Activity} />
-        <StatCard label="Weekly Summaries" value="9" icon={Sparkles} />
-        <StatCard label="Data Sources" value="5" icon={Users} />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        {STATS.map((stat) => (
+          <div key={stat.label} className="bg-surface border border-border rounded-sm p-4" data-testid={`stat-${stat.label.toLowerCase().replace(/ /g, '-')}`}>
+            <div className="flex items-center gap-3">
+              <stat.icon className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-2xl font-heading font-bold text-white">{stat.value}</p>
+                <p className="text-xs text-text-muted uppercase tracking-widest">{stat.label}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Use Cases */}
+      {/* Use Cases Grid */}
       <div className="mb-8">
-        <h2 className="font-heading font-bold text-2xl mb-6 text-white">Get Started</h2>
+        <h2 className="text-xs uppercase tracking-widest text-text-muted mb-4">Use Cases</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {useCases.map((useCase) => (
-            <UseCaseCard key={useCase.id} useCase={useCase} />
+          {USE_CASES.map((useCase) => (
+            <Link
+              key={useCase.id}
+              to={useCase.path}
+              data-testid={`usecase-${useCase.id}`}
+              className="group bg-surface border border-border rounded-sm p-6 hover:border-primary/50 transition-all duration-300"
+            >
+              <div className={`w-14 h-14 ${useCase.color} rounded-sm flex items-center justify-center mb-4`}>
+                <useCase.icon className="w-7 h-7" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white mb-2 group-hover:text-primary transition-colors">
+                {useCase.title}
+              </h3>
+              <p className="text-text-muted text-sm mb-4 leading-relaxed">
+                {useCase.description}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {useCase.features.map((feature) => (
+                  <span key={feature} className="text-xs px-2 py-1 bg-background border border-border rounded-sm text-text-muted">
+                    {feature}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                Open <ArrowRight className="w-4 h-4" />
+              </div>
+            </Link>
           ))}
         </div>
       </div>
 
-      {/* Quick Tips */}
+      {/* Data Sources */}
       <div className="bg-surface border border-border rounded-sm p-6">
-        <h3 className="font-heading font-bold text-lg mb-4 text-white">Quick Tips</h3>
-        <ul className="space-y-2 text-text-muted text-sm">
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            Use natural language queries like "payment gateway issues" or "database performance problems"
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            Incident Analysis generates RCA reports with related tickets, PRs, and timeline
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            AI Companion provides role-specific insights for Engineers, PMs, and Engineering Managers
-          </li>
-        </ul>
+        <h2 className="text-xs uppercase tracking-widest text-text-muted mb-4">Connected Sources</h2>
+        <div className="flex flex-wrap gap-4">
+          {[
+            { name: 'Slack', icon: MessageSquare, count: 67 },
+            { name: 'Jira', icon: AlertTriangle, count: 36 },
+            { name: 'GitHub', icon: GitBranch, count: 17 },
+            { name: 'Docs', icon: FileText, count: 14 },
+            { name: 'Meetings', icon: Users, count: 14 },
+          ].map((source) => (
+            <div key={source.name} className="flex items-center gap-3 px-4 py-3 bg-background border border-border rounded-sm" data-testid={`source-${source.name.toLowerCase()}`}>
+              <source.icon className="w-5 h-5 text-primary" />
+              <div>
+                <p className="font-medium text-white text-sm">{source.name}</p>
+                <p className="text-xs text-text-muted">{source.count} entities</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
