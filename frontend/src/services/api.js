@@ -29,6 +29,28 @@ export const getEntityDetails = async (entityId) => {
   return response.data;
 };
 
+// Code Audit APIs
+export const codeAuditByFilePath = async (filePath, limit = 10) => {
+  const response = await api.get('/api/code/audit', {
+    params: { file_path: filePath, limit },
+  });
+  return response.data;
+};
+
+export const codeAuditByComment = async (comment, limit = 10) => {
+  const response = await api.get('/api/code/audit', {
+    params: { comment, limit },
+  });
+  return response.data;
+};
+
+export const codeAuditByQuery = async (query, limit = 10) => {
+  const response = await api.get('/api/code/audit', {
+    params: { query, limit },
+  });
+  return response.data;
+};
+
 // Application Layer APIs
 export const getContextResponse = async (query, topK = 3) => {
   const response = await api.get('/api/context', {
