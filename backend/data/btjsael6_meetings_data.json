@@ -1,0 +1,941 @@
+{
+  "platform": "meetings",
+  "meetings": [
+    {
+      "meeting_id": "MTG0006",
+      "title": "Daily Standup - 2024-10-14",
+      "type": "standup",
+      "scheduled_time": "2024-10-14T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0001",
+      "title": "Post-Mortem: Payment Gateway Timeout",
+      "type": "postmortem",
+      "scheduled_time": "2024-10-19T11:00:00Z",
+      "duration_minutes": 43,
+      "participants": [
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "01:00",
+          "speaker": "Marcus Chen",
+          "text": "Thanks everyone for joining. Let's go through the Payment Gateway Timeout incident. The issue was related to payment."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Sarah Williams",
+          "text": "To summarize, Payment processing failing due to gateway timeouts causing order failures. We first noticed it when payment started failing."
+        },
+        {
+          "timestamp_offset": "11:00",
+          "speaker": "Marcus Chen",
+          "text": "The root cause was identified as a problem with gateway."
+        },
+        {
+          "timestamp_offset": "14:00",
+          "speaker": "Alex Rodriguez",
+          "text": "I worked on the fix. The main change was in how we handle payment. The PR is already merged."
+        },
+        {
+          "timestamp_offset": "19:00",
+          "speaker": "Marcus Chen",
+          "text": "Good. For action items - we need to add better monitoring for payment and update the runbook."
+        },
+        {
+          "timestamp_offset": "20:00",
+          "speaker": "Sarah Williams",
+          "text": "Agreed. I'll create tickets for the follow-up work on orders."
+        }
+      ],
+      "summary": "Post-mortem for Payment Gateway Timeout.\n\nRoot Cause: Issue with payment - Payment processing failing due to gateway timeouts causing order failures\n\nResolution: Fixed via PR, monitoring added.\n\nKey Takeaways:\n- Need better alerting for payment\n- Update runbook for orders issues\n- Review gateway handling\n",
+      "action_items": [
+        {
+          "action": "Add monitoring for payment",
+          "assignee": "Alex Rodriguez",
+          "assignee_id": "U004",
+          "status": "todo"
+        },
+        {
+          "action": "Update runbook for orders issues",
+          "assignee": "Marcus Chen",
+          "assignee_id": "U002",
+          "status": "todo"
+        }
+      ],
+      "incident_ref": "INC001",
+      "keywords": [
+        "payment",
+        "gateway",
+        "timeout",
+        "stripe",
+        "checkout",
+        "orders"
+      ]
+    },
+    {
+      "meeting_id": "MTG0007",
+      "title": "Daily Standup - 2024-10-21",
+      "type": "standup",
+      "scheduled_time": "2024-10-21T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0008",
+      "title": "Daily Standup - 2024-10-28",
+      "type": "standup",
+      "scheduled_time": "2024-10-28T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0002",
+      "title": "Post-Mortem: Dashboard Performance Degradation",
+      "type": "postmortem",
+      "scheduled_time": "2024-11-02T10:00:00Z",
+      "duration_minutes": 51,
+      "participants": [
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        }
+      ],
+      "organizer": "Sarah Williams",
+      "organizer_id": "U003",
+      "transcript": [
+        {
+          "timestamp_offset": "03:00",
+          "speaker": "Sarah Williams",
+          "text": "Thanks everyone for joining. Let's go through the Dashboard Performance Degradation incident. The issue was related to dashboard."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "To summarize, Analytics dashboard taking 15+ seconds to load due to N+1 query issue. We first noticed it when dashboard started failing."
+        },
+        {
+          "timestamp_offset": "11:00",
+          "speaker": "Sarah Williams",
+          "text": "The root cause was identified as a problem with performance."
+        },
+        {
+          "timestamp_offset": "16:00",
+          "speaker": "Marcus Chen",
+          "text": "I worked on the fix. The main change was in how we handle dashboard. The PR is already merged."
+        },
+        {
+          "timestamp_offset": "20:00",
+          "speaker": "Sarah Williams",
+          "text": "Good. For action items - we need to add better monitoring for dashboard and update the runbook."
+        },
+        {
+          "timestamp_offset": "21:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Agreed. I'll create tickets for the follow-up work on latency."
+        }
+      ],
+      "summary": "Post-mortem for Dashboard Performance Degradation.\n\nRoot Cause: Issue with dashboard - Analytics dashboard taking 15+ seconds to load due to N+1 query issue\n\nResolution: Fixed via PR, monitoring added.\n\nKey Takeaways:\n- Need better alerting for dashboard\n- Update runbook for latency issues\n- Review performance handling\n",
+      "action_items": [
+        {
+          "action": "Add monitoring for dashboard",
+          "assignee": "Marcus Chen",
+          "assignee_id": "U002",
+          "status": "todo"
+        },
+        {
+          "action": "Update runbook for latency issues",
+          "assignee": "Sarah Williams",
+          "assignee_id": "U003",
+          "status": "todo"
+        }
+      ],
+      "incident_ref": "INC003",
+      "keywords": [
+        "dashboard",
+        "performance",
+        "slow",
+        "query",
+        "analytics",
+        "latency"
+      ]
+    },
+    {
+      "meeting_id": "MTG0009",
+      "title": "Daily Standup - 2024-11-04",
+      "type": "standup",
+      "scheduled_time": "2024-11-04T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0010",
+      "title": "Daily Standup - 2024-11-11",
+      "type": "standup",
+      "scheduled_time": "2024-11-11T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0003",
+      "title": "Post-Mortem: Mobile App Crash on Launch",
+      "type": "postmortem",
+      "scheduled_time": "2024-11-12T12:00:00Z",
+      "duration_minutes": 34,
+      "participants": [
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        }
+      ],
+      "organizer": "Jamie Park",
+      "organizer_id": "U005",
+      "transcript": [
+        {
+          "timestamp_offset": "05:00",
+          "speaker": "Jamie Park",
+          "text": "Thanks everyone for joining. Let's go through the Mobile App Crash on Launch incident. The issue was related to mobile."
+        },
+        {
+          "timestamp_offset": "10:00",
+          "speaker": "Sarah Williams",
+          "text": "To summarize, iOS app crashing on startup after latest release - missing null check. We first noticed it when mobile started failing."
+        },
+        {
+          "timestamp_offset": "15:00",
+          "speaker": "Jamie Park",
+          "text": "The root cause was identified as a problem with crash."
+        },
+        {
+          "timestamp_offset": "17:00",
+          "speaker": "Marcus Chen",
+          "text": "I worked on the fix. The main change was in how we handle mobile. The PR is already merged."
+        },
+        {
+          "timestamp_offset": "18:00",
+          "speaker": "Jamie Park",
+          "text": "Good. For action items - we need to add better monitoring for mobile and update the runbook."
+        },
+        {
+          "timestamp_offset": "22:00",
+          "speaker": "Sarah Williams",
+          "text": "Agreed. I'll create tickets for the follow-up work on app."
+        }
+      ],
+      "summary": "Post-mortem for Mobile App Crash on Launch.\n\nRoot Cause: Issue with mobile - iOS app crashing on startup after latest release - missing null check\n\nResolution: Fixed via PR, monitoring added.\n\nKey Takeaways:\n- Need better alerting for mobile\n- Update runbook for app issues\n- Review crash handling\n",
+      "action_items": [
+        {
+          "action": "Add monitoring for mobile",
+          "assignee": "Marcus Chen",
+          "assignee_id": "U002",
+          "status": "todo"
+        },
+        {
+          "action": "Update runbook for app issues",
+          "assignee": "Jamie Park",
+          "assignee_id": "U005",
+          "status": "todo"
+        }
+      ],
+      "incident_ref": "INC005",
+      "keywords": [
+        "mobile",
+        "crash",
+        "ios",
+        "null",
+        "startup",
+        "app"
+      ]
+    },
+    {
+      "meeting_id": "MTG0011",
+      "title": "Daily Standup - 2024-11-18",
+      "type": "standup",
+      "scheduled_time": "2024-11-18T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0012",
+      "title": "Daily Standup - 2024-11-25",
+      "type": "standup",
+      "scheduled_time": "2024-11-25T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0004",
+      "title": "Post-Mortem: API Rate Limiting Bypass",
+      "type": "postmortem",
+      "scheduled_time": "2024-11-27T10:00:00Z",
+      "duration_minutes": 41,
+      "participants": [
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        }
+      ],
+      "organizer": "Sarah Williams",
+      "organizer_id": "U003",
+      "transcript": [
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Sarah Williams",
+          "text": "Thanks everyone for joining. Let's go through the API Rate Limiting Bypass incident. The issue was related to security."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Marcus Chen",
+          "text": "To summarize, Security issue - rate limiting can be bypassed using header manipulation. We first noticed it when security started failing."
+        },
+        {
+          "timestamp_offset": "09:00",
+          "speaker": "Sarah Williams",
+          "text": "The root cause was identified as a problem with rate limit."
+        },
+        {
+          "timestamp_offset": "12:00",
+          "speaker": "Alex Rodriguez",
+          "text": "I worked on the fix. The main change was in how we handle security. The PR is already merged."
+        },
+        {
+          "timestamp_offset": "16:00",
+          "speaker": "Sarah Williams",
+          "text": "Good. For action items - we need to add better monitoring for security and update the runbook."
+        },
+        {
+          "timestamp_offset": "17:00",
+          "speaker": "Marcus Chen",
+          "text": "Agreed. I'll create tickets for the follow-up work on headers."
+        }
+      ],
+      "summary": "Post-mortem for API Rate Limiting Bypass.\n\nRoot Cause: Issue with security - Security issue - rate limiting can be bypassed using header manipulation\n\nResolution: Fixed via PR, monitoring added.\n\nKey Takeaways:\n- Need better alerting for security\n- Update runbook for headers issues\n- Review rate limit handling\n",
+      "action_items": [
+        {
+          "action": "Add monitoring for security",
+          "assignee": "Alex Rodriguez",
+          "assignee_id": "U004",
+          "status": "todo"
+        },
+        {
+          "action": "Update runbook for headers issues",
+          "assignee": "Sarah Williams",
+          "assignee_id": "U003",
+          "status": "todo"
+        }
+      ],
+      "incident_ref": "INC007",
+      "keywords": [
+        "security",
+        "rate limit",
+        "bypass",
+        "api",
+        "vulnerability",
+        "headers"
+      ]
+    },
+    {
+      "meeting_id": "MTG0013",
+      "title": "Daily Standup - 2024-12-02",
+      "type": "standup",
+      "scheduled_time": "2024-12-02T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    },
+    {
+      "meeting_id": "MTG0005",
+      "title": "Post-Mortem: Database Connection Pool Exhaustion",
+      "type": "postmortem",
+      "scheduled_time": "2024-12-05T13:00:00Z",
+      "duration_minutes": 38,
+      "participants": [
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        }
+      ],
+      "organizer": "Alex Rodriguez",
+      "organizer_id": "U004",
+      "transcript": [
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Thanks everyone for joining. Let's go through the Database Connection Pool Exhaustion incident. The issue was related to database."
+        },
+        {
+          "timestamp_offset": "05:00",
+          "speaker": "Sarah Williams",
+          "text": "To summarize, Connection pool maxed out during traffic spike causing 503 errors. We first noticed it when database started failing."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Alex Rodriguez",
+          "text": "The root cause was identified as a problem with connection."
+        },
+        {
+          "timestamp_offset": "10:00",
+          "speaker": "Marcus Chen",
+          "text": "I worked on the fix. The main change was in how we handle database. The PR is already merged."
+        },
+        {
+          "timestamp_offset": "15:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Good. For action items - we need to add better monitoring for database and update the runbook."
+        },
+        {
+          "timestamp_offset": "17:00",
+          "speaker": "Sarah Williams",
+          "text": "Agreed. I'll create tickets for the follow-up work on capacity."
+        }
+      ],
+      "summary": "Post-mortem for Database Connection Pool Exhaustion.\n\nRoot Cause: Issue with database - Connection pool maxed out during traffic spike causing 503 errors\n\nResolution: Fixed via PR, monitoring added.\n\nKey Takeaways:\n- Need better alerting for database\n- Update runbook for capacity issues\n- Review connection handling\n",
+      "action_items": [
+        {
+          "action": "Add monitoring for database",
+          "assignee": "Marcus Chen",
+          "assignee_id": "U002",
+          "status": "todo"
+        },
+        {
+          "action": "Update runbook for capacity issues",
+          "assignee": "Alex Rodriguez",
+          "assignee_id": "U004",
+          "status": "todo"
+        }
+      ],
+      "incident_ref": "INC008",
+      "keywords": [
+        "database",
+        "connection",
+        "pool",
+        "postgres",
+        "503",
+        "capacity"
+      ]
+    },
+    {
+      "meeting_id": "MTG0014",
+      "title": "Daily Standup - 2024-12-09",
+      "type": "standup",
+      "scheduled_time": "2024-12-09T10:00:00Z",
+      "duration_minutes": 15,
+      "participants": [
+        {
+          "name": "Priya Sharma",
+          "user_id": "U001"
+        },
+        {
+          "name": "Marcus Chen",
+          "user_id": "U002"
+        },
+        {
+          "name": "Sarah Williams",
+          "user_id": "U003"
+        },
+        {
+          "name": "Alex Rodriguez",
+          "user_id": "U004"
+        },
+        {
+          "name": "Jamie Park",
+          "user_id": "U005"
+        }
+      ],
+      "organizer": "Marcus Chen",
+      "organizer_id": "U002",
+      "transcript": [
+        {
+          "timestamp_offset": "00:00",
+          "speaker": "Priya Sharma",
+          "text": "Yesterday I worked on the API updates. Today continuing with tests."
+        },
+        {
+          "timestamp_offset": "02:00",
+          "speaker": "Marcus Chen",
+          "text": "Finishing up the dashboard feature. No blockers."
+        },
+        {
+          "timestamp_offset": "04:00",
+          "speaker": "Sarah Williams",
+          "text": "Reviewing PRs and helping with code reviews."
+        },
+        {
+          "timestamp_offset": "06:00",
+          "speaker": "Alex Rodriguez",
+          "text": "Working on the deployment pipeline. Should be done today."
+        },
+        {
+          "timestamp_offset": "08:00",
+          "speaker": "Jamie Park",
+          "text": "Bug fixes and documentation updates."
+        }
+      ],
+      "summary": "Daily standup - team shared updates and no blockers reported.",
+      "action_items": []
+    }
+  ],
+  "total_count": 14
+}

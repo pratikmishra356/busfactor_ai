@@ -1,0 +1,256 @@
+{
+  "platform": "docs",
+  "documents": [
+    {
+      "doc_id": "DOC0001",
+      "title": "Engineering Onboarding Guide",
+      "type": "onboarding",
+      "author": "Sarah Williams",
+      "author_id": "U003",
+      "created_at": "2024-10-14T00:00:00Z",
+      "updated_at": "2024-10-14T00:00:00Z",
+      "content": "# Engineering Onboarding\n\n## Welcome!\nWelcome to the engineering team.\n\n## Getting Started\n1. Set up your development environment\n2. Clone the repositories\n3. Run the local setup script\n\n## Key Contacts\n- Engineering Manager: Marcus Chen\n- Senior Dev: Sarah Williams\n\n## Resources\n- Documentation wiki\n- Slack channels: #engineering, #general\n",
+      "tags": [
+        "onboarding",
+        "guide"
+      ]
+    },
+    {
+      "doc_id": "DOC0002",
+      "title": "System Architecture Overview",
+      "type": "architecture",
+      "author": "Priya Sharma",
+      "author_id": "U001",
+      "created_at": "2024-10-14T00:00:00Z",
+      "updated_at": "2024-10-14T00:00:00Z",
+      "content": "# Architecture Overview\n\n## Components\n- API Gateway\n- Authentication Service  \n- Database (PostgreSQL)\n- Cache (Redis)\n- Message Queue\n\n## Data Flow\n1. Request -> API Gateway\n2. Authentication check\n3. Business logic\n4. Database/Cache operations\n5. Response\n\n## Monitoring\n- Prometheus metrics\n- Grafana dashboards\n- PagerDuty alerts\n",
+      "tags": [
+        "architecture",
+        "system"
+      ]
+    },
+    {
+      "doc_id": "DOC0003",
+      "title": "Post-Mortem: Payment Gateway Timeout",
+      "type": "postmortem",
+      "author": "Marcus Chen",
+      "author_id": "U002",
+      "created_at": "2024-10-20T12:00:00Z",
+      "updated_at": "2024-10-20T12:00:00Z",
+      "content": "# Post-Mortem: Payment Gateway Timeout\n\n**Date**: 2024-10-17\n**Severity**: P1\n**Duration**: 2 day(s)\n**Author**: Marcus Chen\n\n## Summary\nPayment processing failing due to gateway timeouts causing order failures\n\n## Timeline\n- **2024-10-17 09:00**: Issue first detected with payment\n- **2024-10-17 09:30**: Team alerted, investigation started\n- **2024-10-17 12:00**: Root cause identified - gateway\n- **2024-10-17 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with payment. Specifically, Payment processing failing due to gateway timeouts causing order failures\n\nTechnical details:\n- Component affected: payment\n- Related systems: gateway, timeout\n\n## Resolution\nFixed by updating the payment handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for payment\n2. Update runbook for orders issues\n3. Review payment configuration\n\n## Related Links\n- Jira: ENG-1\n- GitHub PR: #101\n- Slack Thread: #INC001\n\n## Keywords\npayment, gateway, timeout, stripe, checkout, orders\n\n## Lessons Learned\n- Need faster alerting for payment failures\n- Documentation for orders should be improved\n- Consider adding redundancy for payment\n",
+      "tags": [
+        "payment",
+        "gateway",
+        "timeout",
+        "postmortem",
+        "P1"
+      ],
+      "incident_ref": "INC001",
+      "jira_ref": "ENG-1",
+      "pr_ref": 101
+    },
+    {
+      "doc_id": "DOC0004",
+      "title": "Runbook: Payment Issues",
+      "type": "runbook",
+      "author": "Alex Rodriguez",
+      "author_id": "U004",
+      "created_at": "2024-10-21T16:00:00Z",
+      "updated_at": "2024-10-21T16:00:00Z",
+      "content": "# Runbook: Payment Issues\n\n**Last Updated**: 2024-10-21\n**Author**: Alex Rodriguez\n\n## Overview\nThis runbook covers troubleshooting for payment related issues.\n\n## Common Issues\n\n### Payment Gateway Timeout\n**Symptoms**: Payment processing failing due to gateway timeouts causing order failures\n**Keywords**: payment, gateway, timeout, stripe, checkout, orders\n\n**Steps to Diagnose**:\n1. Check payment metrics in dashboard\n2. Review logs for payment errors\n3. Verify gateway settings\n\n**Resolution Steps**:\n1. If payment is failing, check connection settings\n2. Restart the payment service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `payment_error_rate > threshold`\n- Dashboard: payment Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Alex Rodriguez (alex@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC001: Payment Gateway Timeout\n",
+      "tags": [
+        "payment",
+        "gateway",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC001"
+    },
+    {
+      "doc_id": "DOC0005",
+      "title": "Post-Mortem: User Session Expiry Bug",
+      "type": "postmortem",
+      "author": "Sarah Williams",
+      "author_id": "U003",
+      "created_at": "2024-10-26T16:00:00Z",
+      "updated_at": "2024-10-26T16:00:00Z",
+      "content": "# Post-Mortem: User Session Expiry Bug\n\n**Date**: 2024-10-22\n**Severity**: P2\n**Duration**: 3 day(s)\n**Author**: Sarah Williams\n\n## Summary\nUsers getting logged out unexpectedly after 5 minutes instead of 24 hours\n\n## Timeline\n- **2024-10-22 09:00**: Issue first detected with session\n- **2024-10-22 09:30**: Team alerted, investigation started\n- **2024-10-22 12:00**: Root cause identified - logout\n- **2024-10-22 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with session. Specifically, Users getting logged out unexpectedly after 5 minutes instead of 24 hours\n\nTechnical details:\n- Component affected: session\n- Related systems: logout, auth\n\n## Resolution\nFixed by updating the session handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for session\n2. Update runbook for jwt issues\n3. Review session configuration\n\n## Related Links\n- Jira: ENG-4\n- GitHub PR: #102\n- Slack Thread: #INC002\n\n## Keywords\nsession, logout, auth, token, expiry, jwt\n\n## Lessons Learned\n- Need faster alerting for session failures\n- Documentation for jwt should be improved\n- Consider adding redundancy for session\n",
+      "tags": [
+        "session",
+        "logout",
+        "auth",
+        "postmortem",
+        "P2"
+      ],
+      "incident_ref": "INC002",
+      "jira_ref": "ENG-4",
+      "pr_ref": 102
+    },
+    {
+      "doc_id": "DOC0006",
+      "title": "Runbook: Session Issues",
+      "type": "runbook",
+      "author": "Jamie Park",
+      "author_id": "U005",
+      "created_at": "2024-10-27T15:00:00Z",
+      "updated_at": "2024-10-27T15:00:00Z",
+      "content": "# Runbook: Session Issues\n\n**Last Updated**: 2024-10-27\n**Author**: Jamie Park\n\n## Overview\nThis runbook covers troubleshooting for session related issues.\n\n## Common Issues\n\n### User Session Expiry Bug\n**Symptoms**: Users getting logged out unexpectedly after 5 minutes instead of 24 hours\n**Keywords**: session, logout, auth, token, expiry, jwt\n\n**Steps to Diagnose**:\n1. Check session metrics in dashboard\n2. Review logs for session errors\n3. Verify logout settings\n\n**Resolution Steps**:\n1. If session is failing, check connection settings\n2. Restart the session service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `session_error_rate > threshold`\n- Dashboard: session Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Jamie Park (jamie@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC002: User Session Expiry Bug\n",
+      "tags": [
+        "session",
+        "logout",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC002"
+    },
+    {
+      "doc_id": "DOC0007",
+      "title": "Post-Mortem: Email Notification Failure",
+      "type": "postmortem",
+      "author": "Alex Rodriguez",
+      "author_id": "U004",
+      "created_at": "2024-11-07T10:00:00Z",
+      "updated_at": "2024-11-07T10:00:00Z",
+      "content": "# Post-Mortem: Email Notification Failure\n\n**Date**: 2024-11-05\n**Severity**: P1\n**Duration**: 1 day(s)\n**Author**: Alex Rodriguez\n\n## Summary\nTransactional emails not being sent - SES rate limit exceeded\n\n## Timeline\n- **2024-11-05 09:00**: Issue first detected with email\n- **2024-11-05 09:30**: Team alerted, investigation started\n- **2024-11-05 12:00**: Root cause identified - notification\n- **2024-11-05 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with email. Specifically, Transactional emails not being sent - SES rate limit exceeded\n\nTechnical details:\n- Component affected: email\n- Related systems: notification, ses\n\n## Resolution\nFixed by updating the email handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for email\n2. Update runbook for sendgrid issues\n3. Review email configuration\n\n## Related Links\n- Jira: ENG-10\n- GitHub PR: #104\n- Slack Thread: #INC004\n\n## Keywords\nemail, notification, ses, rate limit, queue, sendgrid\n\n## Lessons Learned\n- Need faster alerting for email failures\n- Documentation for sendgrid should be improved\n- Consider adding redundancy for email\n",
+      "tags": [
+        "email",
+        "notification",
+        "ses",
+        "postmortem",
+        "P1"
+      ],
+      "incident_ref": "INC004",
+      "jira_ref": "ENG-10",
+      "pr_ref": 104
+    },
+    {
+      "doc_id": "DOC0008",
+      "title": "Runbook: Email Issues",
+      "type": "runbook",
+      "author": "Sarah Williams",
+      "author_id": "U003",
+      "created_at": "2024-11-08T11:00:00Z",
+      "updated_at": "2024-11-08T11:00:00Z",
+      "content": "# Runbook: Email Issues\n\n**Last Updated**: 2024-11-08\n**Author**: Sarah Williams\n\n## Overview\nThis runbook covers troubleshooting for email related issues.\n\n## Common Issues\n\n### Email Notification Failure\n**Symptoms**: Transactional emails not being sent - SES rate limit exceeded\n**Keywords**: email, notification, ses, rate limit, queue, sendgrid\n\n**Steps to Diagnose**:\n1. Check email metrics in dashboard\n2. Review logs for email errors\n3. Verify notification settings\n\n**Resolution Steps**:\n1. If email is failing, check connection settings\n2. Restart the email service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `email_error_rate > threshold`\n- Dashboard: email Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Sarah Williams (sarah@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC004: Email Notification Failure\n",
+      "tags": [
+        "email",
+        "notification",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC004"
+    },
+    {
+      "doc_id": "DOC0009",
+      "title": "Post-Mortem: Search Index Corruption",
+      "type": "postmortem",
+      "author": "Sarah Williams",
+      "author_id": "U003",
+      "created_at": "2024-11-21T10:00:00Z",
+      "updated_at": "2024-11-21T10:00:00Z",
+      "content": "# Post-Mortem: Search Index Corruption\n\n**Date**: 2024-11-18\n**Severity**: P2\n**Duration**: 2 day(s)\n**Author**: Sarah Williams\n\n## Summary\nElasticsearch index corrupted causing search to return stale results\n\n## Timeline\n- **2024-11-18 09:00**: Issue first detected with search\n- **2024-11-18 09:30**: Team alerted, investigation started\n- **2024-11-18 12:00**: Root cause identified - elasticsearch\n- **2024-11-18 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with search. Specifically, Elasticsearch index corrupted causing search to return stale results\n\nTechnical details:\n- Component affected: search\n- Related systems: elasticsearch, index\n\n## Resolution\nFixed by updating the search handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for search\n2. Update runbook for corrupted issues\n3. Review search configuration\n\n## Related Links\n- Jira: ENG-16\n- GitHub PR: #106\n- Slack Thread: #INC006\n\n## Keywords\nsearch, elasticsearch, index, reindex, stale, corrupted\n\n## Lessons Learned\n- Need faster alerting for search failures\n- Documentation for corrupted should be improved\n- Consider adding redundancy for search\n",
+      "tags": [
+        "search",
+        "elasticsearch",
+        "index",
+        "postmortem",
+        "P2"
+      ],
+      "incident_ref": "INC006",
+      "jira_ref": "ENG-16",
+      "pr_ref": 106
+    },
+    {
+      "doc_id": "DOC0010",
+      "title": "Runbook: Search Issues",
+      "type": "runbook",
+      "author": "Alex Rodriguez",
+      "author_id": "U004",
+      "created_at": "2024-11-22T13:00:00Z",
+      "updated_at": "2024-11-22T13:00:00Z",
+      "content": "# Runbook: Search Issues\n\n**Last Updated**: 2024-11-22\n**Author**: Alex Rodriguez\n\n## Overview\nThis runbook covers troubleshooting for search related issues.\n\n## Common Issues\n\n### Search Index Corruption\n**Symptoms**: Elasticsearch index corrupted causing search to return stale results\n**Keywords**: search, elasticsearch, index, reindex, stale, corrupted\n\n**Steps to Diagnose**:\n1. Check search metrics in dashboard\n2. Review logs for search errors\n3. Verify elasticsearch settings\n\n**Resolution Steps**:\n1. If search is failing, check connection settings\n2. Restart the search service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `search_error_rate > threshold`\n- Dashboard: search Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Alex Rodriguez (alex@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC006: Search Index Corruption\n",
+      "tags": [
+        "search",
+        "elasticsearch",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC006"
+    },
+    {
+      "doc_id": "DOC0011",
+      "title": "Post-Mortem: API Rate Limiting Bypass",
+      "type": "postmortem",
+      "author": "Sarah Williams",
+      "author_id": "U003",
+      "created_at": "2024-11-28T13:00:00Z",
+      "updated_at": "2024-11-28T13:00:00Z",
+      "content": "# Post-Mortem: API Rate Limiting Bypass\n\n**Date**: 2024-11-25\n**Severity**: P1\n**Duration**: 2 day(s)\n**Author**: Sarah Williams\n\n## Summary\nSecurity issue - rate limiting can be bypassed using header manipulation\n\n## Timeline\n- **2024-11-25 09:00**: Issue first detected with security\n- **2024-11-25 09:30**: Team alerted, investigation started\n- **2024-11-25 12:00**: Root cause identified - rate limit\n- **2024-11-25 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with security. Specifically, Security issue - rate limiting can be bypassed using header manipulation\n\nTechnical details:\n- Component affected: security\n- Related systems: rate limit, bypass\n\n## Resolution\nFixed by updating the security handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for security\n2. Update runbook for headers issues\n3. Review security configuration\n\n## Related Links\n- Jira: ENG-19\n- GitHub PR: #107\n- Slack Thread: #INC007\n\n## Keywords\nsecurity, rate limit, bypass, api, vulnerability, headers\n\n## Lessons Learned\n- Need faster alerting for security failures\n- Documentation for headers should be improved\n- Consider adding redundancy for security\n",
+      "tags": [
+        "security",
+        "rate limit",
+        "bypass",
+        "postmortem",
+        "P1"
+      ],
+      "incident_ref": "INC007",
+      "jira_ref": "ENG-19",
+      "pr_ref": 107
+    },
+    {
+      "doc_id": "DOC0012",
+      "title": "Runbook: Security Issues",
+      "type": "runbook",
+      "author": "Alex Rodriguez",
+      "author_id": "U004",
+      "created_at": "2024-11-29T10:00:00Z",
+      "updated_at": "2024-11-29T10:00:00Z",
+      "content": "# Runbook: Security Issues\n\n**Last Updated**: 2024-11-29\n**Author**: Alex Rodriguez\n\n## Overview\nThis runbook covers troubleshooting for security related issues.\n\n## Common Issues\n\n### API Rate Limiting Bypass\n**Symptoms**: Security issue - rate limiting can be bypassed using header manipulation\n**Keywords**: security, rate limit, bypass, api, vulnerability, headers\n\n**Steps to Diagnose**:\n1. Check security metrics in dashboard\n2. Review logs for security errors\n3. Verify rate limit settings\n\n**Resolution Steps**:\n1. If security is failing, check connection settings\n2. Restart the security service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `security_error_rate > threshold`\n- Dashboard: security Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Alex Rodriguez (alex@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC007: API Rate Limiting Bypass\n",
+      "tags": [
+        "security",
+        "rate limit",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC007"
+    },
+    {
+      "doc_id": "DOC0013",
+      "title": "Post-Mortem: Database Connection Pool Exhaustion",
+      "type": "postmortem",
+      "author": "Alex Rodriguez",
+      "author_id": "U004",
+      "created_at": "2024-12-06T12:00:00Z",
+      "updated_at": "2024-12-06T12:00:00Z",
+      "content": "# Post-Mortem: Database Connection Pool Exhaustion\n\n**Date**: 2024-12-03\n**Severity**: P1\n**Duration**: 2 day(s)\n**Author**: Alex Rodriguez\n\n## Summary\nConnection pool maxed out during traffic spike causing 503 errors\n\n## Timeline\n- **2024-12-03 09:00**: Issue first detected with database\n- **2024-12-03 09:30**: Team alerted, investigation started\n- **2024-12-03 12:00**: Root cause identified - connection\n- **2024-12-03 14:00**: Fix deployed, monitoring started\n\n## Root Cause\nThe issue was caused by problems with database. Specifically, Connection pool maxed out during traffic spike causing 503 errors\n\nTechnical details:\n- Component affected: database\n- Related systems: connection, pool\n\n## Resolution\nFixed by updating the database handling logic. Changes deployed via PR.\n\n## Action Items\n1. Add better monitoring for database\n2. Update runbook for capacity issues\n3. Review database configuration\n\n## Related Links\n- Jira: ENG-22\n- GitHub PR: #108\n- Slack Thread: #INC008\n\n## Keywords\ndatabase, connection, pool, postgres, 503, capacity\n\n## Lessons Learned\n- Need faster alerting for database failures\n- Documentation for capacity should be improved\n- Consider adding redundancy for database\n",
+      "tags": [
+        "database",
+        "connection",
+        "pool",
+        "postmortem",
+        "P1"
+      ],
+      "incident_ref": "INC008",
+      "jira_ref": "ENG-22",
+      "pr_ref": 108
+    },
+    {
+      "doc_id": "DOC0014",
+      "title": "Runbook: Database Issues",
+      "type": "runbook",
+      "author": "Marcus Chen",
+      "author_id": "U002",
+      "created_at": "2024-12-07T10:00:00Z",
+      "updated_at": "2024-12-07T10:00:00Z",
+      "content": "# Runbook: Database Issues\n\n**Last Updated**: 2024-12-07\n**Author**: Marcus Chen\n\n## Overview\nThis runbook covers troubleshooting for database related issues.\n\n## Common Issues\n\n### Database Connection Pool Exhaustion\n**Symptoms**: Connection pool maxed out during traffic spike causing 503 errors\n**Keywords**: database, connection, pool, postgres, 503, capacity\n\n**Steps to Diagnose**:\n1. Check database metrics in dashboard\n2. Review logs for database errors\n3. Verify connection settings\n\n**Resolution Steps**:\n1. If database is failing, check connection settings\n2. Restart the database service if needed\n3. Escalate to on-call if issue persists\n\n## Monitoring\n- Alert: `database_error_rate > threshold`\n- Dashboard: database Health\n\n## Escalation\n- L1: On-call engineer\n- L2: Marcus Chen (marcus@acmecorp.com)\n- L3: Engineering Manager\n\n## Related Incidents\n- INC008: Database Connection Pool Exhaustion\n",
+      "tags": [
+        "database",
+        "connection",
+        "runbook",
+        "operations"
+      ],
+      "incident_ref": "INC008"
+    }
+  ],
+  "total_count": 14
+}
