@@ -222,33 +222,31 @@ def find_vector_matches(entities: Dict[str, Dict], existing_pairs: Set[Tuple[str
 
 
 def find_meeting_connections(entities: Dict[str, Dict], existing_pairs: Set[Tuple[str, str]]) -> List[Tuple[str, str, str, float]]:
-    """Find connections between meetings and other entities based on keywords and participants"""
+    """Find connections between meetings and Jira tickets based on jira references in content"""
     connections = []
     
     meeting_entities = {k: v for k, v in entities.items() if k.startswith("meeting_")}
+    jira_entities = {k: v for k, v in entities.items() if k.startswith("jira_")}
+    
+    # Build jira ticket lookup
+    jira_ticket_map = {}  # ENG-1 -> jira_ENG-1
+    for jira_id in jira_entities:
+        ticket_id = jira_id.replace("jira_", "")
+        jira_ticket_map[ticket_id] = jira_id
     
     for meeting_id, meeting_entity in meeting_entities.items():
         meeting_doc = meeting_entity.get("document", "")
-        meeting_metadata = meeting_entity.get("metadata", {})
         
-        # Check incident reference from metadata
-        incident_ref = meeting_metadata.get("incident_ref", "")
+        # Extract jira references from meeting content
+        refs = extract_references(meeting_doc)
         
-        # Search for related entities
-        for entity_id, entity in entities.items():
-            if entity_id == meeting_id:
-                continue
-            
-            pair = tuple(sorted([meeting_id, entity_id]))
-            if pair in existing_pairs:
-                continue
-            
-            entity_metadata = entity.get("metadata", {})
-            
-            # Match by incident reference
-            if incident_ref and entity_metadata.get("incident_ref") == incident_ref:
-                connections.append((meeting_id, entity_id, f"shared_incident:{incident_ref}", 0.90))
-                existing_pairs.add(pair)
+        for jira_ref in refs["jira_refs"]:
+            jira_entity_id = jira_ticket_map.get(jira_ref)
+            if jira_entity_id:
+                pair = tuple(sorted([meeting_id, jira_entity_id]))
+                if pair not in existing_pairs:
+                    connections.append((meeting_id, jira_entity_id, f"jira_reference:{jira_ref}", 0.90))
+                    existing_pairs.add(pair)
     
     return connections
 
