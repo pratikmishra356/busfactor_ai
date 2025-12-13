@@ -132,6 +132,24 @@ async def mcp_connections(
     return search_with_connections(q, top_k=top_k, graph_depth=depth)
 
 
+@api_router.get("/mcp/entity/{entity_id}", response_model=EntityDetails)
+async def mcp_get_entity(entity_id: str):
+    """
+    API 3: Get entity details by ID
+    
+    Returns full entity details including:
+    - Basic metadata (source, type, title, content, timestamp)
+    - References (incident_ref, jira_ref, pr_ref)
+    - All connections grouped by target source type
+    
+    Example entity_ids: jira_ENG-1, slack_T00001, github_pr_101, doc_DOC0003
+    """
+    entity = get_entity_by_id(entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail=f"Entity '{entity_id}' not found")
+    return entity
+
+
 # ============== Application Layer Endpoints ==============
 
 @api_router.get("/context", response_model=ContextResponse)
