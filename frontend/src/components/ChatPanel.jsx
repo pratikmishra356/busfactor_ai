@@ -125,7 +125,7 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-slate-200 p-4 bg-white">
+      <div className="border-t border-slate-200 p-4 bg-white overflow-visible">
         {agent.id === 'codehealth' && (
           <CodeHealthForm 
             onResponse={handleAgentResponse}
