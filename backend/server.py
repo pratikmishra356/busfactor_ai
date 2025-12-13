@@ -190,73 +190,45 @@ async def code_audit(
         )
 
 
-# ============== Application Layer Endpoints ==============
+# ============== Agent Endpoints ==============
 
-@api_router.get("/context", response_model=ContextResponse)
-async def get_context(
-    query: str = Query(..., description="Natural language query to get context for"),
-    top_k: int = Query(default=3, ge=1, le=5, description="Number of weekly summaries to analyze")
-):
+@api_router.post("/agent/codehealth", response_model=CodeHealthResponse)
+async def run_codehealth_agent(pr_input: PRInput):
     """
-    Use Case 1: Context Generation
+    CodeHealth Agent - Analyzes a PR and generates a review checklist.
     
-    Generates comprehensive context for a natural language query by:
-    1. Fetching relevant weekly summaries via vector search
-    2. Getting detailed entity information
-    3. Using LLM to synthesize a coherent context response
+    **Input**: PR JSON with:
+    - pr_number, title, description, author
+    - files_changed (list of file paths)
+    - labels, jira_ref (optional)
+    - comments (can be empty array)
     
-    Returns context that addresses the query with information from
-    Slack, Jira, GitHub, Docs, and Meetings.
+    **Process**:
+    1. Searches for semantically related PRs
+    2. Finds PRs with overlapping file changes
+    3. Collects review comments from related PRs
+    4. Generates a comprehensive PR scan checklist using LLM
+    
+    **Output**:
+    - Related PRs and file overlap PRs
+    - Prioritized checklist items by category
+    - Risk level assessment
+    - Summary of potential issues
+    
+    **Example Request**:
+    ```json
+    {
+        "pr_number": 200,
+        "title": "feat: add payment retry",
+        "description": "Implements retry for failed payments",
+        "author": "developer",
+        "files_changed": ["src/services/payment.py", "src/queues/retry.py"],
+        "labels": ["feature", "payment"],
+        "comments": []
+    }
+    ```
     """
-    return await generate_context(query, top_k=top_k)
-
-
-@api_router.get("/incident", response_model=IncidentReport)
-async def get_incident_report(
-    query: str = Query(..., description="Incident-related query for RCA generation")
-):
-    """
-    Use Case 2: Incident Report / RCA
-    
-    Generates a Root Cause Analysis report by:
-    1. Fetching relevant summaries and entity details
-    2. Analyzing connections between entities
-    3. Using LLM to generate comprehensive RCA
-    
-    Returns structured incident report with:
-    - Executive summary
-    - Timeline of events
-    - Root cause analysis
-    - Recommendations
-    - Related tickets and PRs
-    """
-    return await generate_incident_report(query)
-
-
-@api_router.get("/role/{role}/task", response_model=RoleTaskResponse)
-async def get_role_task(
-    role: Literal["engineer", "product_manager", "engineering_manager"] = "engineer",
-    query: str = Query(..., description="Query for role-specific task generation")
-):
-    """
-    Use Case 3: Role-Based Task Generation
-    
-    Generates role-specific responses:
-    
-    - **engineer**: Technical details, PRs, debugging info
-    - **product_manager**: Feature progress, customer impact, roadmap
-    - **engineering_manager**: Team health, incidents, process improvements
-    
-    Returns tailored response with:
-    - Role-specific insights
-    - Action items
-    - Priority items
-    - Relevant entities
-    """
-    if role not in ["engineer", "product_manager", "engineering_manager"]:
-        raise HTTPException(status_code=400, detail="Invalid role. Use: engineer, product_manager, engineering_manager")
-    
-    return await generate_role_task(role, query)
+    return await codehealth_agent(pr_input)
 
 
 # Include the router in the main app
