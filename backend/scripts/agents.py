@@ -21,6 +21,9 @@ from mcp_api import (
     search_code_by_query,
     search_code_by_file_path,
     search_code_by_comment,
+    natural_search,
+    get_entity_metadata,
+    get_entity_connections,
     CodeAuditResponse,
     CodeAuditPR
 )
