@@ -62,20 +62,4 @@ export const runEmployeeAgent = async (role, task) => {
   return response.data;
 };
 
-// Application Layer APIs (deprecated - use agents instead)
-export const getContextResponse = async (query, topK = 3) => {
-  // Deprecated
-  throw new Error('Use runCodeHealthAgent instead');
-};
-
-export const getIncidentReport = async (query) => {
-  // Deprecated - will be replaced by OnCall Agent
-  throw new Error('Use OnCall Agent instead (coming soon)');
-};
-
-export const getRoleTask = async (role, query) => {
-  // Deprecated - will be replaced by Employee Agent
-  throw new Error('Use Employee Agent instead (coming soon)');
-};
-
 export default api;
