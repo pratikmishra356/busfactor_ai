@@ -24,8 +24,23 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
   const [role, setRole] = useState('engineer');
   const [task, setTask] = useState('');
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const dropdownRef = React.useRef(null);
 
   const currentRole = ROLES.find(r => r.id === role);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowRoleDropdown(false);
+      }
+    };
+
+    if (showRoleDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showRoleDropdown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,7 +164,7 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
       {/* Role Selector + Task Input */}
       <div className="flex gap-2">
         {/* Role Dropdown */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button
             type="button"
             onClick={() => setShowRoleDropdown(!showRoleDropdown)}
