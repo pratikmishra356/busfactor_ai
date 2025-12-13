@@ -58,16 +58,18 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Coming Soon</span>
           )}
           {activeTaskId && (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Viewing Task</span>
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">📝 Viewing Task</span>
           )}
         </div>
         {messages.length > 0 && (
           <button
             onClick={clearChat}
             data-testid="clear-chat-btn"
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-md hover:bg-slate-100 transition-colors"
+            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-md hover:bg-slate-100 transition-colors flex items-center gap-1.5"
+            title={activeTaskId ? "Close task view" : "Clear chat"}
           >
             <Trash2 className="w-4 h-4" />
+            <span className="text-xs">{activeTaskId ? "Close" : "Clear"}</span>
           </button>
         )}
       </div>
