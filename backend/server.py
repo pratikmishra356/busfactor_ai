@@ -155,6 +155,42 @@ async def mcp_get_entity(entity_id: str):
     return entity
 
 
+# ============== Code Audit Endpoints ==============
+
+@api_router.get("/code/audit", response_model=CodeAuditResponse)
+async def code_audit(
+    file_path: Optional[str] = Query(default=None, description="Search by file path (e.g., 'src/api/payments.py')"),
+    comment: Optional[str] = Query(default=None, description="Search by comment content"),
+    query: Optional[str] = Query(default=None, description="General search query for PRs"),
+    limit: int = Query(default=10, ge=1, le=50, description="Number of results to return")
+):
+    """
+    Code Audit API - Search PRs by different criteria:
+    
+    1. **file_path**: Find PRs that modified a specific file
+       - Example: `/api/code/audit?file_path=src/api/payments.py`
+    
+    2. **comment**: Find PRs with specific review comments  
+       - Example: `/api/code/audit?comment=memory leak`
+    
+    3. **query**: General semantic search across PR descriptions
+       - Example: `/api/code/audit?query=payment webhook retry`
+    
+    Only one parameter should be provided at a time.
+    """
+    if file_path:
+        return search_code_by_file_path(file_path, n_results=limit)
+    elif comment:
+        return search_code_by_comment(comment, n_results=limit)
+    elif query:
+        return search_code_by_query(query, n_results=limit)
+    else:
+        raise HTTPException(
+            status_code=400, 
+            detail="One of 'file_path', 'comment', or 'query' parameter is required"
+        )
+
+
 # ============== Application Layer Endpoints ==============
 
 @api_router.get("/context", response_model=ContextResponse)
