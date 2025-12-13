@@ -292,7 +292,7 @@ class AgentAPITester:
 
 def main():
     """Main test execution"""
-    tester = ContextIntelligenceAPITester()
+    tester = AgentAPITester()
     
     try:
         success = tester.run_all_tests()
