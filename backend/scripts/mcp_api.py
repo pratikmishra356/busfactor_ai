@@ -381,6 +381,182 @@ def get_entity_by_id(entity_id: str) -> Optional[EntityDetails]:
     )
 
 
+# ============== Code Audit Functions ==============
+
+def _parse_pr_metadata(metadata: Dict, document: str, match_type: str, distance: float) -> CodeAuditPR:
+    """Parse ChromaDB result into CodeAuditPR model"""
+    return CodeAuditPR(
+        pr_id=metadata.get("pr_number", ""),
+        pr_number=metadata.get("pr_number", ""),
+        title=metadata.get("title", ""),
+        author=metadata.get("author", ""),
+        author_github=metadata.get("author_github", ""),
+        reviewer=metadata.get("reviewer", ""),
+        status=metadata.get("status", ""),
+        timestamp=metadata.get("timestamp", ""),
+        merged_at=metadata.get("merged_at", ""),
+        labels=metadata.get("labels", "").split(",") if metadata.get("labels") else [],
+        jira_ref=metadata.get("jira_ref", ""),
+        incident_ref=metadata.get("incident_ref", ""),
+        files_changed=metadata.get("files_changed", "").split(",") if metadata.get("files_changed") else [],
+        file_count=metadata.get("file_count", 0),
+        lines_added=metadata.get("lines_added", 0),
+        lines_removed=metadata.get("lines_removed", 0),
+        match_type=match_type,
+        match_score=1 - (distance / 2),  # Convert distance to score (0-1)
+        matched_content=document[:500] if document else ""
+    )
+
+
+def search_code_by_file_path(file_path: str, n_results: int = 10) -> CodeAuditResponse:
+    """
+    Search PRs by file path.
+    Uses the code_files collection which indexes files_changed.
+    """
+    chroma_client = get_chroma_client()
+    embedding_model = get_embedding_model()
+    
+    try:
+        collection = chroma_client.get_collection(name="code_pr_files")
+    except Exception:
+        return CodeAuditResponse(query=file_path, query_type="file_path", results=[], total_results=0)
+    
+    # Generate embedding for file path
+    query_embedding = embedding_model.encode(file_path, convert_to_numpy=True).tolist()
+    
+    # Search with metadata filter if exact match desired
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
+    )
+    
+    prs = []
+    seen_pr_numbers = set()
+    
+    for i, (doc_id, doc, metadata, distance) in enumerate(zip(
+        results['ids'][0],
+        results['documents'][0],
+        results['metadatas'][0],
+        results['distances'][0]
+    )):
+        # Check if file path is in files_changed
+        files_changed = metadata.get("files_changed", "")
+        if file_path.lower() in files_changed.lower():
+            pr_number = metadata.get("pr_number", "")
+            if pr_number not in seen_pr_numbers:
+                seen_pr_numbers.add(pr_number)
+                prs.append(_parse_pr_metadata(metadata, doc, "file_path", distance))
+    
+    # If no exact matches, return closest semantic matches
+    if not prs:
+        for i, (doc_id, doc, metadata, distance) in enumerate(zip(
+            results['ids'][0],
+            results['documents'][0],
+            results['metadatas'][0],
+            results['distances'][0]
+        )):
+            pr_number = metadata.get("pr_number", "")
+            if pr_number not in seen_pr_numbers:
+                seen_pr_numbers.add(pr_number)
+                prs.append(_parse_pr_metadata(metadata, doc, "file_path", distance))
+    
+    return CodeAuditResponse(
+        query=file_path,
+        query_type="file_path",
+        results=prs,
+        total_results=len(prs)
+    )
+
+
+def search_code_by_comment(comment_query: str, n_results: int = 10) -> CodeAuditResponse:
+    """
+    Search PRs by comment content.
+    Uses the code_comments collection which indexes PR review comments.
+    """
+    chroma_client = get_chroma_client()
+    embedding_model = get_embedding_model()
+    
+    try:
+        collection = chroma_client.get_collection(name="code_pr_comments")
+    except Exception:
+        return CodeAuditResponse(query=comment_query, query_type="comment", results=[], total_results=0)
+    
+    # Generate embedding
+    query_embedding = embedding_model.encode(comment_query, convert_to_numpy=True).tolist()
+    
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
+    )
+    
+    prs = []
+    seen_pr_numbers = set()
+    
+    for i, (doc_id, doc, metadata, distance) in enumerate(zip(
+        results['ids'][0],
+        results['documents'][0],
+        results['metadatas'][0],
+        results['distances'][0]
+    )):
+        pr_number = metadata.get("pr_number", "")
+        if pr_number not in seen_pr_numbers:
+            seen_pr_numbers.add(pr_number)
+            prs.append(_parse_pr_metadata(metadata, doc, "comment", distance))
+    
+    return CodeAuditResponse(
+        query=comment_query,
+        query_type="comment",
+        results=prs,
+        total_results=len(prs)
+    )
+
+
+def search_code_by_query(query: str, n_results: int = 10) -> CodeAuditResponse:
+    """
+    General search for PRs by query.
+    Searches across PR descriptions for semantic matches.
+    """
+    chroma_client = get_chroma_client()
+    embedding_model = get_embedding_model()
+    
+    try:
+        collection = chroma_client.get_collection(name="code_pr_descriptions")
+    except Exception:
+        return CodeAuditResponse(query=query, query_type="query", results=[], total_results=0)
+    
+    # Generate embedding
+    query_embedding = embedding_model.encode(query, convert_to_numpy=True).tolist()
+    
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
+    )
+    
+    prs = []
+    seen_pr_numbers = set()
+    
+    for i, (doc_id, doc, metadata, distance) in enumerate(zip(
+        results['ids'][0],
+        results['documents'][0],
+        results['metadatas'][0],
+        results['distances'][0]
+    )):
+        pr_number = metadata.get("pr_number", "")
+        if pr_number not in seen_pr_numbers:
+            seen_pr_numbers.add(pr_number)
+            prs.append(_parse_pr_metadata(metadata, doc, "query", distance))
+    
+    return CodeAuditResponse(
+        query=query,
+        query_type="query",
+        results=prs,
+        total_results=len(prs)
+    )
+
+
 def natural_search(query: str, top_k: int = 3) -> SearchResponse:
     """
     API 1: Natural search query -> summarized entities with sub-entity IDs
