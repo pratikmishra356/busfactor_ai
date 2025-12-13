@@ -33,10 +33,13 @@ from mcp_api import (
 # Import Agents
 from agents import (
     codehealth_agent,
+    employee_agent,
     PRInput,
     CodeHealthResponse,
     RelatedPR,
-    ChecklistItem
+    ChecklistItem,
+    EmployeeInput,
+    EmployeeResponse
 )
 
 
