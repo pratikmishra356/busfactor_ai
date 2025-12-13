@@ -84,6 +84,86 @@ class CodeHealthResponse(BaseModel):
     total_related_comments: int
 
 
+# ============== Employee Agent Models ==============
+
+class EmployeeInput(BaseModel):
+    """Input for Employee Agent"""
+    role: str  # "engineer" or "manager"
+    task: str  # The task description/query
+
+
+class PRDraft(BaseModel):
+    """Draft PR response for engineer"""
+    title: str
+    description: str
+    branch_name: str
+    target_branch: str = "main"
+    files_to_modify: List[str] = []
+    implementation_steps: List[str] = []
+    test_suggestions: List[str] = []
+    estimated_complexity: str = ""  # "low", "medium", "high"
+
+
+class ReviewComment(BaseModel):
+    """Review comment for PR review task"""
+    file_path: str = ""
+    line_suggestion: str = ""
+    comment: str
+    severity: str = "info"  # "critical", "warning", "info", "praise"
+
+
+class PRReviewResponse(BaseModel):
+    """PR review response for engineer"""
+    summary: str
+    approval_status: str  # "approve", "request_changes", "comment"
+    comments: List[ReviewComment]
+    key_concerns: List[str] = []
+    positive_aspects: List[str] = []
+
+
+class SlackMessage(BaseModel):
+    """Slack message draft for manager"""
+    channel_suggestion: str
+    recipients: List[str] = []
+    subject: str
+    message: str
+    urgency: str = "normal"  # "urgent", "normal", "low"
+    thread_context: str = ""
+
+
+class StatusUpdate(BaseModel):
+    """Status update for manager"""
+    summary: str
+    key_points: List[str]
+    blockers: List[str] = []
+    next_steps: List[str] = []
+    stakeholders_to_notify: List[str] = []
+
+
+class RelatedEntity(BaseModel):
+    """Related entity found during task analysis"""
+    entity_id: str
+    source: str
+    title: str
+    relevance: str
+
+
+class EmployeeResponse(BaseModel):
+    """Response from Employee Agent"""
+    role: str
+    task: str
+    task_type: str  # "create_pr", "review_pr", "send_message", "status_update", "general"
+    related_entities: List[RelatedEntity]
+    context_summary: str
+    
+    # Role-specific outputs (only one will be populated based on task_type)
+    pr_draft: Optional[PRDraft] = None
+    pr_review: Optional[PRReviewResponse] = None
+    slack_message: Optional[SlackMessage] = None
+    status_update: Optional[StatusUpdate] = None
+    general_response: Optional[str] = None
+
+
 # ============== Helper Functions ==============
 
 async def call_llm(system_message: str, user_message: str, session_id: str = "agent") -> str:
