@@ -432,6 +432,7 @@ def store_weekly_summaries_in_chromadb(summaries: List[Dict[str, Any]]):
             "entity_count": summary.get("entity_count", 0),
             "sources": ",".join(summary.get("sources", [])),
             "incident_refs": ",".join(summary.get("incident_refs", [])),
+            "sub_entity_ids": ",".join(summary.get("sub_entity_ids", [])),  # Store sub-entity IDs
         }
         
         ids.append(summary.get("id", ""))
