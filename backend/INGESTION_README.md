@@ -103,6 +103,65 @@ python scripts/search_test.py
 - `chromadb`: Vector database
 - `sentence-transformers`: Local embeddings
 - `emergentintegrations`: OpenAI integration via Emergent LLM key
+- `sqlite3`: Relationship storage (built-in)
+
+---
+
+## Entity Connections
+
+### Overview
+The connection builder establishes bidirectional relationships between entities using:
+1. **Regex matching**: Shared incident_ref, jira_ref, pr_ref
+2. **Vector similarity**: Semantic matching using embeddings
+
+### Connection Schema (SQLite)
+
+```sql
+entity_connections:
+  - source_entity_id (e.g., "jira_ENG-1")
+  - source_type (e.g., "jira")
+  - target_entity_id (e.g., "slack_T00001")
+  - target_type (e.g., "slack")
+  - connection_type ("shared_incident", "vector_similarity")
+  - confidence_score (0.0 - 1.0)
+  - match_reason (e.g., "shared_incident:INC001")
+
+entity_metadata:
+  - entity_id, source, title, content_preview
+  - incident_ref, jira_ref, pr_ref
+```
+
+### Build Connections
+```bash
+python scripts/build_connections.py
+```
+
+### Query Connections
+```bash
+python scripts/query_connections.py
+```
+
+### Connection Statistics
+| Metric | Count |
+|--------|-------|
+| Total bidirectional connections | 410 |
+| Regex matches (incident/jira/pr) | 404 |
+| Vector similarity matches | 6 |
+
+### Example: Jira Ticket Context
+```python
+from scripts.query_connections import get_jira_ticket_full_context, get_db_connection
+
+conn = get_db_connection()
+context = get_jira_ticket_full_context(conn, "ENG-1")
+
+# Returns:
+# - ticket metadata
+# - related_entities grouped by source (slack, docs, github, meetings)
+# - timeline of events
+```
+
+---
 
 ## Next Steps
 
@@ -110,3 +169,4 @@ python scripts/search_test.py
 2. **Application Layer**: Build UI for querying the intelligence platform
 3. **Real-time Ingestion**: Add webhook support for live data updates
 4. **Advanced Search**: Implement filters, facets, and semantic ranking
+5. **Graph Visualization**: Render entity connection graphs
