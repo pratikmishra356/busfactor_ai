@@ -129,6 +129,76 @@ async def mcp_connections(
     """
     return search_with_connections(q, top_k=top_k, graph_depth=depth)
 
+
+# ============== Application Layer Endpoints ==============
+
+@api_router.get("/context", response_model=ContextResponse)
+async def get_context(
+    query: str = Query(..., description="Natural language query to get context for"),
+    top_k: int = Query(default=3, ge=1, le=5, description="Number of weekly summaries to analyze")
+):
+    """
+    Use Case 1: Context Generation
+    
+    Generates comprehensive context for a natural language query by:
+    1. Fetching relevant weekly summaries via vector search
+    2. Getting detailed entity information
+    3. Using LLM to synthesize a coherent context response
+    
+    Returns context that addresses the query with information from
+    Slack, Jira, GitHub, Docs, and Meetings.
+    """
+    return await generate_context(query, top_k=top_k)
+
+
+@api_router.get("/incident", response_model=IncidentReport)
+async def get_incident_report(
+    query: str = Query(..., description="Incident-related query for RCA generation")
+):
+    """
+    Use Case 2: Incident Report / RCA
+    
+    Generates a Root Cause Analysis report by:
+    1. Fetching relevant summaries and entity details
+    2. Analyzing connections between entities
+    3. Using LLM to generate comprehensive RCA
+    
+    Returns structured incident report with:
+    - Executive summary
+    - Timeline of events
+    - Root cause analysis
+    - Recommendations
+    - Related tickets and PRs
+    """
+    return await generate_incident_report(query)
+
+
+@api_router.get("/role/{role}/task", response_model=RoleTaskResponse)
+async def get_role_task(
+    role: Literal["engineer", "product_manager", "engineering_manager"] = "engineer",
+    query: str = Query(..., description="Query for role-specific task generation")
+):
+    """
+    Use Case 3: Role-Based Task Generation
+    
+    Generates role-specific responses:
+    
+    - **engineer**: Technical details, PRs, debugging info
+    - **product_manager**: Feature progress, customer impact, roadmap
+    - **engineering_manager**: Team health, incidents, process improvements
+    
+    Returns tailored response with:
+    - Role-specific insights
+    - Action items
+    - Priority items
+    - Relevant entities
+    """
+    if role not in ["engineer", "product_manager", "engineering_manager"]:
+        raise HTTPException(status_code=400, detail="Invalid role. Use: engineer, product_manager, engineering_manager")
+    
+    return await generate_role_task(role, query)
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
