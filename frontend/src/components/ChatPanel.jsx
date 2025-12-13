@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import CodeHealthForm from './agents/CodeHealthForm';
 import EmployeeForm from './agents/EmployeeForm';
 
-export default function ChatPanel({ agent, messages, addMessage, addCompletedTask, clearChat }) {
+export default function ChatPanel({ agent, messages, addMessage, addCompletedTask, clearChat, activeTaskId }) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -17,30 +17,33 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
   }, [messages]);
 
   const handleAgentResponse = (userInput, response, taskType) => {
-    // Add user message
-    addMessage({
+    const userMsg = {
       id: Date.now(),
       type: 'user',
       content: userInput,
       timestamp: new Date().toISOString()
-    });
+    };
 
-    // Add agent response
-    addMessage({
+    const agentMsg = {
       id: Date.now() + 1,
       type: 'agent',
       agent: agent.id,
       content: response,
       timestamp: new Date().toISOString()
-    });
+    };
 
-    // Add to completed tasks
+    // Add messages to current chat
+    addMessage(userMsg);
+    addMessage(agentMsg);
+
+    // Add to completed tasks with messages
     addCompletedTask({
       id: Date.now(),
       agent: agent.id,
       type: taskType,
       title: typeof userInput === 'string' ? userInput.slice(0, 50) : `${agent.name} Task`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      messages: [userMsg, agentMsg]
     });
   };
 
@@ -53,6 +56,9 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
           <span className="font-heading font-semibold text-slate-900">{agent.name} Agent</span>
           {!agent.enabled && (
             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Coming Soon</span>
+          )}
+          {activeTaskId && (
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Viewing Task</span>
           )}
         </div>
         {messages.length > 0 && (
