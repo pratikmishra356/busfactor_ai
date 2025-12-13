@@ -234,6 +234,44 @@ async def run_codehealth_agent(pr_input: PRInput):
     return await codehealth_agent(pr_input)
 
 
+@api_router.post("/agent/employee", response_model=EmployeeResponse)
+async def run_employee_agent(employee_input: EmployeeInput):
+    """
+    Employee Agent - Role-based task assistance.
+    
+    **Input**: 
+    - role: "engineer" or "manager"
+    - task: Task description/query string
+    
+    **For Engineer** (task_type detected automatically):
+    - **create_pr**: Returns PR draft with title, description, files to modify, implementation steps
+      - Triggers: "implement", "create pr", "fix", "build", "jira ticket"
+    - **review_pr**: Returns review comments with severity levels
+      - Triggers: "review", "check pr", "feedback on"
+    - **general**: General engineering guidance
+    
+    **For Manager** (task_type detected automatically):
+    - **send_message**: Returns Slack message draft with channel, recipients, message
+      - Triggers: "send message", "notify", "slack", "inform team"
+    - **status_update**: Returns status update with key points, blockers, next steps
+      - Triggers: "status", "summary", "progress report"
+    - **general**: General management guidance
+    
+    **Example Requests**:
+    
+    Engineer creating PR:
+    ```json
+    {"role": "engineer", "task": "implement payment retry mechanism for ENG-500"}
+    ```
+    
+    Manager sending message:
+    ```json
+    {"role": "manager", "task": "send slack message to team about the payment bug fix"}
+    ```
+    """
+    return await employee_agent(employee_input)
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
