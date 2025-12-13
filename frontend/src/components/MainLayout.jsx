@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Code2, Users, Bell, FileText, Zap } from 'lucide-react';
+import { Code2, Users, Bell, FileText } from 'lucide-react';
 import Header from './Header';
 import AgentTabs from './AgentTabs';
 import ChatPanel from './ChatPanel';
-import BuilderPanel from './BuilderPanel';
 import CompletedTasks from './CompletedTasks';
 
 const AGENTS = [
@@ -66,36 +65,23 @@ export default function MainLayout() {
         onAgentChange={handleAgentChange} 
       />
 
-      {/* Main Content - Split Screen */}
+      {/* Main Content - Full Height */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Panel - Chat + Tasks */}
-        <div className="h-[55%] flex flex-col border-b border-slate-200 bg-white">
-          <ChatPanel 
-            agent={currentAgent}
-            messages={chatMessages}
-            addMessage={addChatMessage}
-            addCompletedTask={addCompletedTask}
-            clearChat={clearChat}
-            activeTaskId={activeTaskId}
-          />
-          
-          {/* Completed Tasks */}
-          <CompletedTasks 
-            tasks={completedTasks} 
-            activeTaskId={activeTaskId}
-            onTaskClick={handleTaskClick}
-          />
-        </div>
-
-        {/* Resizer */}
-        <div className="h-1 bg-slate-100 hover:bg-blue-200 cursor-row-resize transition-colors flex items-center justify-center">
-          <div className="w-12 h-1 bg-slate-300 rounded-full" />
-        </div>
-
-        {/* Bottom Panel - Builder */}
-        <div className="flex-1 bg-slate-50 builder-grid overflow-hidden">
-          <BuilderPanel agent={currentAgent} />
-        </div>
+        <ChatPanel 
+          agent={currentAgent}
+          messages={chatMessages}
+          addMessage={addChatMessage}
+          addCompletedTask={addCompletedTask}
+          clearChat={clearChat}
+          activeTaskId={activeTaskId}
+        />
+        
+        {/* Completed Tasks */}
+        <CompletedTasks 
+          tasks={completedTasks} 
+          activeTaskId={activeTaskId}
+          onTaskClick={handleTaskClick}
+        />
       </div>
     </div>
   );
