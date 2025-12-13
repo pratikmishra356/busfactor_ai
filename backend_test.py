@@ -228,7 +228,7 @@ class AgentAPITester:
     def run_all_tests(self):
         """Run comprehensive backend API tests"""
         print("=" * 80)
-        print("🚀 Context Intelligence Platform - Backend API Testing")
+        print("🚀 Context Intelligence Platform - Agent API Testing")
         print("=" * 80)
         print(f"Base URL: {self.base_url}")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -241,19 +241,15 @@ class AgentAPITester:
             print("\n❌ Basic connectivity failed. Stopping tests.")
             return self.generate_summary()
         
-        # Test MCP layer APIs
-        print("\n🔧 Testing MCP Layer APIs...")
-        self.test_mcp_apis()
+        # Test Agent APIs
+        print("\n🔧 Testing CodeHealth Agent API...")
+        self.test_codehealth_agent()
         
-        # Test application layer APIs
-        print("\n📚 Testing Knowledge Base (Context) API...")
-        self.test_context_api()
+        print("\n👨‍💻 Testing Employee Agent - Engineer...")
+        self.test_employee_agent_engineer()
         
-        print("\n🚨 Testing Incident Analysis API...")
-        self.test_incident_api()
-        
-        print("\n🤖 Testing AI Companion (Role) APIs...")
-        self.test_role_apis()
+        print("\n👨‍💼 Testing Employee Agent - Manager...")
+        self.test_employee_agent_manager()
         
         return self.generate_summary()
 
