@@ -107,6 +107,37 @@ class EntityDetails(BaseModel):
     connections: Dict[str, List[Dict]] = {}
 
 
+class CodeAuditPR(BaseModel):
+    """PR result from code audit search"""
+    pr_id: str
+    pr_number: str
+    title: str
+    author: str
+    author_github: str
+    reviewer: str
+    status: str
+    timestamp: str
+    merged_at: str
+    labels: List[str]
+    jira_ref: str = ""
+    incident_ref: str = ""
+    files_changed: List[str] = []
+    file_count: int = 0
+    lines_added: int = 0
+    lines_removed: int = 0
+    match_type: str = ""  # "file_path", "comment", "query"
+    match_score: float = 0.0
+    matched_content: str = ""
+
+
+class CodeAuditResponse(BaseModel):
+    """Response for code audit queries"""
+    query: str
+    query_type: str  # "file_path", "comment", "query"
+    results: List[CodeAuditPR]
+    total_results: int
+
+
 # ============== Core Functions ==============
 
 def search_weekly_summaries(query: str, n_results: int = 5) -> List[Dict]:
