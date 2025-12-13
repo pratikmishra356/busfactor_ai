@@ -404,6 +404,404 @@ RISK_LEVEL:
     )
 
 
+# ============== Employee Agent ==============
+
+def detect_task_type(role: str, task: str) -> str:
+    """Detect the type of task based on role and task description"""
+    task_lower = task.lower()
+    
+    if role == "engineer":
+        if any(kw in task_lower for kw in ["create pr", "implement", "build", "develop", "fix", "add feature", "write code", "jira", "ticket"]):
+            return "create_pr"
+        elif any(kw in task_lower for kw in ["review", "check pr", "look at pr", "feedback on"]):
+            return "review_pr"
+        else:
+            return "general"
+    
+    elif role == "manager":
+        if any(kw in task_lower for kw in ["send message", "notify", "communicate", "slack", "inform", "update team", "tell"]):
+            return "send_message"
+        elif any(kw in task_lower for kw in ["status", "summary", "report", "update on", "progress"]):
+            return "status_update"
+        else:
+            return "general"
+    
+    return "general"
+
+
+async def employee_agent(employee_input: EmployeeInput) -> EmployeeResponse:
+    """
+    Employee Agent - Role-based task assistance.
+    
+    For Engineer:
+    - create_pr: Generate PR draft with implementation steps
+    - review_pr: Generate review comments and feedback
+    - general: General engineering guidance
+    
+    For Manager:
+    - send_message: Draft Slack messages for team communication
+    - status_update: Generate status updates for stakeholders
+    - general: General management guidance
+    """
+    
+    role = employee_input.role.lower()
+    task = employee_input.task
+    
+    if role not in ["engineer", "manager"]:
+        role = "engineer"  # Default
+    
+    # Detect task type
+    task_type = detect_task_type(role, task)
+    
+    # Step 1: Fetch related entities/summaries based on task
+    related_entities: List[RelatedEntity] = []
+    context_data = []
+    
+    # Search weekly summaries for context
+    search_result = natural_search(task, top_k=3)
+    
+    for summary in search_result.results:
+        context_data.append({
+            "type": "weekly_summary",
+            "week": summary.week_key,
+            "content": summary.summary_text[:500],
+            "sources": summary.sources
+        })
+        
+        # Get some entity details from sub-entities
+        for entity_id in summary.sub_entity_ids[:5]:
+            entity_meta = get_entity_metadata(entity_id)
+            if entity_meta:
+                related_entities.append(RelatedEntity(
+                    entity_id=entity_id,
+                    source=entity_meta.get("source", ""),
+                    title=entity_meta.get("title", "")[:100],
+                    relevance="from_summary"
+                ))
+    
+    # Also search for related PRs if task involves code
+    if role == "engineer" or "pr" in task.lower() or "code" in task.lower():
+        pr_results = search_code_by_query(task, n_results=5)
+        for pr in pr_results.results:
+            related_entities.append(RelatedEntity(
+                entity_id=f"github_pr_{pr.pr_number}",
+                source="github",
+                title=pr.title[:100],
+                relevance="code_related"
+            ))
+            context_data.append({
+                "type": "related_pr",
+                "pr_number": pr.pr_number,
+                "title": pr.title,
+                "author": pr.author,
+                "files": pr.files_changed[:5]
+            })
+    
+    # Build context summary
+    context_summary = f"Found {len(related_entities)} related entities and {len(context_data)} context items."
+    
+    # Step 2: Generate role-specific response using LLM
+    response = EmployeeResponse(
+        role=role,
+        task=task,
+        task_type=task_type,
+        related_entities=related_entities[:10],
+        context_summary=context_summary
+    )
+    
+    if role == "engineer":
+        if task_type == "create_pr":
+            response.pr_draft = await _generate_pr_draft(task, context_data, related_entities)
+        elif task_type == "review_pr":
+            response.pr_review = await _generate_pr_review(task, context_data, related_entities)
+        else:
+            response.general_response = await _generate_engineer_response(task, context_data, related_entities)
+    
+    elif role == "manager":
+        if task_type == "send_message":
+            response.slack_message = await _generate_slack_message(task, context_data, related_entities)
+        elif task_type == "status_update":
+            response.status_update = await _generate_status_update(task, context_data, related_entities)
+        else:
+            response.general_response = await _generate_manager_response(task, context_data, related_entities)
+    
+    return response
+
+
+async def _generate_pr_draft(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> PRDraft:
+    """Generate a PR draft for engineer"""
+    
+    system_message = """You are a senior software engineer assistant. Generate a complete PR draft based on the task.
+    
+Output a JSON object with:
+{
+    "title": "PR title following conventional commits (feat:, fix:, etc.)",
+    "description": "Detailed PR description with context, changes, and testing notes",
+    "branch_name": "feature/descriptive-branch-name",
+    "target_branch": "main",
+    "files_to_modify": ["list", "of", "files"],
+    "implementation_steps": ["Step 1: ...", "Step 2: ..."],
+    "test_suggestions": ["Test case 1", "Test case 2"],
+    "estimated_complexity": "low|medium|high"
+}"""
+
+    context_text = _format_context_for_llm(context_data, related_entities)
+    
+    prompt = f"""Task: {task}
+
+{context_text}
+
+Generate a comprehensive PR draft for this task. Consider similar PRs in the context when designing the solution."""
+
+    llm_response = await call_llm(system_message, prompt, f"employee-engineer-pr")
+    
+    try:
+        import json
+        import re
+        json_match = re.search(r'\{[\s\S]*\}', llm_response)
+        if json_match:
+            data = json.loads(json_match.group())
+            return PRDraft(
+                title=data.get("title", f"feat: {task[:50]}"),
+                description=data.get("description", task),
+                branch_name=data.get("branch_name", "feature/new-feature"),
+                target_branch=data.get("target_branch", "main"),
+                files_to_modify=data.get("files_to_modify", []),
+                implementation_steps=data.get("implementation_steps", []),
+                test_suggestions=data.get("test_suggestions", []),
+                estimated_complexity=data.get("estimated_complexity", "medium")
+            )
+    except Exception as e:
+        print(f"Error parsing PR draft: {e}")
+    
+    # Fallback
+    return PRDraft(
+        title=f"feat: {task[:50]}",
+        description=task,
+        branch_name="feature/new-feature",
+        files_to_modify=[],
+        implementation_steps=["Analyze requirements", "Implement changes", "Add tests", "Update documentation"],
+        test_suggestions=["Unit tests for new functionality", "Integration tests"],
+        estimated_complexity="medium"
+    )
+
+
+async def _generate_pr_review(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> PRReviewResponse:
+    """Generate PR review comments for engineer"""
+    
+    system_message = """You are a senior code reviewer. Provide thorough PR review feedback.
+    
+Output a JSON object with:
+{
+    "summary": "Overall review summary",
+    "approval_status": "approve|request_changes|comment",
+    "comments": [
+        {"file_path": "path/to/file.py", "line_suggestion": "around line X", "comment": "detailed comment", "severity": "critical|warning|info|praise"}
+    ],
+    "key_concerns": ["concern 1", "concern 2"],
+    "positive_aspects": ["positive 1", "positive 2"]
+}"""
+
+    context_text = _format_context_for_llm(context_data, related_entities)
+    
+    prompt = f"""Review Task: {task}
+
+{context_text}
+
+Provide a thorough code review based on the task and related context from similar PRs."""
+
+    llm_response = await call_llm(system_message, prompt, f"employee-engineer-review")
+    
+    try:
+        import json
+        import re
+        json_match = re.search(r'\{[\s\S]*\}', llm_response)
+        if json_match:
+            data = json.loads(json_match.group())
+            comments = []
+            for c in data.get("comments", []):
+                comments.append(ReviewComment(
+                    file_path=c.get("file_path", ""),
+                    line_suggestion=c.get("line_suggestion", ""),
+                    comment=c.get("comment", ""),
+                    severity=c.get("severity", "info")
+                ))
+            return PRReviewResponse(
+                summary=data.get("summary", "Review completed"),
+                approval_status=data.get("approval_status", "comment"),
+                comments=comments,
+                key_concerns=data.get("key_concerns", []),
+                positive_aspects=data.get("positive_aspects", [])
+            )
+    except Exception as e:
+        print(f"Error parsing PR review: {e}")
+    
+    return PRReviewResponse(
+        summary="Unable to generate detailed review. Manual review recommended.",
+        approval_status="comment",
+        comments=[],
+        key_concerns=["Manual review needed"],
+        positive_aspects=[]
+    )
+
+
+async def _generate_slack_message(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> SlackMessage:
+    """Generate Slack message draft for manager"""
+    
+    system_message = """You are a communication assistant for engineering managers. Draft professional Slack messages.
+    
+Output a JSON object with:
+{
+    "channel_suggestion": "#appropriate-channel",
+    "recipients": ["@person1", "@person2"],
+    "subject": "Brief subject/topic",
+    "message": "The full message content with proper formatting",
+    "urgency": "urgent|normal|low",
+    "thread_context": "Any context about threading or follow-ups"
+}"""
+
+    context_text = _format_context_for_llm(context_data, related_entities)
+    
+    # Extract people from related entities
+    people_mentioned = set()
+    for entity in related_entities:
+        if entity.source in ["slack", "jira", "github"]:
+            people_mentioned.add(entity.title.split(":")[0] if ":" in entity.title else "")
+    
+    prompt = f"""Task: {task}
+
+{context_text}
+
+People/entities involved: {', '.join(list(people_mentioned)[:5]) if people_mentioned else 'Not specified'}
+
+Draft an appropriate Slack message for this communication task."""
+
+    llm_response = await call_llm(system_message, prompt, f"employee-manager-slack")
+    
+    try:
+        import json
+        import re
+        json_match = re.search(r'\{[\s\S]*\}', llm_response)
+        if json_match:
+            data = json.loads(json_match.group())
+            return SlackMessage(
+                channel_suggestion=data.get("channel_suggestion", "#general"),
+                recipients=data.get("recipients", []),
+                subject=data.get("subject", "Update"),
+                message=data.get("message", task),
+                urgency=data.get("urgency", "normal"),
+                thread_context=data.get("thread_context", "")
+            )
+    except Exception as e:
+        print(f"Error parsing Slack message: {e}")
+    
+    return SlackMessage(
+        channel_suggestion="#engineering",
+        recipients=[],
+        subject="Team Update",
+        message=f"Regarding: {task}",
+        urgency="normal"
+    )
+
+
+async def _generate_status_update(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> StatusUpdate:
+    """Generate status update for manager"""
+    
+    system_message = """You are an assistant helping engineering managers create status updates.
+    
+Output a JSON object with:
+{
+    "summary": "Brief executive summary",
+    "key_points": ["point 1", "point 2"],
+    "blockers": ["blocker 1"],
+    "next_steps": ["step 1", "step 2"],
+    "stakeholders_to_notify": ["@stakeholder1"]
+}"""
+
+    context_text = _format_context_for_llm(context_data, related_entities)
+    
+    prompt = f"""Status Update Request: {task}
+
+{context_text}
+
+Generate a comprehensive status update based on the related context."""
+
+    llm_response = await call_llm(system_message, prompt, f"employee-manager-status")
+    
+    try:
+        import json
+        import re
+        json_match = re.search(r'\{[\s\S]*\}', llm_response)
+        if json_match:
+            data = json.loads(json_match.group())
+            return StatusUpdate(
+                summary=data.get("summary", "Status update"),
+                key_points=data.get("key_points", []),
+                blockers=data.get("blockers", []),
+                next_steps=data.get("next_steps", []),
+                stakeholders_to_notify=data.get("stakeholders_to_notify", [])
+            )
+    except Exception as e:
+        print(f"Error parsing status update: {e}")
+    
+    return StatusUpdate(
+        summary=f"Status update for: {task}",
+        key_points=["Review related context for details"],
+        blockers=[],
+        next_steps=["Continue monitoring progress"]
+    )
+
+
+async def _generate_engineer_response(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> str:
+    """Generate general response for engineer"""
+    
+    system_message = """You are a senior software engineer assistant. Provide helpful, technical guidance based on the organizational context."""
+    
+    context_text = _format_context_for_llm(context_data, related_entities)
+    prompt = f"""Task/Question: {task}
+
+{context_text}
+
+Provide helpful guidance for this engineering task."""
+
+    return await call_llm(system_message, prompt, f"employee-engineer-general")
+
+
+async def _generate_manager_response(task: str, context_data: List[Dict], related_entities: List[RelatedEntity]) -> str:
+    """Generate general response for manager"""
+    
+    system_message = """You are an assistant for engineering managers. Provide strategic, people-focused guidance based on the organizational context."""
+    
+    context_text = _format_context_for_llm(context_data, related_entities)
+    prompt = f"""Task/Question: {task}
+
+{context_text}
+
+Provide helpful guidance for this management task."""
+
+    return await call_llm(system_message, prompt, f"employee-manager-general")
+
+
+def _format_context_for_llm(context_data: List[Dict], related_entities: List[RelatedEntity]) -> str:
+    """Format context data for LLM prompt"""
+    context_text = "## Relevant Context\n\n"
+    
+    for item in context_data[:5]:
+        if item["type"] == "weekly_summary":
+            context_text += f"**Week {item['week']}** (sources: {', '.join(item['sources'])})\n"
+            context_text += f"{item['content'][:300]}...\n\n"
+        elif item["type"] == "related_pr":
+            context_text += f"**Related PR #{item['pr_number']}**: {item['title']}\n"
+            context_text += f"  Author: {item['author']}, Files: {', '.join(item['files'][:3])}\n\n"
+    
+    if related_entities:
+        context_text += "\n## Related Entities\n"
+        for entity in related_entities[:8]:
+            context_text += f"- [{entity.source}] {entity.title[:60]}\n"
+    
+    return context_text
+
+
 # ============== Demo ==============
 
 async def demo():
