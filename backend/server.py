@@ -79,6 +79,46 @@ async def get_status_checks():
     
     return status_checks
 
+
+# ============== MCP API Endpoints ==============
+
+@api_router.get("/mcp/search", response_model=SearchResponse)
+async def mcp_search(
+    q: str = Query(..., description="Natural language search query"),
+    top_k: int = Query(default=3, ge=1, le=10, description="Number of summaries to return")
+):
+    """
+    API 1: Natural search query -> summarized entities with sub-entity IDs
+    
+    Returns relevant weekly summaries with their constituent entity IDs.
+    Each summarized entity contains:
+    - Week key and summary text
+    - List of sub-entity IDs that make up this summary
+    - Sources covered (slack, jira, github, docs, meetings)
+    """
+    return natural_search(q, top_k=top_k)
+
+
+@api_router.get("/mcp/connections", response_model=ConnectionGraph)
+async def mcp_connections(
+    q: str = Query(..., description="Natural language search query"),
+    top_k: int = Query(default=2, ge=1, le=5, description="Number of summaries to use as roots"),
+    depth: int = Query(default=1, ge=1, le=3, description="Graph traversal depth")
+):
+    """
+    API 2: Natural search query -> bidirectional connection graph
+    
+    1. Fetches relevant summarized entities based on query
+    2. Gets sub-entity IDs from those summaries  
+    3. Queries connections for each sub-entity
+    4. Builds bidirectional graph where:
+       - e1 connects to s1
+       - s1 also connects back to e1
+    
+    Returns nodes (entities) and edges (connections between them).
+    """
+    return search_with_connections(q, top_k=top_k, graph_depth=depth)
+
 # Include the router in the main app
 app.include_router(api_router)
 
