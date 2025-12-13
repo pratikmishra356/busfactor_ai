@@ -467,6 +467,86 @@ def store_entities_in_chromadb(entities: List[Dict[str, Any]]):
     return total_stored
 
 
+def store_code_entities_in_chromadb(entities: List[Dict[str, Any]]):
+    """
+    Store GitHub PR entities in dedicated collections for code search:
+    - code_prs: PR descriptions
+    - code_comments: PR comments
+    - code_files: Files changed
+    """
+    # Filter GitHub entities by index type
+    pr_descriptions = [e for e in entities if e.get("source") == "github" and e.get("index_type") == "pr_description"]
+    pr_comments = [e for e in entities if e.get("source") == "github" and e.get("index_type") == "pr_comments"]
+    pr_files = [e for e in entities if e.get("source") == "github" and e.get("index_type") == "pr_files"]
+    
+    def store_in_collection(collection_name: str, entities_list: List[Dict], description: str):
+        if not entities_list:
+            return 0
+            
+        collection = chroma_client.get_or_create_collection(
+            name=collection_name,
+            metadata={"description": description}
+        )
+        
+        ids = []
+        documents = []
+        metadatas = []
+        embeddings = []
+        
+        for entity in entities_list:
+            searchable_text = f"{entity.get('title', '')} {entity.get('content', '')}"[:8000]
+            
+            embedding = get_embedding(searchable_text)
+            if not embedding:
+                continue
+            
+            # Build metadata - ChromaDB only supports str, int, float, bool
+            files_changed = entity.get("files_changed", [])
+            metadata = {
+                "pr_number": str(entity.get("pr_number", "")),
+                "title": entity.get("title", "")[:200],
+                "author": entity.get("author", ""),
+                "author_github": entity.get("author_github", ""),
+                "reviewer": entity.get("reviewer", ""),
+                "timestamp": entity.get("timestamp", ""),
+                "merged_at": entity.get("merged_at", ""),
+                "status": entity.get("status", ""),
+                "branch": entity.get("branch", ""),
+                "repository": entity.get("repository", ""),
+                "labels": ",".join(entity.get("labels", [])),
+                "incident_ref": entity.get("incident_ref", "") or "",
+                "jira_ref": entity.get("jira_ref", "") or "",
+                "index_type": entity.get("index_type", ""),
+                "files_changed": ",".join(files_changed) if files_changed else "",
+                "file_count": entity.get("file_count", 0),
+                "lines_added": entity.get("lines_added", 0),
+                "lines_removed": entity.get("lines_removed", 0),
+            }
+            
+            ids.append(entity.get("id", ""))
+            documents.append(searchable_text[:5000])
+            metadatas.append(metadata)
+            embeddings.append(embedding)
+        
+        if ids:
+            collection.upsert(
+                ids=ids,
+                documents=documents,
+                metadatas=metadatas,
+                embeddings=embeddings
+            )
+        
+        return len(ids)
+    
+    # Store in respective collections
+    pr_count = store_in_collection(COLLECTIONS["code_prs"], pr_descriptions, "PR titles and descriptions")
+    comments_count = store_in_collection(COLLECTIONS["code_comments"], pr_comments, "PR review comments")
+    files_count = store_in_collection(COLLECTIONS["code_files"], pr_files, "PR files changed")
+    
+    print(f"Stored code entities: {pr_count} PR descriptions, {comments_count} comment sets, {files_count} file sets")
+    return pr_count + comments_count + files_count
+
+
 def store_weekly_summaries_in_chromadb(summaries: List[Dict[str, Any]]):
     """Store weekly summaries with embeddings in ChromaDB"""
     
