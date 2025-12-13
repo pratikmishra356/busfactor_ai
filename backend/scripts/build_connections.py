@@ -103,36 +103,18 @@ def load_all_entities() -> Dict[str, Dict]:
 
 
 def extract_references(text: str) -> Dict[str, Set[str]]:
-    """Extract all reference IDs from text using regex"""
+    """Extract Jira ticket references from text using regex"""
     refs = {
-        "incident_refs": set(),
         "jira_refs": set(),
-        "pr_refs": set(),
-        "ticket_ids": set()
     }
     
     if not text:
         return refs
     
-    # Incident references (INC001, INC-001, etc.)
-    incident_pattern = r'INC[-]?(\d{3,4})'
-    for match in re.finditer(incident_pattern, text, re.IGNORECASE):
-        refs["incident_refs"].add(f"INC{match.group(1).zfill(3)}")
-    
     # Jira references (ENG-1, ENG-123, PROJ-456)
     jira_pattern = r'([A-Z]{2,5})-(\d{1,5})'
     for match in re.finditer(jira_pattern, text):
         refs["jira_refs"].add(f"{match.group(1)}-{match.group(2)}")
-    
-    # PR references (PR #101, PR-101, pull/101)
-    pr_pattern = r'(?:PR[#\s-]?|pull[/\s]?)(\d{2,4})'
-    for match in re.finditer(pr_pattern, text, re.IGNORECASE):
-        refs["pr_refs"].add(match.group(1))
-    
-    # Generic ticket IDs in metadata format
-    ticket_pattern = r'(?:ticket|issue)[:\s#]+([A-Z]+-\d+)'
-    for match in re.finditer(ticket_pattern, text, re.IGNORECASE):
-        refs["ticket_ids"].add(match.group(1))
     
     return refs
 
