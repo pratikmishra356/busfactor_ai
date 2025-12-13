@@ -277,7 +277,7 @@ class AgentAPITester:
         
         # Determine overall status
         critical_failures = len([f for f in self.failed_tests if any(
-            api in f['test'].lower() for api in ['context', 'incident', 'role']
+            api in f['test'].lower() for api in ['codehealth', 'employee']
         )])
         
         if critical_failures > 0:
