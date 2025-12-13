@@ -2,27 +2,35 @@
 Context Intelligence Platform - Data Ingestion Script
 Ingests JSON data from multiple sources, generates embeddings, stores in ChromaDB,
 and creates weekly summaries for improved search indexing.
+
+Uses:
+- Sentence Transformers for local embeddings (all-MiniLM-L6-v2)
+- OpenAI GPT via Emergent LLM key for weekly summaries
+- ChromaDB for vector storage
 """
 
 import os
 import json
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Any
 from collections import defaultdict
 from dotenv import load_dotenv
 import chromadb
-from chromadb.config import Settings
-import openai
+from sentence_transformers import SentenceTransformer
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 load_dotenv()
 
-# Initialize OpenAI client with Emergent LLM key
+# Initialize Emergent LLM key for summaries
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
 if not EMERGENT_LLM_KEY:
     raise ValueError("EMERGENT_LLM_KEY not found in environment")
 
-openai_client = openai.OpenAI(api_key=EMERGENT_LLM_KEY)
+# Initialize sentence transformer for embeddings (local, no API key needed)
+print("Loading embedding model...")
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Embedding model loaded.")
 
 # Initialize ChromaDB
 CHROMA_PERSIST_DIR = os.path.join(os.path.dirname(__file__), "..", "chroma_db")
@@ -38,13 +46,10 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
 def get_embedding(text: str) -> List[float]:
-    """Generate embedding using OpenAI text-embedding-3-small"""
+    """Generate embedding using sentence-transformers (local model)"""
     try:
-        response = openai_client.embeddings.create(
-            model="text-embedding-3-small",
-            input=text
-        )
-        return response.data[0].embedding
+        embedding = embedding_model.encode(text, convert_to_numpy=True)
+        return embedding.tolist()
     except Exception as e:
         print(f"Error generating embedding: {e}")
         return []
@@ -265,7 +270,7 @@ def group_entities_by_week(entities: List[Dict[str, Any]]) -> Dict[str, List[Dic
 
 
 async def generate_weekly_summary(week_key: str, entities: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Generate a summary for a week's worth of entities using GPT"""
+    """Generate a summary for a week's worth of entities using GPT via Emergent"""
     
     # Group by source
     by_source = defaultdict(list)
@@ -292,18 +297,18 @@ Data:
 Provide a 2-3 paragraph summary that would help someone quickly understand what happened this week."""
 
     try:
-        response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are an assistant that creates concise weekly summaries for a context intelligence platform."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=500
-        )
-        summary_text = response.choices[0].message.content
+        # Use LlmChat from emergentintegrations
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"weekly-summary-{week_key}",
+            system_message="You are an assistant that creates concise weekly summaries for a context intelligence platform."
+        ).with_model("openai", "gpt-4o-mini")
+        
+        user_message = UserMessage(text=prompt)
+        summary_text = await chat.send_message(user_message)
     except Exception as e:
         print(f"Error generating summary for {week_key}: {e}")
-        summary_text = f"Weekly summary for {week_key}: {len(entities)} entities processed."
+        summary_text = f"Weekly summary for {week_key}: {len(entities)} entities processed from sources: {', '.join(by_source.keys())}."
     
     # Collect all unique incident refs, keywords, and participants
     incident_refs = set()
@@ -507,6 +512,16 @@ async def run_ingestion():
     print(f"Weekly summaries generated: {len(weekly_summaries)}")
     print(f"Weekly summaries stored: {summaries_stored}")
     print(f"\nChromaDB location: {CHROMA_PERSIST_DIR}")
+    
+    # Print weekly summary details
+    print("\n--- Weekly Summaries ---")
+    for summary in weekly_summaries:
+        print(f"\n{summary['week_key']}:")
+        print(f"  Entities: {summary['entity_count']}")
+        print(f"  Sources: {summary['entities_by_source']}")
+        if summary['incident_refs']:
+            print(f"  Incidents: {summary['incident_refs']}")
+    
     print("=" * 60)
     
     return {
