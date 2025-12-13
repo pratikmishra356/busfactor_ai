@@ -5,56 +5,12 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Primary Blue */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    /* Background - White/Slate */
-    --background: 0 0% 100%;
-    --background-subtle: 210 40% 98%;
-    --background-canvas: 210 40% 96%;
-    
-    /* Foreground */
-    --foreground: 222 47% 11%;
-    --muted-foreground: 215 16% 47%;
-    
-    /* Border */
-    --border: 214 32% 91%;
-    --border-subtle: 210 40% 96%;
-    --border-strong: 214 20% 79%;
-    
-    /* Card */
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    
-    /* Accent colors for agents */
-    --accent-codehealth: 199 89% 48%;
-    --accent-employee: 258 90% 66%;
-    --accent-oncall: 0 84% 60%;
-    --accent-document: 160 84% 39%;
-    
-    /* Shadcn overrides */
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 60%;
-    --radius: 0.5rem;
-  }
-
   * {
-    @apply border-border;
+    @apply border-slate-200;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-white text-slate-900 antialiased;
     font-family: 'Inter', sans-serif;
   }
 
@@ -78,29 +34,29 @@
 
   /* Agent accent colors */
   .accent-codehealth {
-    color: hsl(var(--accent-codehealth));
+    @apply text-sky-500;
   }
   .accent-employee {
-    color: hsl(var(--accent-employee));
+    @apply text-violet-500;
   }
   .accent-oncall {
-    color: hsl(var(--accent-oncall));
+    @apply text-red-500;
   }
   .accent-document {
-    color: hsl(var(--accent-document));
+    @apply text-emerald-500;
   }
 
   .bg-accent-codehealth {
-    background-color: hsl(var(--accent-codehealth));
+    @apply bg-sky-500;
   }
   .bg-accent-employee {
-    background-color: hsl(var(--accent-employee));
+    @apply bg-violet-500;
   }
   .bg-accent-oncall {
-    background-color: hsl(var(--accent-oncall));
+    @apply bg-red-500;
   }
   .bg-accent-document {
-    background-color: hsl(var(--accent-document));
+    @apply bg-emerald-500;
   }
 
   /* Chat bubbles */
