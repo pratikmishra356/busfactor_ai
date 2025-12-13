@@ -92,6 +92,21 @@ class ConnectionGraph(BaseModel):
     edge_count: int
 
 
+class EntityDetails(BaseModel):
+    """Full entity details with connections"""
+    entity_id: str
+    source: str
+    type: str
+    title: str
+    content: str
+    preview: str
+    timestamp: str
+    incident_ref: str = ""
+    jira_ref: str = ""
+    pr_ref: str = ""
+    connections: Dict[str, List[Dict]] = {}
+
+
 # ============== Core Functions ==============
 
 def search_weekly_summaries(query: str, n_results: int = 5) -> List[Dict]:
