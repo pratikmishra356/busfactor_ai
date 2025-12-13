@@ -139,37 +139,95 @@ def process_docs_data(file_path: str) -> List[Dict[str, Any]]:
 
 # ============== GITHUB DATA PROCESSING ==============
 def process_github_data(file_path: str) -> List[Dict[str, Any]]:
-    """Process GitHub pull request data"""
+    """
+    Process GitHub pull request data with 3 types of indexing:
+    1. PR title + description (github_pr_{number})
+    2. Comments combined (github_pr_{number}_comments)
+    3. Files changed (github_pr_{number}_files)
+    """
     with open(file_path, 'r') as f:
         data = json.load(f)
     
     entities = []
+    repository = data.get("repository", "")
     
     for pr in data.get("pull_requests", []):
-        entity = {
-            "id": f"github_pr_{pr.get('pr_number', '')}",
-            "source": "github",
-            "type": "pull_request",
-            "title": pr.get("title", ""),
-            "content": pr.get("description", ""),
+        pr_number = pr.get('pr_number', '')
+        base_id = f"github_pr_{pr_number}"
+        
+        # Common metadata for all 3 index types
+        common_meta = {
             "author": pr.get("author", ""),
-            "author_id": pr.get("author_id", ""),
             "author_github": pr.get("author_github", ""),
             "reviewer": pr.get("reviewer", ""),
-            "reviewer_id": pr.get("reviewer_id", ""),
             "timestamp": pr.get("created_at", ""),
             "merged_at": pr.get("merged_at", ""),
             "status": pr.get("status", ""),
             "branch": pr.get("branch", ""),
             "base_branch": pr.get("base_branch", ""),
-            "repository": pr.get("repository", ""),
+            "repository": repository,
             "labels": pr.get("labels", []),
             "incident_ref": pr.get("incident_ref", ""),
-            "jira_ref": pr.get("jira_ref", "")
+            "jira_ref": pr.get("jira_ref", ""),
+            "pr_number": pr_number,
+            "lines_added": pr.get("lines_added", 0),
+            "lines_removed": pr.get("lines_removed", 0),
         }
-        entities.append(entity)
+        
+        # 1. PR Title + Description Entity
+        pr_entity = {
+            "id": base_id,
+            "source": "github",
+            "type": "pull_request",
+            "index_type": "pr_description",
+            "title": pr.get("title", ""),
+            "content": f"{pr.get('title', '')}\n\n{pr.get('description', '')}",
+            **common_meta
+        }
+        entities.append(pr_entity)
+        
+        # 2. Comments Entity (all comments combined)
+        comments = pr.get("comments", [])
+        if comments:
+            comments_content = []
+            for comment in comments:
+                comment_text = f"[{comment.get('author', 'Unknown')}] ({comment.get('file', '')}:{comment.get('line', '')}):\n{comment.get('body', '')}"
+                comments_content.append(comment_text)
+            
+            comments_entity = {
+                "id": f"{base_id}_comments",
+                "source": "github",
+                "type": "pr_comments",
+                "index_type": "pr_comments",
+                "title": f"Comments on PR #{pr_number}: {pr.get('title', '')}",
+                "content": "\n\n---\n\n".join(comments_content),
+                "comment_count": len(comments),
+                "comment_authors": list(set([c.get('author', '') for c in comments])),
+                **common_meta
+            }
+            entities.append(comments_entity)
+        
+        # 3. Files Changed Entity
+        files_changed = pr.get("files_changed", [])
+        if files_changed:
+            files_content = f"Files changed in PR #{pr_number}: {pr.get('title', '')}\n\n"
+            files_content += "\n".join([f"- {f}" for f in files_changed])
+            
+            files_entity = {
+                "id": f"{base_id}_files",
+                "source": "github",
+                "type": "pr_files",
+                "index_type": "pr_files",
+                "title": f"Files changed in PR #{pr_number}: {pr.get('title', '')}",
+                "content": files_content,
+                "files_changed": files_changed,
+                "file_count": len(files_changed),
+                **common_meta
+            }
+            entities.append(files_entity)
     
-    print(f"Processed {len(entities)} GitHub PRs")
+    pr_count = len(data.get("pull_requests", []))
+    print(f"Processed {pr_count} GitHub PRs into {len(entities)} entities (PR descriptions, comments, files)")
     return entities
 
 
