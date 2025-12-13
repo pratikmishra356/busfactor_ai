@@ -302,6 +302,54 @@ def build_connection_graph(sub_entity_ids: List[str], max_depth: int = 1) -> Dic
 
 # ============== API Functions ==============
 
+def get_entity_by_id(entity_id: str) -> Optional[EntityDetails]:
+    """
+    API: Get entity details by ID
+    
+    Returns full entity details including:
+    - Basic metadata (source, type, title, content)
+    - References (incident_ref, jira_ref, pr_ref)
+    - All connections grouped by target source type
+    """
+    # Get basic metadata
+    metadata = get_entity_metadata(entity_id)
+    if not metadata:
+        return None
+    
+    # Get connections
+    connections = get_entity_connections(entity_id)
+    
+    # Group connections by target source
+    grouped_connections = {}
+    for conn in connections:
+        target_source = conn["target_source"]
+        if target_source not in grouped_connections:
+            grouped_connections[target_source] = []
+        grouped_connections[target_source].append({
+            "entity_id": conn["target_id"],
+            "title": conn["title"],
+            "preview": conn["preview"],
+            "type": conn["type"],
+            "connection_type": conn["connection_type"],
+            "confidence": conn["confidence"],
+            "match_reason": conn["match_reason"]
+        })
+    
+    return EntityDetails(
+        entity_id=metadata["entity_id"],
+        source=metadata["source"],
+        type=metadata["type"],
+        title=metadata["title"],
+        content=metadata["content"],
+        preview=metadata["preview"],
+        timestamp=metadata["timestamp"],
+        incident_ref=metadata["incident_ref"],
+        jira_ref=metadata["jira_ref"],
+        pr_ref=metadata["pr_ref"],
+        connections=grouped_connections
+    )
+
+
 def natural_search(query: str, top_k: int = 3) -> SearchResponse:
     """
     API 1: Natural search query -> summarized entities with sub-entity IDs
