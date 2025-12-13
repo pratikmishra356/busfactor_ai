@@ -24,6 +24,11 @@ export const getConnections = async (query, topK = 2, depth = 1) => {
   return response.data;
 };
 
+export const getEntityDetails = async (entityId) => {
+  const response = await api.get(`/api/mcp/entity/${entityId}`);
+  return response.data;
+};
+
 // Application Layer APIs
 export const getContextResponse = async (query, topK = 3) => {
   const response = await api.get('/api/context', {
