@@ -39,7 +39,10 @@ chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
 # Collections for different entity types
 COLLECTIONS = {
     "entities": "context_entities",
-    "weekly_summaries": "weekly_summaries"
+    "weekly_summaries": "weekly_summaries",
+    "code_prs": "code_pr_descriptions",
+    "code_comments": "code_pr_comments", 
+    "code_files": "code_pr_files"
 }
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
