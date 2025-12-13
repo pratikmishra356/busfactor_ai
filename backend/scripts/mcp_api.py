@@ -154,7 +154,8 @@ def get_entity_metadata(entity_id: str) -> Optional[Dict]:
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT entity_id, source, entity_type, title, content_preview, timestamp
+        SELECT entity_id, source, entity_type, title, content_preview, timestamp,
+               incident_ref, jira_ref, pr_ref, metadata_json
         FROM entity_metadata WHERE entity_id = ?
     ''', (entity_id,))
     
@@ -170,7 +171,12 @@ def get_entity_metadata(entity_id: str) -> Optional[Dict]:
         "type": row[2] or "",
         "title": row[3] or "",
         "preview": row[4][:200] if row[4] else "",
-        "timestamp": row[5] or ""
+        "content": row[4] or "",  # Full content
+        "timestamp": row[5] or "",
+        "incident_ref": row[6] or "",
+        "jira_ref": row[7] or "",
+        "pr_ref": row[8] or "",
+        "metadata_json": row[9] or "{}"
     }
 
 
