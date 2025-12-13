@@ -120,68 +120,48 @@ def extract_references(text: str) -> Dict[str, Set[str]]:
 
 
 def find_regex_matches(entities: Dict[str, Dict]) -> List[Tuple[str, str, str, float]]:
-    """Find connections using regex pattern matching on references"""
+    """Find connections using Jira ticket references only"""
     connections = []
     
-    # Build lookup tables for fast matching
-    incident_lookup = defaultdict(list)  # incident_ref -> [entity_ids]
-    jira_lookup = defaultdict(list)       # jira_ref -> [entity_ids]
-    pr_lookup = defaultdict(list)         # pr_number -> [entity_ids]
+    # Build lookup: jira_ref -> [entity_ids that mention it]
+    jira_lookup = defaultdict(list)
+    
+    # Also track which entity IS the jira ticket
+    jira_ticket_entities = {}  # ENG-1 -> jira_ENG-1
     
     for entity_id, entity in entities.items():
         metadata = entity.get("metadata", {})
         document = entity.get("document", "")
         
-        # From metadata fields
-        if metadata.get("incident_ref"):
-            incident_lookup[metadata["incident_ref"]].append(entity_id)
+        # If this is a Jira ticket, register it
+        if entity_id.startswith("jira_"):
+            ticket_id = entity_id.replace("jira_", "")
+            jira_ticket_entities[ticket_id] = entity_id
         
-        # Extract from document content
+        # Extract jira references from document content
         refs = extract_references(document)
-        
-        for inc_ref in refs["incident_refs"]:
-            incident_lookup[inc_ref].append(entity_id)
         
         for jira_ref in refs["jira_refs"]:
             jira_lookup[jira_ref].append(entity_id)
-        
-        for pr_ref in refs["pr_refs"]:
-            pr_lookup[pr_ref].append(entity_id)
     
-    # Find connections based on shared references
+    # Find connections: entities that reference a Jira ticket
     seen_pairs = set()
     
-    # Incident-based connections
-    for incident_ref, entity_ids in incident_lookup.items():
-        if len(entity_ids) > 1:
-            for i, eid1 in enumerate(entity_ids):
-                for eid2 in entity_ids[i+1:]:
-                    pair = tuple(sorted([eid1, eid2]))
-                    if pair not in seen_pairs:
-                        seen_pairs.add(pair)
-                        connections.append((eid1, eid2, f"shared_incident:{incident_ref}", 0.95))
-    
-    # Jira-based connections
-    for jira_ref, entity_ids in jira_lookup.items():
-        if len(entity_ids) > 1:
-            for i, eid1 in enumerate(entity_ids):
-                for eid2 in entity_ids[i+1:]:
-                    pair = tuple(sorted([eid1, eid2]))
-                    if pair not in seen_pairs:
-                        seen_pairs.add(pair)
-                        connections.append((eid1, eid2, f"shared_jira:{jira_ref}", 0.90))
-    
-    # PR-based connections (match github PRs to Jira tickets mentioning them)
-    for pr_ref, entity_ids in pr_lookup.items():
-        # Also look for the corresponding github_pr entity
-        github_pr_id = f"github_pr_{pr_ref}"
-        if github_pr_id in entities:
-            for eid in entity_ids:
-                if eid != github_pr_id:
-                    pair = tuple(sorted([eid, github_pr_id]))
-                    if pair not in seen_pairs:
-                        seen_pairs.add(pair)
-                        connections.append((eid, github_pr_id, f"pr_reference:{pr_ref}", 0.85))
+    for jira_ref, referencing_entities in jira_lookup.items():
+        # Get the actual Jira ticket entity if it exists
+        jira_entity_id = jira_ticket_entities.get(jira_ref)
+        
+        if jira_entity_id:
+            # Connect each referencing entity to the Jira ticket
+            for ref_entity_id in referencing_entities:
+                # Skip self-references
+                if ref_entity_id == jira_entity_id:
+                    continue
+                
+                pair = tuple(sorted([jira_entity_id, ref_entity_id]))
+                if pair not in seen_pairs:
+                    seen_pairs.add(pair)
+                    connections.append((jira_entity_id, ref_entity_id, f"jira_reference:{jira_ref}", 0.90))
     
     return connections
 
