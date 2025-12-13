@@ -162,7 +162,7 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
           </button>
 
           {showRoleDropdown && (
-            <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-10 overflow-hidden">
+            <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
               {ROLES.map((r) => (
                 <button
                   key={r.id}
