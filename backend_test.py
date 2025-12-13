@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing for Context Intelligence Platform
-Tests all backend endpoints including context, incident, and role-based APIs
+Tests agent endpoints: CodeHealth and Employee agents
 """
 
 import requests
@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 from typing import Dict, List, Any
 
-class ContextIntelligenceAPITester:
+class AgentAPITester:
     def __init__(self, base_url="https://slack-thread-intel.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
