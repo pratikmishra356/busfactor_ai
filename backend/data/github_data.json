@@ -3,348 +3,880 @@
   "repository": "acmecorp/platform",
   "pull_requests": [
     {
-      "pr_number": 110,
-      "title": "test: add integration tests",
-      "description": "## Summary\ntest: add integration tests\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "test/integration-tests",
-      "base_branch": "main",
-      "author": "Priya Sharma",
-      "author_id": "U001",
-      "author_github": "priyasharma",
-      "reviewer": "Alex Rodriguez",
-      "reviewer_id": "U004",
-      "status": "open",
-      "created_at": "2024-10-14T14:19:00Z",
-      "merged_at": null,
-      "repository": "acmecorp/platform",
-      "labels": []
-    },
-    {
-      "pr_number": 101,
-      "title": "fix: resolve payment outage",
-      "description": "## Summary\nPayment processing failing due to gateway timeouts causing order failures\n\n## Changes\n- Fixed issue with payment\n- Added handling for gateway\n- Updated related orders logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\npayment, gateway, timeout, stripe, checkout, orders\n\n\nFixes: ENG-1\n## Slack Thread\nSee #INC001 for incident discussion\n",
-      "branch": "hotfix/payment-inc001",
+      "pr_number": 156,
+      "title": "feat: user preferences API",
+      "description": "Adds CRUD endpoints for user preferences including theme, notifications, and privacy settings.",
+      "branch": "feature/user-preferences-api",
       "base_branch": "main",
       "author": "Sarah Williams",
-      "author_id": "U003",
+      "author_github": "sarahwilliams",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-10-14T11:23:00Z",
+      "merged_at": "2024-10-14T12:08:00Z",
+      "lines_added": 347,
+      "lines_removed": 12,
+      "files_changed": [
+        "src/api/preferences.py",
+        "src/models/user_preferences.py",
+        "src/routes/preferences_routes.py",
+        "tests/test_preferences.py",
+        "src/services/cache_service.py"
+      ],
+      "labels": ["feature", "backend", "api"],
+      "jira_ref": "ENG-101",
+      "comments": []
+    },
+    {
+      "pr_number": 157,
+      "title": "feat: onboarding flow redesign",
+      "description": "Complete redesign of user onboarding with new tutorial screens, progress indicator, and skip option.",
+      "branch": "feature/onboarding-redesign",
+      "base_branch": "main",
+      "author": "Jamie Park",
+      "author_github": "jamiepark",
+      "reviewer": "Sarah Williams",
+      "status": "merged",
+      "created_at": "2024-10-18T16:00:00Z",
+      "merged_at": "2024-10-21T10:30:00Z",
+      "lines_added": 892,
+      "lines_removed": 234,
+      "files_changed": [
+        "src/components/Onboarding/OnboardingCarousel.tsx",
+        "src/components/Onboarding/ProgressIndicator.tsx",
+        "src/components/Onboarding/TutorialScreen.tsx",
+        "src/styles/onboarding.module.css",
+        "src/hooks/useOnboarding.ts",
+        "src/pages/OnboardingPage.tsx"
+      ],
+      "labels": ["feature", "frontend", "onboarding"],
+      "comments": [
+        {
+          "author": "Sarah Williams",
+          "timestamp": "2024-10-19T10:15:00Z",
+          "body": "Nice work! One thing - make sure to add null checks for the carousel items. If a user has no saved state, this could crash.",
+          "file": "src/components/Onboarding/OnboardingCarousel.tsx",
+          "line": 45
+        },
+        {
+          "author": "Sarah Williams",
+          "timestamp": "2024-10-19T10:18:00Z",
+          "body": "DO: Use the useCallback hook here to prevent unnecessary re-renders.\nDON'T: Create new function instances on every render.",
+          "file": "src/components/Onboarding/TutorialScreen.tsx",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "pr_number": 158,
+      "title": "fix: add retry queue for payment webhooks",
+      "description": "Fixes payment webhook failures by adding Redis-based retry mechanism with exponential backoff.",
+      "branch": "hotfix/payment-webhook-retry",
+      "base_branch": "main",
+      "author": "Sarah Williams",
       "author_github": "sarahwilliams",
       "reviewer": "Marcus Chen",
-      "reviewer_id": "U002",
       "status": "merged",
-      "created_at": "2024-10-17T06:39:00Z",
-      "merged_at": "2024-10-17T08:39:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "payment",
-        "gateway",
-        "P1"
+      "created_at": "2024-10-17T10:45:00Z",
+      "merged_at": "2024-10-17T11:30:00Z",
+      "lines_added": 156,
+      "lines_removed": 23,
+      "files_changed": [
+        "src/services/webhook_service.py",
+        "src/queues/retry_queue.py",
+        "src/config/redis_config.py",
+        "tests/test_webhook_retry.py"
       ],
+      "labels": ["hotfix", "payment", "P1"],
       "incident_ref": "INC001",
-      "jira_ref": "ENG-1"
+      "jira_ref": "ENG-104",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-17T11:00:00Z",
+          "body": "DO: Always set a max retry limit to prevent infinite loops.\nDON'T: Retry immediately - use exponential backoff to avoid hammering the service.",
+          "file": "src/queues/retry_queue.py",
+          "line": 34
+        }
+      ]
     },
     {
-      "pr_number": 102,
-      "title": "fix: user session expiry bug",
-      "description": "## Summary\nUsers getting logged out unexpectedly after 5 minutes instead of 24 hours\n\n## Changes\n- Fixed issue with session\n- Added handling for logout\n- Updated related jwt logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nsession, logout, auth, token, expiry, jwt\n\n\nFixes: ENG-4\n## Slack Thread\nSee #INC002 for incident discussion\n",
-      "branch": "fix/session-inc002",
+      "pr_number": 159,
+      "title": "chore: migrate dashboard charts to Recharts",
+      "description": "Migrates all dashboard charts from Chart.js to Recharts for better React integration and smaller bundle size.",
+      "branch": "chore/recharts-migration",
+      "base_branch": "main",
+      "author": "Alex Rodriguez",
+      "author_github": "alexrodriguez",
+      "reviewer": "Jamie Park",
+      "status": "merged",
+      "created_at": "2024-10-19T14:00:00Z",
+      "merged_at": "2024-10-21T11:00:00Z",
+      "lines_added": 445,
+      "lines_removed": 523,
+      "files_changed": [
+        "src/components/Dashboard/BarChart.tsx",
+        "src/components/Dashboard/LineChart.tsx",
+        "src/components/Dashboard/PieChart.tsx",
+        "src/components/Dashboard/AreaChart.tsx",
+        "package.json",
+        "yarn.lock"
+      ],
+      "labels": ["chore", "frontend", "charts"],
+      "comments": [
+        {
+          "author": "Jamie Park",
+          "timestamp": "2024-10-20T09:30:00Z",
+          "body": "The tooltip positioning looks off on mobile. Can you add responsive breakpoints?",
+          "file": "src/components/Dashboard/BarChart.tsx",
+          "line": 78
+        },
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-20T10:15:00Z",
+          "body": "Good catch! Fixed with ResponsiveContainer wrapper.",
+          "file": "src/components/Dashboard/BarChart.tsx",
+          "line": 78
+        }
+      ]
+    },
+    {
+      "pr_number": 160,
+      "title": "fix: JWT token expiry configuration",
+      "description": "Fixes JWT expiry set to 5 minutes instead of 24 hours due to debug config committed by mistake.",
+      "branch": "fix/jwt-expiry",
       "base_branch": "main",
       "author": "Sarah Williams",
-      "author_id": "U003",
       "author_github": "sarahwilliams",
-      "reviewer": "Jamie Park",
-      "reviewer_id": "U005",
+      "reviewer": "Marcus Chen",
       "status": "merged",
-      "created_at": "2024-10-22T04:48:00Z",
-      "merged_at": "2024-10-22T08:48:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "session",
-        "logout",
-        "P2"
+      "created_at": "2024-10-22T15:00:00Z",
+      "merged_at": "2024-10-22T15:12:00Z",
+      "lines_added": 18,
+      "lines_removed": 3,
+      "files_changed": [
+        "src/config/auth_config.py",
+        "tests/test_auth_config.py",
+        ".env.example"
       ],
+      "labels": ["fix", "auth", "P2"],
       "incident_ref": "INC002",
-      "jira_ref": "ENG-4"
+      "jira_ref": "ENG-108",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-22T15:05:00Z",
+          "body": "DO: Add validation to catch unreasonable TTL values (e.g., < 1 hour or > 30 days).\nDON'T: Commit debug/test configurations to the repo.",
+          "file": "src/config/auth_config.py",
+          "line": 15
+        }
+      ]
     },
     {
-      "pr_number": 111,
-      "title": "feat: implement user preferences",
-      "description": "## Summary\nfeat: implement user preferences\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "feature/user-prefs",
+      "pr_number": 161,
+      "title": "feat: add dark mode support",
+      "description": "Implements system-wide dark mode with CSS variables and theme toggle component.",
+      "branch": "feature/dark-mode",
       "base_branch": "main",
-      "author": "Marcus Chen",
-      "author_id": "U002",
-      "author_github": "marcuschen",
+      "author": "Jamie Park",
+      "author_github": "jamiepark",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-10-20T09:00:00Z",
+      "merged_at": "2024-10-22T14:00:00Z",
+      "lines_added": 678,
+      "lines_removed": 89,
+      "files_changed": [
+        "src/styles/themes/dark.css",
+        "src/styles/themes/light.css",
+        "src/styles/variables.css",
+        "src/components/ThemeToggle/ThemeToggle.tsx",
+        "src/hooks/useTheme.ts",
+        "src/context/ThemeContext.tsx"
+      ],
+      "labels": ["feature", "frontend", "ui"],
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-21T11:00:00Z",
+          "body": "DO: Use CSS custom properties for colors so they cascade properly.\nDON'T: Hard-code color values in component styles - always reference the theme variables.",
+          "file": "src/styles/variables.css",
+          "line": 1
+        },
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-21T11:05:00Z",
+          "body": "Consider adding prefers-color-scheme media query for automatic OS-level detection.",
+          "file": "src/hooks/useTheme.ts",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "pr_number": 162,
+      "title": "feat: CSV export with async generation",
+      "description": "Adds CSV export feature with async processing for large datasets. Files stored in S3 with email notification.",
+      "branch": "feature/csv-export",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-10-23T11:15:00Z",
+      "merged_at": "2024-10-23T14:18:00Z",
+      "lines_added": 534,
+      "lines_removed": 0,
+      "files_changed": [
+        "src/services/export_service.py",
+        "src/jobs/export_job.py",
+        "src/utils/csv_generator.py",
+        "src/services/s3_service.py",
+        "src/services/email_service.py",
+        "tests/test_export.py"
+      ],
+      "labels": ["feature", "export", "backend"],
+      "jira_ref": "ENG-106",
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-23T12:30:00Z",
+          "body": "DO: Stream large files to avoid memory issues. The chunking approach here is good.\nDON'T: Load entire dataset into memory before writing to CSV.",
+          "file": "src/utils/csv_generator.py",
+          "line": 45
+        },
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-23T12:35:00Z",
+          "body": "Nice! The progress tracking would be a great follow-up feature.",
+          "file": "src/jobs/export_job.py",
+          "line": 67
+        }
+      ]
+    },
+    {
+      "pr_number": 163,
+      "title": "feat: implement rate limiting middleware",
+      "description": "Adds configurable rate limiting middleware with Redis backend for distributed tracking.",
+      "branch": "feature/rate-limiting",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
+      "status": "merged",
+      "created_at": "2024-10-24T10:00:00Z",
+      "merged_at": "2024-10-24T16:30:00Z",
+      "lines_added": 289,
+      "lines_removed": 34,
+      "files_changed": [
+        "src/middleware/rate_limiter.py",
+        "src/config/rate_limit_config.py",
+        "src/utils/redis_utils.py",
+        "tests/test_rate_limiter.py"
+      ],
+      "labels": ["feature", "security", "middleware"],
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-24T14:00:00Z",
+          "body": "DO: Use sliding window algorithm for smoother rate limiting.\nDON'T: Use fixed windows - they allow burst traffic at window boundaries.",
+          "file": "src/middleware/rate_limiter.py",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "pr_number": 165,
+      "title": "feat: notification preferences settings page",
+      "description": "Adds settings page for managing notification preferences with real-time save.",
+      "branch": "feature/notification-prefs",
+      "base_branch": "main",
+      "author": "Alex Rodriguez",
+      "author_github": "alexrodriguez",
       "reviewer": "Jamie Park",
-      "reviewer_id": "U005",
-      "status": "open",
-      "created_at": "2024-10-24T14:39:00Z",
-      "merged_at": "2024-10-25T07:39:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
+      "status": "merged",
+      "created_at": "2024-10-25T11:00:00Z",
+      "merged_at": "2024-10-28T09:00:00Z",
+      "lines_added": 412,
+      "lines_removed": 23,
+      "files_changed": [
+        "src/pages/Settings/NotificationSettings.tsx",
+        "src/components/Settings/NotificationToggle.tsx",
+        "src/hooks/useNotificationPrefs.ts",
+        "src/api/notifications.ts",
+        "src/styles/settings.module.css"
+      ],
+      "labels": ["feature", "frontend", "notifications"],
+      "jira_ref": "ENG-109",
+      "comments": []
     },
     {
-      "pr_number": 103,
-      "title": "perf: optimize dashboard",
-      "description": "## Summary\nAnalytics dashboard taking 15+ seconds to load due to N+1 query issue\n\n## Changes\n- Fixed issue with dashboard\n- Added handling for performance\n- Updated related latency logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\ndashboard, performance, slow, query, analytics, latency\n\n\nFixes: ENG-7\n## Slack Thread\nSee #INC003 for incident discussion\n",
-      "branch": "perf/dashboard-inc003",
+      "pr_number": 166,
+      "title": "feat: add API versioning support",
+      "description": "Implements API versioning via URL path (/api/v1/, /api/v2/) with backward compatibility.",
+      "branch": "feature/api-versioning",
       "base_branch": "main",
       "author": "Sarah Williams",
-      "author_id": "U003",
       "author_github": "sarahwilliams",
-      "reviewer": "Alex Rodriguez",
-      "reviewer_id": "U004",
+      "reviewer": "Marcus Chen",
       "status": "merged",
-      "created_at": "2024-10-29T03:03:00Z",
-      "merged_at": "2024-10-29T04:03:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "dashboard",
-        "performance",
-        "P2"
+      "created_at": "2024-10-26T09:00:00Z",
+      "merged_at": "2024-10-28T11:00:00Z",
+      "lines_added": 234,
+      "lines_removed": 156,
+      "files_changed": [
+        "src/routes/__init__.py",
+        "src/routes/v1/__init__.py",
+        "src/routes/v2/__init__.py",
+        "src/middleware/version_middleware.py",
+        "docs/api-versioning.md"
       ],
+      "labels": ["feature", "api", "backend"],
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-27T10:00:00Z",
+          "body": "DO: Document breaking changes clearly when bumping versions.\nDON'T: Remove deprecated endpoints without a deprecation period (min 3 months).",
+          "file": "docs/api-versioning.md",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "pr_number": 167,
+      "title": "perf: dashboard query optimization",
+      "description": "Fixes N+1 query issue on dashboard. Batches widget queries and adds Redis caching.",
+      "branch": "perf/dashboard-queries",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
+      "status": "merged",
+      "created_at": "2024-10-29T14:45:00Z",
+      "merged_at": "2024-10-29T15:30:00Z",
+      "lines_added": 189,
+      "lines_removed": 67,
+      "files_changed": [
+        "src/services/dashboard_service.py",
+        "src/queries/dashboard_queries.py",
+        "src/cache/dashboard_cache.py",
+        "tests/test_dashboard_perf.py"
+      ],
+      "labels": ["performance", "backend", "P2"],
       "incident_ref": "INC003",
-      "jira_ref": "ENG-7"
+      "jira_ref": "ENG-111",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-29T15:00:00Z",
+          "body": "DO: Use select_related/prefetch_related (or equivalent) to batch DB queries.\nDON'T: Make database calls inside loops - this is the classic N+1 pattern.",
+          "file": "src/queries/dashboard_queries.py",
+          "line": 23
+        },
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-10-29T15:05:00Z",
+          "body": "Great improvement! Load time from 15s to 1.2s is huge.",
+          "file": "src/services/dashboard_service.py",
+          "line": 1
+        }
+      ]
     },
     {
-      "pr_number": 112,
-      "title": "feat: implement user preferences",
-      "description": "## Summary\nfeat: implement user preferences\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "feature/user-prefs",
+      "pr_number": 168,
+      "title": "feat: in-app notification center",
+      "description": "Adds notification bell with dropdown showing recent notifications, mark-as-read, and real-time updates.",
+      "branch": "feature/notification-center",
       "base_branch": "main",
-      "author": "Marcus Chen",
-      "author_id": "U002",
-      "author_github": "marcuschen",
+      "author": "Jamie Park",
+      "author_github": "jamiepark",
       "reviewer": "Alex Rodriguez",
-      "reviewer_id": "U004",
       "status": "merged",
-      "created_at": "2024-10-29T10:04:00Z",
-      "merged_at": "2024-10-29T12:04:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
+      "created_at": "2024-10-30T10:10:00Z",
+      "merged_at": "2024-10-30T11:05:00Z",
+      "lines_added": 567,
+      "lines_removed": 12,
+      "files_changed": [
+        "src/components/Notifications/NotificationBell.tsx",
+        "src/components/Notifications/NotificationDropdown.tsx",
+        "src/components/Notifications/NotificationItem.tsx",
+        "src/hooks/useNotifications.ts",
+        "src/websocket/notification_channel.ts",
+        "src/styles/notifications.module.css"
+      ],
+      "labels": ["feature", "frontend", "notifications"],
+      "jira_ref": "ENG-110",
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-10-30T10:30:00Z",
+          "body": "DO: Use virtualization for long notification lists to keep performance smooth.\nDON'T: Render all notifications at once - lazy load as user scrolls.",
+          "file": "src/components/Notifications/NotificationDropdown.tsx",
+          "line": 34
+        }
+      ]
     },
     {
-      "pr_number": 104,
-      "title": "fix: resolve email outage",
-      "description": "## Summary\nTransactional emails not being sent - SES rate limit exceeded\n\n## Changes\n- Fixed issue with email\n- Added handling for notification\n- Updated related sendgrid logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nemail, notification, ses, rate limit, queue, sendgrid\n\n\nFixes: ENG-10\n## Slack Thread\nSee #INC004 for incident discussion\n",
-      "branch": "hotfix/email-inc004",
+      "pr_number": 169,
+      "title": "feat: implement webhook signature verification",
+      "description": "Adds HMAC signature verification for incoming webhooks to prevent tampering.",
+      "branch": "feature/webhook-signatures",
       "base_branch": "main",
-      "author": "Alex Rodriguez",
-      "author_id": "U004",
-      "author_github": "alexrodriguez",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
       "reviewer": "Marcus Chen",
-      "reviewer_id": "U002",
       "status": "merged",
-      "created_at": "2024-11-05T07:44:00Z",
-      "merged_at": "2024-11-05T08:44:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "email",
-        "notification",
-        "P1"
+      "created_at": "2024-11-01T09:00:00Z",
+      "merged_at": "2024-11-01T14:00:00Z",
+      "lines_added": 178,
+      "lines_removed": 23,
+      "files_changed": [
+        "src/middleware/webhook_auth.py",
+        "src/utils/crypto_utils.py",
+        "src/config/webhook_config.py",
+        "tests/test_webhook_auth.py"
       ],
+      "labels": ["feature", "security", "webhooks"],
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-01T11:00:00Z",
+          "body": "DO: Use constant-time comparison for signature verification to prevent timing attacks.\nDON'T: Use regular string comparison (==) for secrets.",
+          "file": "src/utils/crypto_utils.py",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "pr_number": 170,
+      "title": "fix: SES rate limiting",
+      "description": "Adds application-level rate limiting for transactional emails to prevent hitting AWS SES limits.",
+      "branch": "fix/ses-rate-limit",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-11-05T09:30:00Z",
+      "merged_at": "2024-11-05T10:00:00Z",
+      "lines_added": 89,
+      "lines_removed": 12,
+      "files_changed": [
+        "src/services/email_service.py",
+        "src/middleware/email_rate_limiter.py",
+        "src/config/email_config.py"
+      ],
+      "labels": ["fix", "email", "P1"],
       "incident_ref": "INC004",
-      "jira_ref": "ENG-10"
+      "jira_ref": "ENG-113",
+      "comments": []
     },
     {
-      "pr_number": 113,
-      "title": "feat: add new dashboard widget",
-      "description": "## Summary\nfeat: add new dashboard widget\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "feature/dashboard-widget",
+      "pr_number": 172,
+      "title": "feat: bulk data import",
+      "description": "Bulk import feature supporting CSV and JSON with validation, progress bar, and rollback on failure.",
+      "branch": "feature/bulk-import",
       "base_branch": "main",
-      "author": "Jamie Park",
-      "author_id": "U005",
-      "author_github": "jamiepark",
-      "reviewer": "Priya Sharma",
-      "reviewer_id": "U001",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
       "status": "merged",
-      "created_at": "2024-11-08T10:45:00Z",
-      "merged_at": "2024-11-08T20:45:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
-    },
-    {
-      "pr_number": 105,
-      "title": "fix: mobile app crash on launch",
-      "description": "## Summary\niOS app crashing on startup after latest release - missing null check\n\n## Changes\n- Fixed issue with mobile\n- Added handling for crash\n- Updated related app logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nmobile, crash, ios, null, startup, app\n\n\nFixes: ENG-13\n## Slack Thread\nSee #INC005 for incident discussion\n",
-      "branch": "fix/mobile-inc005",
-      "base_branch": "main",
-      "author": "Jamie Park",
-      "author_id": "U005",
-      "author_github": "jamiepark",
-      "reviewer": "Sarah Williams",
-      "reviewer_id": "U003",
-      "status": "merged",
-      "created_at": "2024-11-11T03:27:00Z",
-      "merged_at": "2024-11-11T07:27:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "mobile",
-        "crash",
-        "P1"
+      "created_at": "2024-11-06T14:20:00Z",
+      "merged_at": "2024-11-07T15:00:00Z",
+      "lines_added": 823,
+      "lines_removed": 0,
+      "files_changed": [
+        "src/services/import_service.py",
+        "src/jobs/import_job.py",
+        "src/parsers/csv_parser.py",
+        "src/parsers/json_parser.py",
+        "src/validators/import_validator.py",
+        "src/components/Import/ImportDropzone.tsx",
+        "src/components/Import/ImportProgress.tsx",
+        "tests/test_import.py"
       ],
+      "labels": ["feature", "import", "backend"],
+      "jira_ref": "ENG-114",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-06T16:00:00Z",
+          "body": "DO: Validate file contents before processing. Check headers, data types, required fields.\nDON'T: Trust user input - always sanitize and validate imported data.",
+          "file": "src/validators/import_validator.py",
+          "line": 1
+        },
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-11-06T16:30:00Z",
+          "body": "The drag-and-drop UI is really slick! Nice touch with the file type icons.",
+          "file": "src/components/Import/ImportDropzone.tsx",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "pr_number": 174,
+      "title": "fix: iOS app null pointer crash",
+      "description": "Hotfix for iOS app crashing on launch due to null pointer in onboarding carousel.",
+      "branch": "hotfix/ios-crash",
+      "base_branch": "main",
+      "author": "Jamie Park",
+      "author_github": "jamiepark",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-11-11T07:45:00Z",
+      "merged_at": "2024-11-11T08:00:00Z",
+      "lines_added": 34,
+      "lines_removed": 5,
+      "files_changed": [
+        "ios/App/Onboarding/OnboardingCarousel.swift",
+        "ios/App/Onboarding/OnboardingViewModel.swift",
+        "ios/AppTests/OnboardingTests.swift"
+      ],
+      "labels": ["hotfix", "mobile", "P1"],
       "incident_ref": "INC005",
-      "jira_ref": "ENG-13"
+      "jira_ref": "ENG-115",
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-11-11T07:50:00Z",
+          "body": "DO: Always use optional binding (if let, guard let) when accessing potentially nil values.\nDON'T: Force unwrap optionals with ! - this is what caused the crash.",
+          "file": "ios/App/Onboarding/OnboardingCarousel.swift",
+          "line": 45
+        }
+      ]
     },
     {
-      "pr_number": 114,
-      "title": "fix: handle edge case in validation",
-      "description": "## Summary\nfix: handle edge case in validation\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "fix/validation-edge",
-      "base_branch": "main",
-      "author": "Alex Rodriguez",
-      "author_id": "U004",
-      "author_github": "alexrodriguez",
-      "reviewer": "Sarah Williams",
-      "reviewer_id": "U003",
-      "status": "merged",
-      "created_at": "2024-11-13T14:14:00Z",
-      "merged_at": "2024-11-14T00:14:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
-    },
-    {
-      "pr_number": 106,
-      "title": "fix: resolve search outage",
-      "description": "## Summary\nElasticsearch index corrupted causing search to return stale results\n\n## Changes\n- Fixed issue with search\n- Added handling for elasticsearch\n- Updated related corrupted logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nsearch, elasticsearch, index, reindex, stale, corrupted\n\n\nFixes: ENG-16\n## Slack Thread\nSee #INC006 for incident discussion\n",
-      "branch": "hotfix/search-inc006",
+      "pr_number": 175,
+      "title": "feat: add audit logging",
+      "description": "Implements comprehensive audit logging for security-sensitive operations.",
+      "branch": "feature/audit-logging",
       "base_branch": "main",
       "author": "Sarah Williams",
-      "author_id": "U003",
       "author_github": "sarahwilliams",
-      "reviewer": "Alex Rodriguez",
-      "reviewer_id": "U004",
+      "reviewer": "Marcus Chen",
       "status": "merged",
-      "created_at": "2024-11-18T05:44:00Z",
-      "merged_at": "2024-11-18T08:44:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "search",
-        "elasticsearch",
-        "P2"
+      "created_at": "2024-11-12T10:00:00Z",
+      "merged_at": "2024-11-13T11:00:00Z",
+      "lines_added": 456,
+      "lines_removed": 23,
+      "files_changed": [
+        "src/services/audit_service.py",
+        "src/models/audit_log.py",
+        "src/middleware/audit_middleware.py",
+        "src/decorators/auditable.py",
+        "tests/test_audit.py"
       ],
+      "labels": ["feature", "security", "compliance"],
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-12T15:00:00Z",
+          "body": "DO: Log WHO did WHAT, WHEN, and from WHERE (IP, user agent).\nDON'T: Log sensitive data like passwords, tokens, or PII in audit logs.",
+          "file": "src/services/audit_service.py",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "pr_number": 178,
+      "title": "feat: search autocomplete and fuzzy matching",
+      "description": "Enhances search with autocomplete suggestions and typo tolerance using Elasticsearch.",
+      "branch": "feature/search-autocomplete",
+      "base_branch": "main",
+      "author": "Alex Rodriguez",
+      "author_github": "alexrodriguez",
+      "reviewer": "Sarah Williams",
+      "status": "merged",
+      "created_at": "2024-11-14T11:30:00Z",
+      "merged_at": "2024-11-14T12:30:00Z",
+      "lines_added": 389,
+      "lines_removed": 45,
+      "files_changed": [
+        "src/services/search_service.py",
+        "src/components/Search/SearchAutocomplete.tsx",
+        "src/components/Search/SearchSuggestions.tsx",
+        "src/hooks/useSearch.ts",
+        "src/config/elasticsearch_config.py"
+      ],
+      "labels": ["feature", "search", "frontend"],
+      "jira_ref": "ENG-116",
+      "comments": [
+        {
+          "author": "Sarah Williams",
+          "timestamp": "2024-11-14T12:00:00Z",
+          "body": "DO: Debounce search requests (300ms is good) to avoid overwhelming the server.\nDON'T: Fire a request on every keystroke.",
+          "file": "src/hooks/useSearch.ts",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "pr_number": 180,
+      "title": "fix: elasticsearch reindex and monitoring",
+      "description": "Fixes stale search results by triggering reindex and adds cluster health monitoring.",
+      "branch": "fix/es-reindex",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
+      "status": "merged",
+      "created_at": "2024-11-18T16:30:00Z",
+      "merged_at": "2024-11-18T17:00:00Z",
+      "lines_added": 123,
+      "lines_removed": 12,
+      "files_changed": [
+        "src/services/search_service.py",
+        "src/jobs/reindex_job.py",
+        "src/monitoring/es_health_check.py",
+        "infrastructure/alerts/es_alerts.yaml"
+      ],
+      "labels": ["fix", "search", "monitoring"],
       "incident_ref": "INC006",
-      "jira_ref": "ENG-16"
+      "jira_ref": "ENG-117",
+      "comments": []
     },
     {
-      "pr_number": 115,
-      "title": "docs: update API documentation",
-      "description": "## Summary\ndocs: update API documentation\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "docs/api-update",
-      "base_branch": "main",
-      "author": "Jamie Park",
-      "author_id": "U005",
-      "author_github": "jamiepark",
-      "reviewer": "Sarah Williams",
-      "reviewer_id": "U003",
-      "status": "merged",
-      "created_at": "2024-11-18T13:45:00Z",
-      "merged_at": "2024-11-19T01:45:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
-    },
-    {
-      "pr_number": 107,
-      "title": "security: patch security vulnerability",
-      "description": "## Summary\nSecurity issue - rate limiting can be bypassed using header manipulation\n\n## Changes\n- Fixed issue with security\n- Added handling for rate limit\n- Updated related headers logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nsecurity, rate limit, bypass, api, vulnerability, headers\n\n\nFixes: ENG-19\n## Slack Thread\nSee #INC007 for incident discussion\n",
-      "branch": "security/security-inc007",
+      "pr_number": 182,
+      "title": "feat: add request tracing with correlation IDs",
+      "description": "Implements distributed tracing with correlation IDs that flow through all services and logs.",
+      "branch": "feature/request-tracing",
       "base_branch": "main",
       "author": "Sarah Williams",
-      "author_id": "U003",
       "author_github": "sarahwilliams",
       "reviewer": "Marcus Chen",
-      "reviewer_id": "U002",
       "status": "merged",
-      "created_at": "2024-11-25T08:14:00Z",
-      "merged_at": "2024-11-25T09:14:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "security",
-        "rate limit",
-        "P1"
+      "created_at": "2024-11-19T09:00:00Z",
+      "merged_at": "2024-11-20T10:00:00Z",
+      "lines_added": 234,
+      "lines_removed": 45,
+      "files_changed": [
+        "src/middleware/tracing_middleware.py",
+        "src/utils/correlation_id.py",
+        "src/logging/structured_logger.py",
+        "src/http/http_client.py"
       ],
-      "incident_ref": "INC007",
-      "jira_ref": "ENG-19"
+      "labels": ["feature", "observability", "backend"],
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-19T14:00:00Z",
+          "body": "DO: Pass correlation ID in all outgoing HTTP requests via X-Correlation-ID header.\nDON'T: Generate new IDs for each service - propagate the original ID through the chain.",
+          "file": "src/http/http_client.py",
+          "line": 23
+        }
+      ]
     },
     {
-      "pr_number": 116,
-      "title": "test: add integration tests",
-      "description": "## Summary\ntest: add integration tests\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "test/integration-tests",
+      "pr_number": 185,
+      "title": "security: fix rate limit bypass vulnerability",
+      "description": "Fixes security vulnerability where rate limiting could be bypassed by spoofing X-Forwarded-For header.",
+      "branch": "security/rate-limit-bypass",
       "base_branch": "main",
-      "author": "Priya Sharma",
-      "author_id": "U001",
-      "author_github": "priyasharma",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
       "reviewer": "Marcus Chen",
-      "reviewer_id": "U002",
       "status": "merged",
-      "created_at": "2024-11-28T14:15:00Z",
-      "merged_at": "2024-11-29T11:15:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
+      "created_at": "2024-11-25T12:30:00Z",
+      "merged_at": "2024-11-25T13:15:00Z",
+      "lines_added": 67,
+      "lines_removed": 23,
+      "files_changed": [
+        "src/middleware/rate_limiter.py",
+        "src/utils/ip_utils.py",
+        "src/config/trusted_proxies.py",
+        "tests/test_rate_limit_security.py"
+      ],
+      "labels": ["security", "api", "P1"],
+      "incident_ref": "INC007",
+      "jira_ref": "ENG-122",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-25T12:45:00Z",
+          "body": "DO: Maintain an allowlist of trusted proxy IPs and only accept X-Forwarded-For from those.\nDON'T: Trust client-provided headers blindly - they can be spoofed.",
+          "file": "src/utils/ip_utils.py",
+          "line": 15
+        }
+      ]
     },
     {
-      "pr_number": 108,
-      "title": "fix: resolve database outage",
-      "description": "## Summary\nConnection pool maxed out during traffic spike causing 503 errors\n\n## Changes\n- Fixed issue with database\n- Added handling for connection\n- Updated related capacity logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\ndatabase, connection, pool, postgres, 503, capacity\n\n\nFixes: ENG-22\n## Slack Thread\nSee #INC008 for incident discussion\n",
-      "branch": "hotfix/database-inc008",
+      "pr_number": 189,
+      "title": "feat: SSO integration (SAML + OIDC)",
+      "description": "Full SSO support for enterprise customers with SAML 2.0 and OIDC, including user auto-provisioning.",
+      "branch": "feature/sso-integration",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
+      "status": "merged",
+      "created_at": "2024-11-28T15:40:00Z",
+      "merged_at": "2024-11-29T14:00:00Z",
+      "lines_added": 1245,
+      "lines_removed": 89,
+      "files_changed": [
+        "src/auth/saml_handler.py",
+        "src/auth/oidc_handler.py",
+        "src/auth/sso_config.py",
+        "src/services/user_provisioning.py",
+        "src/models/identity_provider.py",
+        "src/pages/Login/SSOLogin.tsx",
+        "src/components/Auth/SSOButton.tsx",
+        "docs/sso-setup.md",
+        "tests/test_saml.py",
+        "tests/test_oidc.py"
+      ],
+      "labels": ["feature", "enterprise", "sso", "auth"],
+      "jira_ref": "ENG-118",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-29T10:00:00Z",
+          "body": "DO: Validate SAML assertions thoroughly - check signature, timestamps, audience, issuer.\nDON'T: Skip validation steps even in development - security bugs love to ship this way.",
+          "file": "src/auth/saml_handler.py",
+          "line": 78
+        },
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-11-29T10:15:00Z",
+          "body": "Excellent documentation on the setup process! This will save a lot of support tickets.",
+          "file": "docs/sso-setup.md",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "pr_number": 192,
+      "title": "fix: database connection pool exhaustion",
+      "description": "Fixes 503 errors during traffic spike by adding PgBouncer and increasing connection pool size.",
+      "branch": "hotfix/db-connection-pool",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Marcus Chen",
+      "status": "merged",
+      "created_at": "2024-12-03T09:28:00Z",
+      "merged_at": "2024-12-03T09:45:00Z",
+      "lines_added": 89,
+      "lines_removed": 12,
+      "files_changed": [
+        "src/config/database_config.py",
+        "infrastructure/pgbouncer/pgbouncer.ini",
+        "infrastructure/terraform/rds.tf",
+        "src/monitoring/db_metrics.py"
+      ],
+      "labels": ["hotfix", "database", "P1"],
+      "incident_ref": "INC008",
+      "jira_ref": "ENG-123",
+      "comments": [
+        {
+          "author": "Marcus Chen",
+          "timestamp": "2024-12-03T09:35:00Z",
+          "body": "DO: Use connection pooling (PgBouncer) for production databases.\nDON'T: Let each app instance manage its own connections - this doesn't scale.",
+          "file": "infrastructure/pgbouncer/pgbouncer.ini",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "pr_number": 195,
+      "title": "fix: nginx file upload size limit",
+      "description": "Fixes file upload limit reset to 5MB by updating nginx config and adding to Terraform.",
+      "branch": "fix/nginx-upload-limit",
+      "base_branch": "main",
+      "author": "Sarah Williams",
+      "author_github": "sarahwilliams",
+      "reviewer": "Alex Rodriguez",
+      "status": "merged",
+      "created_at": "2024-12-05T11:30:00Z",
+      "merged_at": "2024-12-05T11:45:00Z",
+      "lines_added": 23,
+      "lines_removed": 3,
+      "files_changed": [
+        "infrastructure/nginx/nginx.conf",
+        "infrastructure/terraform/nginx.tf",
+        "tests/integration/test_upload_limits.py"
+      ],
+      "labels": ["fix", "nginx", "config"],
+      "incident_ref": "INC009",
+      "jira_ref": "ENG-125",
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-12-05T11:40:00Z",
+          "body": "DO: Keep infrastructure config in version control (Terraform, Ansible, etc.).\nDON'T: Make manual changes to servers - they get lost on redeploy.",
+          "file": "infrastructure/terraform/nginx.tf",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "pr_number": 198,
+      "title": "feat: advanced search filters",
+      "description": "Adds advanced filtering options to search including date range, status, tags, and custom fields.",
+      "branch": "feature/advanced-search-filters",
       "base_branch": "main",
       "author": "Alex Rodriguez",
-      "author_id": "U004",
       "author_github": "alexrodriguez",
-      "reviewer": "Sarah Williams",
-      "reviewer_id": "U003",
+      "reviewer": "Jamie Park",
       "status": "merged",
-      "created_at": "2024-12-03T04:58:00Z",
-      "merged_at": "2024-12-03T06:58:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "database",
-        "connection",
-        "P1"
+      "created_at": "2024-12-10T14:20:00Z",
+      "merged_at": "2024-12-10T15:00:00Z",
+      "lines_added": 456,
+      "lines_removed": 34,
+      "files_changed": [
+        "src/components/Search/AdvancedFilters.tsx",
+        "src/components/Search/DateRangePicker.tsx",
+        "src/components/Search/FilterChips.tsx",
+        "src/hooks/useSearchFilters.ts",
+        "src/utils/url_serialization.ts",
+        "src/styles/search.module.css"
       ],
-      "incident_ref": "INC008",
-      "jira_ref": "ENG-22"
+      "labels": ["feature", "search", "frontend"],
+      "jira_ref": "ENG-126",
+      "comments": [
+        {
+          "author": "Jamie Park",
+          "timestamp": "2024-12-10T14:45:00Z",
+          "body": "Love the URL serialization for shareable filtered searches! The filter chips look great too.",
+          "file": "src/utils/url_serialization.ts",
+          "line": 1
+        }
+      ]
     },
     {
-      "pr_number": 117,
-      "title": "docs: update API documentation",
-      "description": "## Summary\ndocs: update API documentation\n\n## Changes\n- Implementation details\n- Tests added",
-      "branch": "docs/api-update",
-      "base_branch": "main",
-      "author": "Sarah Williams",
-      "author_id": "U003",
-      "author_github": "sarahwilliams",
-      "reviewer": "Priya Sharma",
-      "reviewer_id": "U001",
-      "status": "merged",
-      "created_at": "2024-12-03T10:33:00Z",
-      "merged_at": "2024-12-03T18:33:00Z",
-      "repository": "acmecorp/platform",
-      "labels": []
-    },
-    {
-      "pr_number": 109,
-      "title": "fix: file upload size limit issue",
-      "description": "## Summary\nUsers unable to upload files larger than 5MB despite 25MB limit setting\n\n## Changes\n- Fixed issue with upload\n- Added handling for file\n- Updated related multipart logic\n\n## Testing\n- [x] Unit tests added\n- [x] Tested locally\n- [x] Verified fix resolves the issue\n\n## Keywords\nupload, file, size, limit, nginx, multipart\n\n\nFixes: ENG-25\n## Slack Thread\nSee #INC009 for incident discussion\n",
-      "branch": "fix/upload-inc009",
+      "pr_number": 199,
+      "title": "feat: mobile dark mode",
+      "description": "Adds dark mode support to iOS and Android apps with system preference detection.",
+      "branch": "feature/mobile-dark-mode",
       "base_branch": "main",
       "author": "Jamie Park",
-      "author_id": "U005",
       "author_github": "jamiepark",
       "reviewer": "Alex Rodriguez",
-      "reviewer_id": "U004",
       "status": "merged",
-      "created_at": "2024-12-08T03:28:00Z",
-      "merged_at": "2024-12-08T06:28:00Z",
-      "repository": "acmecorp/platform",
-      "labels": [
-        "upload",
-        "file",
-        "P3"
+      "created_at": "2024-12-08T15:00:00Z",
+      "merged_at": "2024-12-09T10:00:00Z",
+      "lines_added": 534,
+      "lines_removed": 123,
+      "files_changed": [
+        "ios/App/Theme/DarkTheme.swift",
+        "ios/App/Theme/LightTheme.swift",
+        "ios/App/Theme/ThemeManager.swift",
+        "android/app/src/main/res/values-night/colors.xml",
+        "android/app/src/main/java/com/acme/theme/ThemeManager.kt",
+        "src/components/Settings/ThemeSettings.tsx"
       ],
-      "incident_ref": "INC009",
-      "jira_ref": "ENG-25"
+      "labels": ["feature", "mobile", "dark-mode"],
+      "jira_ref": "ENG-127",
+      "comments": [
+        {
+          "author": "Alex Rodriguez",
+          "timestamp": "2024-12-08T16:30:00Z",
+          "body": "DO: Test dark mode with actual dark backgrounds - some colors that look fine in light mode become unreadable.\nDON'T: Just invert colors - design for each theme intentionally.",
+          "file": "ios/App/Theme/DarkTheme.swift",
+          "line": 1
+        }
+      ]
     }
   ],
-  "total_count": 17
+  "total_count": 25
 }
