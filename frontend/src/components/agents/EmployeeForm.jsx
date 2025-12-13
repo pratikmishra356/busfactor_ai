@@ -160,11 +160,11 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3" data-testid="employee-form">
+    <form onSubmit={handleSubmit} className="space-y-3 overflow-visible" data-testid="employee-form">
       {/* Role Selector + Task Input */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-visible">
         {/* Role Dropdown */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative overflow-visible" ref={dropdownRef}>
           <button
             type="button"
             onClick={() => setShowRoleDropdown(!showRoleDropdown)}
@@ -177,7 +177,7 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
           </button>
 
           {showRoleDropdown && (
-            <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
+            <div className="absolute bottom-full left-0 mb-1 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
               {ROLES.map((r) => (
                 <button
                   key={r.id}
