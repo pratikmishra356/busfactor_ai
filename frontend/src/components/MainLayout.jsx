@@ -17,6 +17,7 @@ export default function MainLayout() {
   const [activeAgent, setActiveAgent] = useState('codehealth');
   const [completedTasks, setCompletedTasks] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
+  const [activeTaskId, setActiveTaskId] = useState(null);
 
   const addCompletedTask = (task) => {
     setCompletedTasks(prev => [task, ...prev].slice(0, 10));
@@ -30,6 +31,27 @@ export default function MainLayout() {
     setChatMessages([]);
   };
 
+  const handleAgentChange = (agentId) => {
+    setActiveAgent(agentId);
+    // Clear chat when switching agents
+    setChatMessages([]);
+    setActiveTaskId(null);
+  };
+
+  const handleTaskClick = (task) => {
+    // If clicking the same task, do nothing
+    if (activeTaskId === task.id) return;
+    
+    // Switch to the task's agent if different
+    if (activeAgent !== task.agent) {
+      setActiveAgent(task.agent);
+    }
+    
+    // Load the task's conversation
+    setActiveTaskId(task.id);
+    setChatMessages(task.messages || []);
+  };
+
   const currentAgent = AGENTS.find(a => a.id === activeAgent);
 
   return (
@@ -41,7 +63,7 @@ export default function MainLayout() {
       <AgentTabs 
         agents={AGENTS} 
         activeAgent={activeAgent} 
-        onAgentChange={setActiveAgent} 
+        onAgentChange={handleAgentChange} 
       />
 
       {/* Main Content - Split Screen */}
@@ -54,10 +76,15 @@ export default function MainLayout() {
             addMessage={addChatMessage}
             addCompletedTask={addCompletedTask}
             clearChat={clearChat}
+            activeTaskId={activeTaskId}
           />
           
           {/* Completed Tasks */}
-          <CompletedTasks tasks={completedTasks} />
+          <CompletedTasks 
+            tasks={completedTasks} 
+            activeTaskId={activeTaskId}
+            onTaskClick={handleTaskClick}
+          />
         </div>
 
         {/* Resizer */}
