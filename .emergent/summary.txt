@@ -1,0 +1,153 @@
+<analysis>**original_problem_statement:**
+The user wants to build a Context Intelligence Platform. The project started with ingesting multiple JSON data sources (Slack, Jira, GitHub, Docs, Meetings) into a ChromaDB vector store, creating embeddings and weekly summaries. The system then evolved to build an entity connection graph using SQLite.
+
+The initial backend application layer was replaced by a new Agent-based architecture. The current goal is to implement a series of these agents and provide a UI for them.
+
+The implemented agents are:
+1.  **CodeHealth Agent**: Analyzes a given PR, finds related PRs and those with overlapping file changes, and generates a review checklist.
+2.  **Employee Agent**: Responds to a task query based on a specified role (e.g., 'engineer', 'manager'), generating outputs like PR drafts or Slack messages.
+
+The latest UI has been implemented with a white and light-bluish theme, featuring a header Busfactor AI and tabs for the different agents. It's split horizontally, with a chat/task interface on top and a placeholder for a low-code builder at the bottom.
+
+**User's preferred language**: English
+
+**what currently exists?**
+- **Backend**: A FastAPI application with several script-based modules.
+  - **Data Ingestion**:  processes JSON files, generates embeddings using , and stores them in multiple ChromaDB collections (a general one, and specific ones for PR code, comments, and files). It also generates and stores weekly summaries.
+  - **Connection Graph**:  creates an SQLite database () to link related entities based on Jira references and vector similarity.
+  - **MCP (Micro-services/Context Platform) Layer**:  provides low-level APIs for searching entities (), retrieving connections (), getting entity details (), and auditing code ().
+  - **Agents Layer**:  contains the logic for the high-level agents, including  and .
+  - **Server**:  exposes all the MCP and Agent APIs.
+- **Frontend**: A React application with a new UI.
+  - **Layout**: The main layout () includes a header, agent tabs, a chat panel for interaction, a list of completed tasks, and a placeholder Builder Panel.
+  - **Agents**: UI forms for the  () and  () are implemented and integrated.
+
+**Last working item**:
+-   Last item agent was working: The agent just finished implementing the new UI for the Agent based architecture. It successfully tested the UI components, tab switching, and the end-to-end flow for the Employee Agent (submitting a form, receiving a response from the backend, and displaying it). The agent's final action was to initiate a comprehensive end-to-end test using the testing subagent to validate the entire new UI and its integrations.
+-   Status: IN PROGRESS
+-   Agent Testing Done: N
+-   Which testing method agent to use? frontend testing agent
+-   User Testing Done: N
+
+**All Pending/In progress Issue list**:
+-   Issue 1: (P0) Finalize validation of the new UI and agent integrations.
+    -   Description: The testing agent was invoked to perform a full end-to-end test of the new UI, including the CodeHealth and Employee agent functionalities. The results of this test need to be reviewed and any reported issues must be fixed.
+    -   Status: IN PROGRESS
+    -   Next debug checklist:
+        1.  Wait for the  to complete and provide its report in .
+        2.  View the report file.
+        3.  Address any frontend or backend errors, UI inconsistencies, or failed assertions identified by the testing agent.
+    -   Why fix this issue and what will be achieved with the fix?: This will confirm that the major UI overhaul and the integration of the first two agents are stable and working correctly, providing a solid foundation for adding the next agents.
+    -   Should Test frontend/backend/both after fix?: Both
+
+**In progress Task List**:
+-   None
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   (P0) Implement : As per the user's plan, this is the next agent to be built. The functionality needs to be defined and implemented in  and exposed via . A corresponding UI tab and form will be needed on the frontend.
+    -   (P1) Implement : The last of the four requested agents. Similar to the OnCall Agent, its functionality needs to be implemented on the backend and integrated into the frontend.
+-   **Future Tasks:**
+    -   Implement the Low-Code Integration Builder: The lower half of the UI currently contains a placeholder panel (). The functionality for this self-build and deploy feature for agents needs to be designed and implemented.
+    -   Add time-decay scoring for connections.
+    -   Implement caching for the graph API.
+
+**Completed work in this session**
+-   Data Ingestion pipeline for multiple sources (Slack, Jira, Docs, etc.) into ChromaDB (DONE)
+-   Advanced GitHub data ingestion indexing PRs by title/desc, comments, and files separately (DONE)
+-   Entity connection graph built with SQLite (DONE)
+-   MCP API Layer with search, connection, entity detail, and code audit endpoints (DONE)
+-    API and business logic (DONE)
+-    API with role-based task handling (DONE)
+-   Complete overhaul of the frontend to an Agent-based UI with tabs (DONE)
+
+**Earlier issues found/mentioned but not fixed**
+-   None. All identified issues (embedding proxy failure, missing , Tailwind CSS errors) were resolved.
+
+**Known issue recurrence from previous fork**
+-   None
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend**: FastAPI, Pydantic
+-   **Frontend**: React, Tailwind CSS
+-   **Vector Database**: ChromaDB for similarity search.
+-   **Relational Database**: SQLite for storing the entity connection graph.
+-   **Embeddings**:  for generating local text embeddings.
+-   **LLM Integration**:  library to interact with OpenAI GPT for summarization and agent responses.
+
+**key DB schema**
+-   **ChromaDB Collections**:
+    -   : Main collection for all entities (Jira, Slack, etc.).
+    -   : Stores PRs indexed by their changed file paths.
+    -   : Stores PRs indexed by the content of their comments.
+    -   : Stores PRs indexed by their title and description.
+-   **SQLite**:
+    -   : {id, source_entity_id, target_entity_id, confidence, reason, created_at}
+
+**changes in tech stack**
+-   The initial plan to use OpenAI embeddings via the Emergent proxy was changed to using the  library for local embedding generation due to proxy limitations. The LLM for text generation still uses the Emergent proxy.
+
+**All files of reference**
+-   : Core logic for data processing and vector DB storage.
+-   : Logic for creating the relational graph.
+-   : Low-level data access layer.
+-   : Current business logic for the new agent-based architecture.
+-   : Main API server file.
+-   : Main frontend router and layout structure.
+-   : The primary UI component organizing the agent interface.
+-   : Directory containing the UI forms for each agent.
+-   : Defines the new UI theme.
+
+**Areas that need refactoring**:
+-    exists but is no longer used and should be deleted to avoid confusion.
+
+**key api endpoints**
+-   **Agents**:
+    -   : Runs the CodeHealth agent on a PR.
+    -   : Runs the Employee agent for a given role and task.
+-   **MCP**:
+    -   : Natural language search over entities.
+    -   : Get the connection graph for a query.
+    -   : Get details for a single entity.
+    -   : Search PRs by file path, comment, or general query.
+
+**Critical Info for New Agent**
+-   The project has pivoted from a traditional application layer to an Agent-based architecture. All new use cases should be implemented as agents within .
+-   The old application layer file () is deprecated.
+-   Embeddings are generated locally using , not via an external API. LLM calls for text generation use the  library.
+-   The UI has been completely rebuilt. New features will require creating new components that fit into the  and  structure.
+
+**documents created in this job**
+-   
+-   
+
+**Last 10 User Messages and any pending user messages**
+1.  **Request:** Add  API. (COMPLETED)
+2.  **Request:** Update  structure and add code audit APIs. (COMPLETED)
+3.  **Request:** Remove the current application implementation and create 4 new Agents (CodeHealth, Employee, OnCall, Document). Start with CodeHealth. (COMPLETED for CodeHealth)
+4.  **Request:** Implement the . (COMPLETED)
+5.  **Request:** Remove the current UI and implement a new one for the agents with a specific theme and layout (white/light-blue, Busfactor AI header, tabs, chat panel, builder panel). (IN PROGRESS - implementation done, pending final testing)
+
+**Project Health Check:**
+-   **Broken**: None currently known, but pending a full test run.
+-   **Mocked**: The Low-code Integration Builder panel () on the UI is a visual placeholder with no functionality.
+
+**3rd Party Integrations**
+-   OpenAI GPT (Text Generation) — uses Emergent LLM Key
+-   ChromaDB (Vector Store) — local instance
+-   SQLite (Relational DB) — local file
+
+**Testing status**
+-   Testing agent used after significant changes: YES (The agent was in the process of calling it for the latest UI change).
+-   Troubleshoot agent used after agent stuck in loop: NO
+-   Test files created: None
+-   Known regressions: None
+
+**Credentials to test flow:**
+-   The  is required for LLM-based features (summaries, agent responses). It is accessed from the environment.
+
+**What agent forgot to execute**
+-   The agent is on track with the user's sequential requests. The next steps ( and ) are correctly identified as upcoming tasks and were not forgotten.</analysis>
