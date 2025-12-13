@@ -631,11 +631,15 @@ async def run_ingestion():
     print(f"\nTotal entities extracted: {len(all_entities)}")
     
     # Store entities in ChromaDB
-    print("\n[2/4] Storing entities in ChromaDB...")
+    print("\n[2/5] Storing entities in ChromaDB...")
     entities_stored = store_entities_in_chromadb(all_entities)
     
+    # Store code entities in dedicated collections
+    print("\n[3/5] Storing code entities in dedicated collections...")
+    code_entities_stored = store_code_entities_in_chromadb(all_entities)
+    
     # Generate weekly summaries
-    print("\n[3/4] Generating weekly summaries...")
+    print("\n[4/5] Generating weekly summaries...")
     weekly_groups = group_entities_by_week(all_entities)
     print(f"Found {len(weekly_groups)} weeks of data")
     
@@ -646,7 +650,7 @@ async def run_ingestion():
         weekly_summaries.append(summary)
     
     # Store weekly summaries
-    print("\n[4/4] Storing weekly summaries in ChromaDB...")
+    print("\n[5/5] Storing weekly summaries in ChromaDB...")
     summaries_stored = store_weekly_summaries_in_chromadb(weekly_summaries)
     
     # Print summary
@@ -655,6 +659,7 @@ async def run_ingestion():
     print("=" * 60)
     print(f"Entities processed: {len(all_entities)}")
     print(f"Entities stored in ChromaDB: {entities_stored}")
+    print(f"Code entities stored: {code_entities_stored}")
     print(f"Weekly summaries generated: {len(weekly_summaries)}")
     print(f"Weekly summaries stored: {summaries_stored}")
     print(f"\nChromaDB location: {CHROMA_PERSIST_DIR}")
@@ -673,6 +678,7 @@ async def run_ingestion():
     return {
         "entities_processed": len(all_entities),
         "entities_stored": entities_stored,
+        "code_entities_stored": code_entities_stored,
         "weekly_summaries": len(weekly_summaries),
         "summaries_stored": summaries_stored
     }
