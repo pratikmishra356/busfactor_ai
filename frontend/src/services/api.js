@@ -57,6 +57,11 @@ export const runCodeHealthAgent = async (prInput) => {
   return response.data;
 };
 
+export const runEmployeeAgent = async (role, task) => {
+  const response = await api.post('/api/agent/employee', { role, task });
+  return response.data;
+};
+
 // Application Layer APIs (deprecated - use agents instead)
 export const getContextResponse = async (query, topK = 3) => {
   // Deprecated
