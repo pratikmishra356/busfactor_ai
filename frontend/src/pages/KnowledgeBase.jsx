@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Database, Loader2, FileText, Calendar, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, Loader2, BookOpen, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import SearchInput from '../components/SearchInput';
-import { SourceBadgeList, EntityCard } from '../components/EntityComponents';
-import { getContext } from '../services/api';
+import { SourceBadge, SummaryCard, WeekBadge } from '../components/EntityComponents';
+import { getContextResponse } from '../services/api';
 
 export default function KnowledgeBase() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [expandedSummaries, setExpandedSummaries] = useState({});
+  const [expandedSummary, setExpandedSummary] = useState(null);
 
   const handleSearch = async (searchQuery) => {
     setLoading(true);
     setError(null);
     
     try {
-      const data = await getContext(searchQuery, 3);
+      const data = await getContextResponse(searchQuery, 3);
       setResult(data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to fetch context. Please try again.');
@@ -26,24 +26,17 @@ export default function KnowledgeBase() {
     }
   };
 
-  const toggleSummary = (weekKey) => {
-    setExpandedSummaries(prev => ({
-      ...prev,
-      [weekKey]: !prev[weekKey]
-    }));
-  };
-
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-8 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-primary/20 rounded-sm flex items-center justify-center">
-            <Database className="w-6 h-6 text-primary" />
+          <div className="w-12 h-12 bg-info/20 rounded-sm flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-info" />
           </div>
           <div>
             <h1 className="font-heading font-bold text-3xl tracking-tight">Knowledge Base</h1>
-            <p className="text-text-muted">Search organizational context across all sources</p>
+            <p className="text-text-muted">Search and explore organizational context</p>
           </div>
         </div>
       </div>
@@ -55,7 +48,7 @@ export default function KnowledgeBase() {
           onChange={setQuery}
           onSubmit={handleSearch}
           loading={loading}
-          placeholder="Ask anything... e.g., 'payment gateway issues' or 'database performance'"
+          placeholder="What would you like to know? e.g., 'payment gateway issues'"
         />
       </div>
 
@@ -68,74 +61,57 @@ export default function KnowledgeBase() {
 
       {/* Results */}
       {result && (
-        <div className="space-y-6" data-testid="knowledge-results">
-          {/* Context Header */}
-          <div className="bg-surface border border-border rounded-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-heading font-bold text-xl text-white">Context Results</h2>
-              <div className="flex items-center gap-4 text-sm text-text-muted">
-                <span className="flex items-center gap-1">
-                  <FileText className="w-4 h-4" />
-                  {result.entity_count} entities
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {result.weeks_covered?.length || 0} weeks
-                </span>
-              </div>
+        <div className="space-y-6" data-testid="search-results">
+          {/* Meta Info */}
+          <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-border">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-text-muted" />
+              <span className="text-sm text-text-muted">Weeks covered:</span>
+              {result.weeks_covered?.map((week) => (
+                <WeekBadge key={week} week={week} />
+              ))}
             </div>
-            
-            {/* Sources */}
-            <div className="mb-4">
-              <p className="text-xs uppercase tracking-widest text-text-muted mb-2">Sources Used</p>
-              <SourceBadgeList sources={result.sources_used} />
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-text-muted">Sources:</span>
+              {result.sources_used?.map((source) => (
+                <SourceBadge key={source} source={source} />
+              ))}
+            </div>
+            <div className="text-sm text-text-muted">
+              <span className="text-primary font-bold">{result.entity_count}</span> entities analyzed
             </div>
           </div>
 
-          {/* Main Context */}
-          <div className="bg-surface border border-border rounded-sm p-6">
-            <h3 className="font-heading font-bold text-lg mb-4 text-primary">AI-Generated Context</h3>
+          {/* Context Response */}
+          <div className="bg-surface border border-border rounded-sm p-6" data-testid="context-response">
+            <h3 className="font-heading font-bold text-lg mb-4 text-white flex items-center gap-2">
+              <Search className="w-5 h-5 text-primary" />
+              Context for "{result.query}"
+            </h3>
             <div className="markdown-content text-text-muted leading-relaxed">
               <ReactMarkdown>{result.context}</ReactMarkdown>
             </div>
           </div>
-
-          {/* Weeks Covered */}
-          {result.weeks_covered && result.weeks_covered.length > 0 && (
-            <div className="bg-surface border border-border rounded-sm p-6">
-              <h3 className="font-heading font-bold text-lg mb-4 text-white">Weeks Analyzed</h3>
-              <div className="flex flex-wrap gap-2">
-                {result.weeks_covered.map((week, idx) => (
-                  <span 
-                    key={idx} 
-                    className="px-3 py-1 bg-primary/20 text-primary rounded-sm text-sm font-medium"
-                  >
-                    {week}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
       {/* Empty State */}
       {!loading && !result && !error && (
         <div className="text-center py-16">
-          <Database className="w-16 h-16 text-border mx-auto mb-4" />
-          <h3 className="font-heading text-xl text-text-muted mb-2">Search the Knowledge Base</h3>
+          <BookOpen className="w-16 h-16 text-border mx-auto mb-4" />
+          <h3 className="font-heading text-xl text-text-muted mb-2">Search Your Knowledge</h3>
           <p className="text-text-muted text-sm max-w-md mx-auto">
-            Enter a natural language query to search across Slack, Jira, GitHub, Docs, and Meetings.
+            Ask any question about your organization. We'll search across Slack, Jira, GitHub, Docs, and Meetings to give you comprehensive context.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {['payment issues', 'database performance', 'security vulnerabilities', 'API refactoring'].map((suggestion) => (
+            {['payment gateway', 'database performance', 'security vulnerability', 'email notifications'].map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => {
                   setQuery(suggestion);
                   handleSearch(suggestion);
                 }}
-                data-testid={`suggestion-${suggestion.replace(' ', '-')}`}
+                data-testid={`suggestion-${suggestion.replace(/ /g, '-')}`}
                 className="px-3 py-1 bg-surface border border-border rounded-sm text-sm text-text-muted hover:border-primary hover:text-primary transition-colors"
               >
                 {suggestion}
@@ -149,7 +125,7 @@ export default function KnowledgeBase() {
       {loading && (
         <div className="flex flex-col items-center justify-center py-16" data-testid="loading-state">
           <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-          <p className="text-text-muted">Generating context...</p>
+          <p className="text-text-muted">Searching knowledge base...</p>
         </div>
       )}
     </div>
