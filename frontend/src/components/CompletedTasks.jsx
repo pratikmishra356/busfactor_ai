@@ -15,7 +15,7 @@ const AGENT_COLORS = {
   document: 'text-emerald-500 bg-emerald-50',
 };
 
-export default function CompletedTasks({ tasks }) {
+export default function CompletedTasks({ tasks, activeTaskId, onTaskClick }) {
   if (tasks.length === 0) {
     return (
       <div className="h-16 border-t border-slate-100 px-4 flex items-center bg-slate-50/50">
@@ -36,17 +36,21 @@ export default function CompletedTasks({ tasks }) {
         {tasks.map((task) => {
           const Icon = AGENT_ICONS[task.agent] || Code2;
           const colorClass = AGENT_COLORS[task.agent] || 'text-slate-500 bg-slate-50';
+          const isActive = activeTaskId === task.id;
           
           return (
-            <div
+            <button
               key={task.id}
-              className="task-tab flex items-center gap-1.5 flex-shrink-0"
+              onClick={() => onTaskClick(task)}
+              className={`task-tab flex items-center gap-1.5 flex-shrink-0 transition-all cursor-pointer ${
+                isActive ? 'ring-2 ring-blue-400 bg-blue-50' : 'hover:bg-slate-100'
+              }`}
               data-testid={`task-${task.id}`}
               title={task.title}
             >
-              <Icon className={`w-3 h-3 ${colorClass.split(' ')[0]}`} />
-              <span className="truncate">{task.title}</span>
-            </div>
+              <Icon className={`w-3 h-3 ${isActive ? 'text-blue-600' : colorClass.split(' ')[0]}`} />
+              <span className={`truncate ${isActive ? 'text-blue-600 font-medium' : ''}`}>{task.title}</span>
+            </button>
           );
         })}
       </div>
