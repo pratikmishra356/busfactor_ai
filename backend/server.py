@@ -17,12 +17,17 @@ from mcp_api import (
     natural_search, 
     search_with_connections,
     get_entity_by_id,
+    search_code_by_file_path,
+    search_code_by_comment,
+    search_code_by_query,
     SearchResponse,
     ConnectionGraph,
     SummarizedEntity,
     GraphNode,
     GraphEdge,
-    EntityDetails
+    EntityDetails,
+    CodeAuditResponse,
+    CodeAuditPR
 )
 
 # Import Application Layer functions
