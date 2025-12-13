@@ -103,85 +103,127 @@ class AgentAPITester:
         """Test basic API connectivity"""
         return self.test_api_endpoint("Basic API Connectivity", "", expected_status=200)
 
-    def test_context_api(self):
-        """Test Knowledge Base context API"""
-        test_queries = [
-            "payment",
-            "database performance", 
-            "security issues"
-        ]
+    def test_post_endpoint(self, name: str, endpoint: str, data: Dict, expected_status: int = 200, timeout: int = 30) -> tuple:
+        """Test a POST endpoint"""
+        url = f"{self.base_url}/api/{endpoint}"
         
-        results = []
-        for query in test_queries:
-            success, response = self.test_api_endpoint(
-                f"Context API - {query}",
-                "context",
-                params={"query": query, "top_k": 3},
-                timeout=45  # LLM calls can be slow
-            )
-            results.append(success)
-        
-        return all(results)
+        try:
+            print(f"\n🔍 Testing {name}...")
+            print(f"   URL: {url}")
+            print(f"   Data: {json.dumps(data, indent=2)}")
+            
+            response = requests.post(url, json=data, timeout=timeout, headers={'Content-Type': 'application/json'})
+            
+            success = response.status_code == expected_status
+            
+            details = {
+                "status_code": response.status_code,
+                "url": url,
+                "request_data": data,
+                "response_size": len(response.text) if response.text else 0
+            }
+            
+            if success:
+                try:
+                    json_data = response.json()
+                    details["has_json"] = True
+                    details["response_keys"] = list(json_data.keys()) if isinstance(json_data, dict) else []
+                    
+                    # Check for specific response structure based on endpoint
+                    if "codehealth" in endpoint:
+                        details["has_checklist"] = "checklist" in json_data
+                        details["has_related_prs"] = "related_prs" in json_data
+                        details["checklist_count"] = len(json_data.get("checklist", []))
+                        details["related_prs_count"] = len(json_data.get("related_prs", []))
+                        details["risk_level"] = json_data.get("risk_level", "")
+                    elif "employee" in endpoint:
+                        details["role"] = json_data.get("role", "")
+                        details["task_type"] = json_data.get("task_type", "")
+                        details["has_pr_draft"] = "pr_draft" in json_data and json_data["pr_draft"] is not None
+                        details["has_slack_message"] = "slack_message" in json_data and json_data["slack_message"] is not None
+                        details["has_general_response"] = "general_response" in json_data and json_data["general_response"] is not None
+                    
+                except json.JSONDecodeError:
+                    details["has_json"] = False
+                    details["response_preview"] = response.text[:200]
+            else:
+                details["error_message"] = response.text[:500]
+            
+            self.log_result(name, success, details)
+            return success, response.json() if success else {}
+            
+        except requests.exceptions.Timeout:
+            details = {"error": "Request timeout", "timeout": timeout}
+            self.log_result(name, False, details)
+            return False, {}
+        except requests.exceptions.RequestException as e:
+            details = {"error": f"Request failed: {str(e)}"}
+            self.log_result(name, False, details)
+            return False, {}
+        except Exception as e:
+            details = {"error": f"Unexpected error: {str(e)}"}
+            self.log_result(name, False, details)
+            return False, {}
 
-    def test_incident_api(self):
-        """Test Incident Analysis API"""
-        test_queries = [
-            "payment outage",
-            "email notification failure",
-            "database connection issues"
-        ]
+    def test_codehealth_agent(self):
+        """Test CodeHealth Agent API"""
+        test_pr = {
+            "pr_number": 123,
+            "title": "feat: add payment retry mechanism",
+            "description": "Implements automatic retry for failed payment transactions",
+            "author": "test-developer",
+            "author_github": "testdev",
+            "files_changed": [
+                "src/services/payment.py",
+                "src/queues/retry.py"
+            ],
+            "labels": ["feature", "payment"],
+            "lines_added": 150,
+            "lines_removed": 20,
+            "jira_ref": "ENG-500",
+            "comments": []
+        }
         
-        results = []
-        for query in test_queries:
-            success, response = self.test_api_endpoint(
-                f"Incident API - {query}",
-                "incident", 
-                params={"query": query},
-                timeout=45  # LLM calls can be slow
-            )
-            results.append(success)
-        
-        return all(results)
-
-    def test_role_apis(self):
-        """Test AI Companion role-based APIs"""
-        roles = ["engineer", "product_manager", "engineering_manager"]
-        test_queries = [
-            "database performance",
-            "team incidents",
-            "security updates"
-        ]
-        
-        results = []
-        for role in roles:
-            for query in test_queries:
-                success, response = self.test_api_endpoint(
-                    f"Role API - {role} - {query}",
-                    f"role/{role}/task",
-                    params={"query": query},
-                    timeout=45  # LLM calls can be slow
-                )
-                results.append(success)
-        
-        return all(results)
-
-    def test_mcp_apis(self):
-        """Test underlying MCP APIs"""
-        # Test MCP search
-        success1, _ = self.test_api_endpoint(
-            "MCP Search API",
-            "mcp/search",
-            params={"q": "payment", "top_k": 3}
+        success, response = self.test_post_endpoint(
+            "CodeHealth Agent",
+            "agent/codehealth",
+            test_pr,
+            timeout=60  # LLM calls can be slow
         )
         
-        # Test MCP connections
-        success2, _ = self.test_api_endpoint(
-            "MCP Connections API", 
-            "mcp/connections",
-            params={"q": "payment", "top_k": 2, "depth": 1}
+        return success
+
+    def test_employee_agent_engineer(self):
+        """Test Employee Agent - Engineer role"""
+        test_data = {
+            "role": "engineer",
+            "task": "implement payment retry for ENG-500"
+        }
+        
+        success, response = self.test_post_endpoint(
+            "Employee Agent - Engineer",
+            "agent/employee",
+            test_data,
+            timeout=60  # LLM calls can be slow
         )
         
-        return success1 and success2
+        return success
+
+    def test_employee_agent_manager(self):
+        """Test Employee Agent - Manager role"""
+        test_data = {
+            "role": "manager",
+            "task": "send slack message about the payment bug fix"
+        }
+        
+        success, response = self.test_post_endpoint(
+            "Employee Agent - Manager",
+            "agent/employee",
+            test_data,
+            timeout=60  # LLM calls can be slow
+        )
+        
+        return success
 
     def run_all_tests(self):
         """Run comprehensive backend API tests"""
