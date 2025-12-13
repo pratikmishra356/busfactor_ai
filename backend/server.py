@@ -16,11 +16,13 @@ sys.path.insert(0, str(Path(__file__).parent / "scripts"))
 from mcp_api import (
     natural_search, 
     search_with_connections,
+    get_entity_by_id,
     SearchResponse,
     ConnectionGraph,
     SummarizedEntity,
     GraphNode,
-    GraphEdge
+    GraphEdge,
+    EntityDetails
 )
 
 # Import Application Layer functions
