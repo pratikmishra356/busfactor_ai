@@ -327,6 +327,9 @@ Provide a 2-3 paragraph summary that would help someone quickly understand what 
             participants.add(entity.get("author"))
         sources.add(entity.get("source", ""))
     
+    # Collect sub-entity IDs
+    sub_entity_ids = [entity.get("id") for entity in entities]
+    
     return {
         "id": f"weekly_summary_{week_key}",
         "week_key": week_key,
@@ -336,7 +339,8 @@ Provide a 2-3 paragraph summary that would help someone quickly understand what 
         "incident_refs": list(incident_refs),
         "keywords": list(keywords),
         "key_participants": list(participants)[:20],  # Limit to 20
-        "entities_by_source": {k: len(v) for k, v in by_source.items()}
+        "entities_by_source": {k: len(v) for k, v in by_source.items()},
+        "sub_entity_ids": sub_entity_ids  # Store all entity IDs in this week
     }
 
 
