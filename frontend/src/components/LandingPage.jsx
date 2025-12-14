@@ -288,25 +288,14 @@ export default function LandingPage() {
         </div>
       </Section>
 
-      {/* Benefits + CTA */}
+      {/* Benefits */}
       <Section className="py-12">
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 sm:p-8">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div>
-              <h2 className="font-heading font-semibold text-base md:text-lg text-slate-900">Make engineering operations faster and safer</h2>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
-                Reduce time-to-context during incidents, improve onboarding, and keep decisions grounded in your org’s real history—
-                not tribal memory.
-              </p>
-            </div>
-            <Link
-              to="/agents"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white text-sm font-semibold shadow-sm hover:opacity-95 transition-opacity"
-            >
-              Try the Agents UI
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          <h2 className="font-heading font-semibold text-base md:text-lg text-slate-900">Make engineering operations faster and safer</h2>
+          <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
+            Reduce time-to-context during incidents, improve onboarding, and keep decisions grounded in your org’s real history—
+            not tribal memory.
+          </p>
         </div>
 
         <div className="py-8 text-center text-xs text-slate-500">
