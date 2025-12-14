@@ -60,6 +60,12 @@ export function incrementAgentTask(key, agentIdOrName) {
 }
 
 export function setDynamicAgentsCount(key, count) {
+  const metrics = readMetrics(key);
+  writeMetrics(key, {
+    ...metrics,
+    dynamicAgentsCount: count,
+  });
+}
 
 export function setChatForAgent(key, agentId, messages) {
   const metrics = readMetrics(key);
