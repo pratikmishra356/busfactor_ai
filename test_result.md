@@ -101,3 +101,66 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+## user_problem_statement: "Build a theme-aligned landing page for busfactor AI (org/teams), make it the / route, and route existing agent tabs UI to /agents. Add nav Home/Agents/Agent Builder."
+## backend: []
+## frontend:
+  - task: "Landing page (/) for busfactor AI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/LandingPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented new LandingPage with centered hero focusing on MCP layer, tool connector badges, how-it-works, agent examples, and CTA buttons to /agents and /agent-builder. Screenshot sanity check passed."
+  - task: "Routing update: / -> landing, /agents -> MainLayout"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated routes so landing is default / and original agent tabs UI moved to /agents."
+  - task: "Navigation update (Home/Agents/Agent Builder)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Navigation.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated navigation labels and destinations to match new routes."
+  - task: "Dynamic agent builder markdown rendering"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/DynamicAgentBuilder.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Previously implemented react-markdown rendering for agent responses; awaiting user verification."
+## metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+## test_plan:
+  current_focus:
+    - "Landing page (/) for busfactor AI"
+    - "Routing update: / -> landing, /agents -> MainLayout"
+    - "Navigation update (Home/Agents/Agent Builder)"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+## agent_communication:
+  - agent: "main"
+    message: "Please run frontend e2e checks: landing page loads and is responsive, nav links work, /agents renders the existing agent tabs UI, /agent-builder loads and chat/create flow still works. Validate no console errors."
