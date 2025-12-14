@@ -52,6 +52,34 @@ function Card({ children }) {
 }
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [teamName, setTeamName] = useState('');
+  const [selectedTools, setSelectedTools] = useState(() => new Set());
+
+  const tools = useMemo(() => TOOL_BADGES, []);
+  const canSubmit = teamName.trim().length > 0 && selectedTools.size > 0;
+
+  const toggleTool = (toolId) => {
+    setSelectedTools((prev) => {
+      const next = new Set(prev);
+      if (next.has(toolId)) next.delete(toolId);
+      else next.add(toolId);
+      return next;
+    });
+  };
+
+  const handleCreateTeam = () => {
+    const payload = {
+      createdAt: new Date().toISOString(),
+      teamName: teamName.trim(),
+      tools: Array.from(selectedTools),
+    };
+    window.localStorage.setItem('busfactor_team', JSON.stringify(payload));
+    setDialogOpen(false);
+    navigate('/agents');
+  };
+
   return (
     <div className="h-full overflow-auto bg-white">
       {/* Hero */}
