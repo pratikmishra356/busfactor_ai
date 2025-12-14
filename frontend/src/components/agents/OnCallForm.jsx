@@ -99,7 +99,7 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
           disabled={isLoading}
           data-testid="alert-input"
           rows={2}
-          className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-sm resize-none"
+          className="w-[70%] px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-sm resize-none"
         />
         
         <button
