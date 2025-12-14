@@ -18,10 +18,13 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
+    const token = window.localStorage.getItem('session_token');
     await fetch(`${API_BASE}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
+    window.localStorage.removeItem('session_token');
     setUser(null);
     setTeam(null);
   };
