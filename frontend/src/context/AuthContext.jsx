@@ -82,8 +82,10 @@ export function AuthProvider({ children }) {
     let cancelled = false;
     const run = async () => {
       try {
+        const token = window.localStorage.getItem('session_token');
         const res = await fetch(`${API_BASE}/api/auth/me`, {
           credentials: 'include',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
         if (!res.ok) throw new Error('not authed');
         const u = await res.json();
