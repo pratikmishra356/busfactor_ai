@@ -331,10 +331,18 @@ class AgentAPITester:
 
 def main():
     """Main test execution"""
+    import sys
+    
+    # Check if smoke test is requested
+    smoke_test = len(sys.argv) > 1 and sys.argv[1] == "smoke"
+    
     tester = AgentAPITester()
     
     try:
-        success = tester.run_all_tests()
+        if smoke_test:
+            success = tester.run_smoke_tests()
+        else:
+            success = tester.run_all_tests()
         
         # Save detailed results
         with open('/app/backend_test_results.json', 'w') as f:
