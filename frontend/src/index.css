@@ -241,10 +241,6 @@
 
   @keyframes busfactor-bus-move {
     0% { left: 12px; }
-    40% { left: 38%; }
-    55% { left: 50%; }
-    70% { left: 62%; }
-    85% { left: 74%; }
     100% { left: calc(100% - 86px); }
   }
 
