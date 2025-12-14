@@ -143,9 +143,9 @@ async def auth_session_exchange(input: SessionExchangeInput, request: Request, r
         samesite="none" if is_https else "lax",
     )
 
-    # If we are not on https (localhost), cookies may not be usable. Provide token for header auth.
-    if not is_https:
-        user_doc = {**user_doc, "session_token": session_token}
+    # Provide token for header-based auth fallback (useful when cookies are blocked).
+    # This also simplifies local development.
+    user_doc = {**user_doc, "session_token": session_token}
 
     return UserOut(**user_doc)
 
