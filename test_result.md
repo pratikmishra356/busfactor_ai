@@ -182,3 +182,5 @@
 ## agent_communication:
   - agent: "main"
     message: "Please run frontend e2e checks: landing page loads and is responsive, nav links work, /agents renders the existing agent tabs UI, /agent-builder loads and chat/create flow still works. Validate no console errors."
+  - agent: "testing"
+    message: "✅ COMPREHENSIVE E2E TEST COMPLETED: All updated requirements successfully verified. Landing page navbar correctly hides tabs (only brand visible), hero section has proper MCP line placement and short paragraph, Create Team dialog functions perfectly with proper form validation (team name + tool selection required), Continue button state management works correctly, navigation to /agents successful, and /agents page shows all navigation tabs and agent UI properly. Only minor HTML validation warning about nested buttons in dialog (doesn't affect functionality). All core features working as expected."
