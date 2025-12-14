@@ -102,7 +102,40 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 ## user_problem_statement: "Build a theme-aligned landing page for busfactor AI (org/teams), make it the / route, and route existing agent tabs UI to /agents. Add nav Home/Agents/Agent Builder."
-## backend: []
+## backend:
+  - task: "GET /api/status endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ SMOKE TEST PASSED: GET /api/status returns 200 OK with 0.072s latency. Endpoint is responsive and working correctly."
+  - task: "POST /api/agent/codehealth endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ SMOKE TEST PASSED: POST /api/agent/codehealth with minimal valid PR payload returns 200 OK with 11.029s latency. Response includes proper structure with checklist (11 items), related PRs (5), risk level (medium), and all expected fields. Agent integration working correctly."
+  - task: "POST /api/agent/employee endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ SMOKE TEST PASSED: POST /api/agent/employee with role=engineer and short task returns 200 OK with 7.894s latency. Response correctly identifies task_type as 'create_pr', includes PR draft, and has proper role-based response structure. Agent integration working correctly."
 ## frontend:
   - task: "Team creation stored server-side"
     implemented: true
