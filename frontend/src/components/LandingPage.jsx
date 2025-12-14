@@ -100,9 +100,7 @@ export default function LandingPage() {
             </div>
 
             <p className="max-w-3xl text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed">
-              Increase your team’s bus factor by turning fragmented engineering operations knowledge into a deployable,
-              agent-ready context layer.
-              {' '}Connect your tools, build a RAG-powered knowledge base, and ship AI agents that work the way your org works.
+              Build a RAG-powered knowledge base, and ship AI agents that work the way your org works.
             </p>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
