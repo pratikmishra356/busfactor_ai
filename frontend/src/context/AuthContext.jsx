@@ -33,6 +33,9 @@ export function AuthProvider({ children }) {
         setTeam(null);
         return;
       }
+
+  // After returning from Emergent auth, the browser may set cookies; refresh auth.
+
       const t = await res.json();
       setTeam(t);
     } catch {
