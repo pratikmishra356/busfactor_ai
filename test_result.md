@@ -146,6 +146,9 @@
       - working: "NA"
         agent: "main"
         comment: "Updated navigation labels and destinations to match new routes."
+      - working: "NA"
+        agent: "main"
+        comment: "Updated navbar behavior: hide nav tabs on / (landing), show tabs on /agents and /agent-builder."
   - task: "Dynamic agent builder markdown rendering"
     implemented: true
     working: "NA"
