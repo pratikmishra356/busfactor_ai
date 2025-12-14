@@ -1,0 +1,160 @@
+import React, { useState } from 'react';
+import { Send, Loader2, AlertTriangle } from 'lucide-react';
+import { runOnCallAgent } from '../../services/api';
+
+const ALERT_EXAMPLES = [
+  'PaymentService timeout - 500 errors increasing',
+  'Database connection pool exhausted',
+  'Memory leak in authentication service',
+];
+
+export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
+  const [alertText, setAlertText] = useState('');
+  const [incidentId, setIncidentId] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!alertText.trim()) return;
+
+    setIsLoading(true);
+    
+    try {
+      const result = await runOnCallAgent({
+        alert_text: alertText,
+        incident_id: incidentId || undefined
+      });
+      
+      const formattedResponse = formatOnCallResponse(result);
+      onResponse(alertText, formattedResponse, 'oncall');
+      
+      // Reset form
+      setAlertText('');
+      setIncidentId('');
+    } catch (error) {
+      onResponse(alertText, `Error: ${error.message || 'Failed to analyze alert'}`, 'oncall');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatOnCallResponse = (result) => {
+    let response = `## 🚨 Incident Analysis\n\n`;
+    response += `**Severity:** ${result.severity.toUpperCase()}\n\n`;
+    response += `${result.alert_summary}\n\n`;
+    
+    // Root Cause Analysis
+    if (result.root_cause_analysis) {
+      response += `### Root Cause Analysis\n`;
+      response += `${result.root_cause_analysis}\n\n`;
+    }
+    
+    // Suspect Files
+    if (result.suspect_files?.length > 0) {
+      response += `### 🎯 Suspect Files (${result.suspect_files.length})\n`;
+      result.suspect_files.slice(0, 8).forEach(file => {
+        const confidenceEmoji = file.confidence === 'high' ? '🔴' : file.confidence === 'medium' ? '🟡' : '🟢';
+        response += `${confidenceEmoji} **\`${file.file_path}\`** [${file.confidence} confidence]\n`;
+        response += `   ${file.reason}\n`;
+        if (file.related_pr) {
+          response += `   📝 Related PR: #${file.related_pr} - ${file.pr_title}\n`;
+        }
+        response += '\n';
+      });
+    }
+    
+    // Related PRs
+    if (result.related_prs?.length > 0) {
+      response += `### 📋 Related PRs (${result.related_prs.length})\n`;
+      result.related_prs.slice(0, 5).forEach(pr => {
+        response += `- **PR #${pr.pr_number}**: ${pr.title}\n`;
+        response += `  Author: ${pr.author}\n`;
+        if (pr.overlapping_files?.length > 0) {
+          response += `  Files: ${pr.overlapping_files.slice(0, 3).join(', ')}\n`;
+        }
+        response += '\n';
+      });
+    }
+    
+    // Recommended Actions
+    if (result.recommended_actions?.length > 0) {
+      response += `### ✅ Recommended Actions\n`;
+      result.recommended_actions.forEach((action, i) => {
+        response += `${i + 1}. ${action}\n`;
+      });
+      response += '\n';
+    }
+    
+    // Similar Incidents
+    if (result.similar_incidents?.length > 0) {
+      response += `### 📚 Similar Past Incidents\n`;
+      result.similar_incidents.forEach(incident => {
+        response += `- ${incident}\n`;
+      });
+    }
+
+    return response;
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3 overflow-visible" data-testid="oncall-form">
+      {/* Main Input Row */}
+      <div className="flex gap-2 overflow-visible">
+        <input
+          type="text"
+          value={incidentId}
+          onChange={(e) => setIncidentId(e.target.value)}
+          placeholder="Incident ID (optional)"
+          disabled={isLoading}
+          className="w-32 h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-sm"
+        />
+        
+        <textarea
+          value={alertText}
+          onChange={(e) => setAlertText(e.target.value)}
+          placeholder="Paste alert/incident details here... (e.g., error messages, stack traces, metrics)"
+          disabled={isLoading}
+          data-testid="alert-input"
+          rows={2}
+          className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-sm resize-none"
+        />
+        
+        <button
+          type="submit"
+          disabled={isLoading || !alertText.trim()}
+          data-testid="submit-oncall-btn"
+          className="h-11 px-5 bg-red-600 text-white rounded-xl font-medium text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 self-start"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Analyzing...</span>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-4 h-4" />
+              <span>Analyze</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Alert Examples */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-slate-400">Try:</span>
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+          {ALERT_EXAMPLES.map((example, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setAlertText(example)}
+              disabled={isLoading}
+              className="px-3 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-600 rounded-full whitespace-nowrap transition-colors"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+      </div>
+    </form>
+  );
+}
