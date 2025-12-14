@@ -131,7 +131,7 @@ export default function LandingPage() {
                     title: 'Login required',
                     description: 'Please login first to create your team.',
                   });
-                  login();
+                  login('/');
                   return;
                 }
                 setDialogOpen(open);
