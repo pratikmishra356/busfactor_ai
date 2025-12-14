@@ -269,9 +269,9 @@ export default function DynamicAgentBuilder() {
 
           {/* Chat Area */}
           {selectedAgent ? (
-            <div className="flex-1 flex flex-col m-6 bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
+            <div className="flex-1 flex flex-col m-6 bg-white rounded-xl shadow-lg border border-slate-200" style={{ maxHeight: 'calc(100vh - 220px)' }}>
               {/* Chat Header */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-white/20 backdrop-blur flex items-center justify-center">
                     <Bot className="w-5 h-5" />
@@ -284,7 +284,7 @@ export default function DynamicAgentBuilder() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
                 {chatMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <MessageSquare className="w-16 h-16 mb-4" />
@@ -323,22 +323,20 @@ export default function DynamicAgentBuilder() {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleExecuteAgent} className="border-t border-slate-200 p-4 bg-slate-50">
-                <div className="flex gap-3 items-end">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={currentQuery}
-                      onChange={(e) => setCurrentQuery(e.target.value)}
-                      placeholder="Ask me anything about your knowledge base..."
-                      disabled={executing}
-                      className="w-full px-4 py-3.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 text-slate-900 text-base"
-                    />
-                  </div>
+              <form onSubmit={handleExecuteAgent} className="border-t border-slate-200 p-4 bg-slate-50 flex-shrink-0">
+                <div className="flex gap-3 items-center">
+                  <input
+                    type="text"
+                    value={currentQuery}
+                    onChange={(e) => setCurrentQuery(e.target.value)}
+                    placeholder="Ask me anything about your knowledge base..."
+                    disabled={executing}
+                    className="flex-1 px-4 py-3.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 text-slate-900 text-base"
+                  />
                   <button
                     type="submit"
                     disabled={executing || !currentQuery.trim()}
-                    className="px-6 py-3.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]"
+                    className="px-6 py-3.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px] flex-shrink-0"
                   >
                     {executing ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send'}
                   </button>
