@@ -1,6 +1,10 @@
-import React from 'react';
-import { ArrowRight, Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 const TOOL_BADGES = [
   { name: 'Slack', icon: Workflow },
