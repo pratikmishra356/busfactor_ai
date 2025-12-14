@@ -178,68 +178,72 @@ export default function DynamicAgentBuilder() {
           {/* Create Agent Form */}
           {showCreateForm && (
             <div className="bg-white border-b border-slate-200 p-6 shadow-sm">
-              <form onSubmit={handleCreateAgent} className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-slate-900">Create New Agent</h3>
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateForm(false)}
-                    className="text-slate-400 hover:text-slate-600"
-                  >
-                    ✕
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Agent Name*</label>
-                    <input
-                      type="text"
-                      value={newAgent.name}
-                      onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
-                      placeholder="e.g., payment-specialist"
-                      required
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                    />
+              <div className="max-w-4xl mx-auto">
+                <form onSubmit={handleCreateAgent} className="space-y-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Create New Agent</h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateForm(false)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Agent Name*</label>
+                      <input
+                        type="text"
+                        value={newAgent.name}
+                        onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+                        placeholder="e.g., payment-specialist"
+                        required
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Role*</label>
+                      <input
+                        type="text"
+                        value={newAgent.role}
+                        onChange={(e) => setNewAgent({ ...newAgent, role: e.target.value })}
+                        placeholder="e.g., Payment Systems Expert"
+                        required
+                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 transition-all"
+                      />
+                    </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Role*</label>
-                    <input
-                      type="text"
-                      value={newAgent.role}
-                      onChange={(e) => setNewAgent({ ...newAgent, role: e.target.value })}
-                      placeholder="e.g., Payment Systems Expert"
+                    <label className="block text-sm font-medium text-slate-700 mb-2">System Prompt*</label>
+                    <textarea
+                      value={newAgent.prompt}
+                      onChange={(e) => setNewAgent({ ...newAgent, prompt: e.target.value })}
+                      placeholder="You are an expert in... Provide specific guidance based on the organizational context from PRs, docs, and incidents."
                       required
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      rows={4}
+                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 resize-none transition-all"
                     />
                   </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">System Prompt*</label>
-                  <textarea
-                    value={newAgent.prompt}
-                    onChange={(e) => setNewAgent({ ...newAgent, prompt: e.target.value })}
-                    placeholder="You are an expert in... Provide specific guidance based on the organizational context from PRs, docs, and incidents."
-                    required
-                    rows={3}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {loading ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>
-                  ) : (
-                    <><Plus className="w-4 h-4" /> Create Agent</>
-                  )}
-                </button>
-              </form>
+                  
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {loading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>
+                      ) : (
+                        <><Plus className="w-4 h-4" /> Create Agent</>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
 
@@ -320,19 +324,21 @@ export default function DynamicAgentBuilder() {
 
               {/* Input */}
               <form onSubmit={handleExecuteAgent} className="border-t border-slate-200 p-4 bg-slate-50">
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={currentQuery}
-                    onChange={(e) => setCurrentQuery(e.target.value)}
-                    placeholder="Ask me anything about your knowledge base..."
-                    disabled={executing}
-                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 text-slate-900"
-                  />
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={currentQuery}
+                      onChange={(e) => setCurrentQuery(e.target.value)}
+                      placeholder="Ask me anything about your knowledge base..."
+                      disabled={executing}
+                      className="w-full px-4 py-3.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 text-slate-900 text-base"
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={executing || !currentQuery.trim()}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]"
                   >
                     {executing ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send'}
                   </button>
