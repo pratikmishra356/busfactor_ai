@@ -8,7 +8,7 @@ import CompletedTasks from './CompletedTasks';
 const AGENTS = [
   { id: 'codehealth', name: 'CodeHealth', icon: Code2, color: 'accent-codehealth', enabled: true },
   { id: 'employee', name: 'Employee', icon: Users, color: 'accent-employee', enabled: true },
-  { id: 'oncall', name: 'OnCall', icon: Bell, color: 'accent-oncall', enabled: false },
+  { id: 'oncall', name: 'OnCall', icon: Bell, color: 'accent-oncall', enabled: true },
   { id: 'document', name: 'Document', icon: FileText, color: 'accent-document', enabled: false },
 ];
 
