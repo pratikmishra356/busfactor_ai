@@ -962,19 +962,24 @@ CRITICAL INSTRUCTIONS:
     context_text = f"""## Alert/Incident
 {alert_text}
 
-## Most Relevant PRs (Direct Connection Only)
+## Highly Relevant PRs (Match Score > 0.6)
 """
     
-    # Only show top 3 most relevant PRs
-    for pr in filtered_prs[:3]:
-        context_text += f"\n**PR #{pr.pr_number}**: {pr.title}\n"
+    # Show all filtered PRs (max 3)
+    for pr in filtered_prs:
+        context_text += f"\n**PR #{pr.pr_number}**: {pr.title} (Score: {pr.match_score:.2f})\n"
         context_text += f"  - Author: {pr.author}\n"
-        context_text += f"  - Match Score: {pr.match_score:.2f}\n"
-        context_text += f"  - Key Files: {', '.join(pr.overlapping_files[:3])}\n"
+        context_text += f"  - Key Files: {', '.join(pr.overlapping_files[:4])}\n"
+    
+    if not filtered_prs:
+        context_text += "\nNo PRs found with high confidence match.\n"
     
     context_text += "\n## Suspect Files (Ordered by Confidence)\n"
-    for sf in suspect_files[:5]:
-        context_text += f"- `{sf.file_path}` [{sf.confidence} confidence] - {sf.reason}\n"
+    if suspect_files:
+        for sf in suspect_files[:5]:
+            context_text += f"- `{sf.file_path}` [{sf.confidence} confidence] - {sf.reason}\n"
+    else:
+        context_text += "No specific suspect files identified. Focus on general system health.\n"
     
     if similar_incidents:
         context_text += "\n## Similar Past Incidents\n"
