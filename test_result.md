@@ -106,11 +106,11 @@
 ## frontend:
   - task: "Landing page (/) for busfactor AI"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/LandingPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -121,6 +121,9 @@
       - working: "NA"
         agent: "main"
         comment: "Updated landing improvements: hide nav tabs on Home, simplify hero copy (MCP line under title), replace CTAs with Create Team dialog (team name + multi-select tools required). On submit, save to localStorage and route to /agents."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: All updated requirements verified - navbar correctly hides tabs on landing (only brand visible), MCP line positioned under title, short paragraph present, Create Team dialog works with proper validation (team name + tool selection required), Continue button correctly disabled/enabled based on form state, navigation to /agents works perfectly. Minor: Console warning about nested button elements in dialog (HTML validation issue but doesn't affect functionality)."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
     working: true
