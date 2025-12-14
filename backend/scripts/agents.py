@@ -1033,12 +1033,12 @@ Do NOT include severity assessment in your response."""
     return OnCallResponse(
         alert_summary=alert_summary,
         related_entities=related_entities[:10],
-        related_prs=related_prs[:10],
-        suspect_files=suspect_files[:8],
+        related_prs=filtered_prs[:5],  # Only return the most relevant PRs
+        suspect_files=suspect_files[:5],  # Limit to top 5 suspect files
         root_cause_analysis=root_cause_analysis,
         recommended_actions=recommended_actions,
         severity=severity,
-        similar_incidents=similar_incidents[:5]
+        similar_incidents=similar_incidents[:3]
     )
     
     return context_text
