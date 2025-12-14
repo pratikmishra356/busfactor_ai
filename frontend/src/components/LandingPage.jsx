@@ -75,7 +75,9 @@ export default function LandingPage() {
   const [selectedTools, setSelectedTools] = useState(() => new Set());
   const [metrics, setMetrics] = useState(null);
 
-  const metricsKey = user && team?.team_id ? getMetricsKey({ userId: user.user_id, teamId: team.team_id }) : null;
+  // Metrics are stored in localStorage; use the last metrics key written by /agents or /agent-builder
+  // so Home can show stats immediately.
+  const metricsKey = getLastMetricsKey();
 
   const tools = useMemo(() => TOOL_BADGES, []);
   const canSubmit = teamName.trim().length > 0 && selectedTools.size > 0;
