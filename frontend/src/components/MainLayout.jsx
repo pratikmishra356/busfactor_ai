@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { getMetricsKey, incrementAgentTask, readMetrics, setChatForAgent, setCompletedTasks } from '@/services/metrics';
+import { getMetricsKey, incrementAgentTask, readMetrics, setChatForAgent, setCompletedTasks as persistCompletedTasks } from '@/services/metrics';
 
 import { Code2, Users, Bell, FileText } from 'lucide-react';
 import AgentTabs from './AgentTabs';
@@ -42,7 +42,7 @@ export default function MainLayout() {
   // Save completed tasks whenever they change
   React.useEffect(() => {
     if (!metricsKey) return;
-    setCompletedTasks(metricsKey, completedTasks);
+    persistCompletedTasks(metricsKey, completedTasks);
   }, [metricsKey, completedTasks]);
 
   const addCompletedTask = (task) => {
