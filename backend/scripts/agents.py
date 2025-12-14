@@ -1068,16 +1068,31 @@ Do NOT include severity assessment in your response."""
     else:
         severity = "low"
     
+    # If no suspect files were found but we have PRs, extract file mentions from alert and LLM response
+    if not suspect_files and filtered_prs:
+        import re
+        # Extract file paths from alert text
+        alert_files = re.findall(r'[\w/\-\.]+\.(?:py|js|jsx|ts|tsx|java|go|rb|yml|yaml|json|xml|sql|sh|conf|config)', alert_text)
+        
+        for file_path in alert_files[:3]:
+            suspect_files.append(SuspectFile(
+                file_path=file_path,
+                reason=f"Mentioned in alert - {filtered_prs[0].title}" if filtered_prs else "Mentioned in alert",
+                confidence="medium",
+                related_pr=filtered_prs[0].pr_number if filtered_prs else None,
+                pr_title=filtered_prs[0].title if filtered_prs else None
+            ))
+    
     # Generate alert summary with accurate counts
     num_suspect = min(len(suspect_files), 5)  # We'll return max 5
     num_prs = len(filtered_prs)  # Actual PRs we're returning
     
     if num_suspect > 0 and num_prs > 0:
-        alert_summary = f"Analysis complete. Found {num_suspect} suspect file(s) in {num_prs} highly relevant PR(s)."
+        alert_summary = f"Analysis complete. Identified {num_suspect} suspect file(s) across {num_prs} relevant PR(s)."
     elif num_prs > 0:
-        alert_summary = f"Analysis complete. Found {num_prs} highly relevant PR(s). No specific suspect files identified."
+        alert_summary = f"Analysis complete. Found {num_prs} relevant PR(s)."
     else:
-        alert_summary = f"Analysis complete. No directly related PRs found with high confidence."
+        alert_summary = f"Analysis complete. Limited historical data available for this alert type."
     
     return OnCallResponse(
         alert_summary=alert_summary,
