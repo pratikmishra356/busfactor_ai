@@ -139,11 +139,18 @@ export default function LandingPage() {
                         const Icon = t.icon;
                         const checked = selectedTools.has(t.id);
                         return (
-                          <button
+                          <div
                             key={t.id}
-                            type="button"
+                            role="button"
+                            tabIndex={0}
                             onClick={() => toggleTool(t.id)}
-                            className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left shadow-sm transition-colors ${
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                toggleTool(t.id);
+                              }
+                            }}
+                            className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left shadow-sm transition-colors cursor-pointer ${
                               checked
                                 ? 'border-blue-300 bg-blue-50'
                                 : 'border-slate-200 bg-white hover:bg-slate-50'
@@ -154,7 +161,7 @@ export default function LandingPage() {
                               <span className="text-sm text-slate-800">{t.name}</span>
                             </div>
                             <Checkbox checked={checked} className="pointer-events-none" />
-                          </button>
+                          </div>
                         );
                       })}
                     </div>
