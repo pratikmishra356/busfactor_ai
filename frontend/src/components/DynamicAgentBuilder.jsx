@@ -29,7 +29,6 @@ export default function DynamicAgentBuilder() {
 
   useEffect(() => {
     loadAgents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
