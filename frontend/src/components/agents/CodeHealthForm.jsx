@@ -69,22 +69,6 @@ export default function CodeHealthForm({ onResponse, isLoading, setIsLoading }) 
     let response = `## PR Analysis: ${result.pr_title}\n\n`;
     response += `**Risk Level:** ${result.risk_level.toUpperCase()}\n\n`;
     response += `**Summary:** ${result.summary}\n\n`;
-    
-    if (result.related_prs?.length > 0) {
-      response += `### Related PRs (${result.related_prs.length})\n`;
-      result.related_prs.slice(0, 3).forEach(pr => {
-        response += `- PR #${pr.pr_number}: ${pr.title} (score: ${pr.match_score.toFixed(2)})\n`;
-      });
-      response += '\n';
-    }
-
-    if (result.file_overlap_prs?.length > 0) {
-      response += `### File Overlap PRs (${result.file_overlap_prs.length})\n`;
-      result.file_overlap_prs.slice(0, 3).forEach(pr => {
-        response += `- PR #${pr.pr_number}: ${pr.title}\n`;
-      });
-      response += '\n';
-    }
 
     if (result.checklist?.length > 0) {
       response += `### Review Checklist\n`;
