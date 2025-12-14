@@ -47,6 +47,11 @@ export default function MainLayout() {
 
   const addCompletedTask = (task) => {
     setCompletedTasks(prev => [task, ...prev].slice(0, 10));
+
+    // Metrics: count built-in agent tasks
+    if (metricsKey) {
+      incrementAgentTask(metricsKey, task.agent);
+    }
   };
 
   const addChatMessage = (message) => {
