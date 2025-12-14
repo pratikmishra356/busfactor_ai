@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { listDynamicAgents } from '@/services/api';
-import { getLastMetricsKey, readMetrics, setDynamicAgentsCount } from '@/services/metrics';
+import { getLastMetricsKey, getMetricsKey, readMetrics, setDynamicAgentsCount, setLastMetricsKey } from '@/services/metrics';
 
 function StatCard({ label, value }) {
   return (
@@ -75,9 +75,11 @@ export default function LandingPage() {
   const [selectedTools, setSelectedTools] = useState(() => new Set());
   const [metrics, setMetrics] = useState(null);
 
-  // Metrics are stored in localStorage; use the last metrics key written by /agents or /agent-builder
-  // so Home can show stats immediately.
-  const metricsKey = getLastMetricsKey();
+  // Metrics are stored in localStorage.
+  // Prefer current user+team key; otherwise fallback to last seen key.
+  const metricsKey = user && team?.team_id
+    ? getMetricsKey({ userId: user.user_id, teamId: team.team_id })
+    : getLastMetricsKey();
 
   const tools = useMemo(() => TOOL_BADGES, []);
   const canSubmit = teamName.trim().length > 0 && selectedTools.size > 0;
@@ -96,6 +98,8 @@ export default function LandingPage() {
       setMetrics(null);
       return;
     }
+
+    setLastMetricsKey(metricsKey);
 
     const m = readMetrics(metricsKey);
     setMetrics(m);
