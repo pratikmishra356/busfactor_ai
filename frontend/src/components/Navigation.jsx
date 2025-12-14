@@ -24,14 +24,20 @@ export default function Navigation() {
       {/* Center/Right */}
       {isHome ? (
         <div className="flex items-center gap-3">
-          {team?.team_name && (
+          {isAuthenticated && (
             <Link
               to="/agents"
               className="inline-flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-white shadow-sm text-sm text-slate-700 hover:bg-slate-50 transition-colors"
               title="Open Agents"
             >
-              <span className="text-slate-500 mr-1">Team</span>
-              <span className="font-semibold text-slate-900">{team.team_name}</span>
+              {team?.team_name ? (
+                <>
+                  <span className="text-slate-500 mr-1">Team</span>
+                  <span className="font-semibold text-slate-900">{team.team_name}</span>
+                </>
+              ) : (
+                <span className="font-semibold text-slate-900">Open Agents</span>
+              )}
             </Link>
           )}
 
