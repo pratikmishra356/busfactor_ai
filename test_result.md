@@ -117,15 +117,18 @@
         comment: "Added /api/team/create (upsert by user_id) and /api/team/me. Frontend create-team dialog now posts to backend and shows team name in navbar after refreshTeam()."
   - task: "Emergent Google Auth (login/logout/me + session exchange)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented Emergent Google auth flow: /api/auth/session exchanges session_id for user + httpOnly cookie, /api/auth/me verifies session, /api/auth/logout clears. Added cookie/header token support and CORS fix for credentials. Frontend: Login button on landing, user name + logout in navbar, AuthCallback handles #session_id."
+      - working: true
+        agent: "testing"
+        comment: "✅ AUTHENTICATION BUG FIX VERIFIED: Comprehensive testing completed with simulated auth session. Key findings: 1) Unauthenticated state correctly shows Login button, no user name visible. 2) After authentication (session token set), navbar correctly displays 'Test User' name + Logout button (Login button hidden). 3) Create Team dialog opens without login redirect when authenticated, shows user name in dialog title. 4) Authentication state persists across page navigation (/agents page). 5) Logout functionality works correctly - clears auth state and returns to Login button. The specific bug fix requested has been successfully implemented and tested."
   - task: "Landing page (/) for busfactor AI"
     implemented: true
     working: true
