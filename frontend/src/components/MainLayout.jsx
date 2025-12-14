@@ -64,8 +64,8 @@ export default function MainLayout() {
 
   const handleAgentChange = (agentId) => {
     setActiveAgent(agentId);
-    setChatMessages([]);
     setActiveTaskId(null);
+    // NOTE: chat for the agent will load from persisted storage via effect
   };
 
   const handleTaskClick = (task) => {
