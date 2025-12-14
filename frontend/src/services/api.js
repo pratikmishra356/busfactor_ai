@@ -62,4 +62,9 @@ export const runEmployeeAgent = async (role, task) => {
   return response.data;
 };
 
+export const runOnCallAgent = async (oncallInput) => {
+  const response = await api.post('/api/agent/oncall', oncallInput);
+  return response.data;
+};
+
 export default api;
