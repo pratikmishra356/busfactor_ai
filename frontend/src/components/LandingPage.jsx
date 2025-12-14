@@ -123,21 +123,22 @@ export default function LandingPage() {
               Build a RAG-powered knowledge base, and ship AI agents that work the way your org works.
             </p>
 
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog
+              open={dialogOpen}
+              onOpenChange={(open) => {
+                if (open && !isAuthenticated) {
+                  toast({
+                    title: 'Login required',
+                    description: 'Please login first to create your team.',
+                  });
+                  login();
+                  return;
+                }
+                setDialogOpen(open);
+              }}
+            >
               <DialogTrigger asChild>
-                <Button
-                  className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                  onClick={(e) => {
-                    if (!isAuthenticated) {
-                      e.preventDefault();
-                      toast({
-                        title: 'Login required',
-                        description: 'Please login first to create your team.',
-                      });
-                      login();
-                    }
-                  }}
-                >
+                <Button className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
                   Create Team
                 </Button>
               </DialogTrigger>
