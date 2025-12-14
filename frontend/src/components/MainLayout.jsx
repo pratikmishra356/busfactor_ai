@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { getMetricsKey, incrementAgentTask, readMetrics, writeMetrics } from '@/services/metrics';
+import { getMetricsKey, incrementAgentTask, readMetrics, setChatForAgent, setCompletedTasks } from '@/services/metrics';
 
 import { Code2, Users, Bell, FileText } from 'lucide-react';
 import AgentTabs from './AgentTabs';
