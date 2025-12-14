@@ -782,6 +782,201 @@ Provide helpful guidance for this management task."""
     return await call_llm(system_message, prompt, f"employee-manager-general")
 
 
+# ============== Document Agent ==============
+
+class DocumentInput(BaseModel):
+    """Input for Document Agent"""
+    query: str  # What document to write
+
+
+class DocumentResponse(BaseModel):
+    """Response from Document Agent"""
+    document_title: str
+    document_content: str
+    document_type: str  # "technical", "overview", "guide", "api_doc", "runbook"
+    word_count: int
+    sections_count: int
+
+
+async def document_agent(document_input: DocumentInput) -> DocumentResponse:
+    """
+    Document Agent - Writes documentation based on organizational context.
+    
+    Steps:
+    1. Understand what document the user wants
+    2. Fetch related entities (docs, PRs, Jira, messages) for context
+    3. Generate a clean, professional document using LLM
+    4. Return polished document without reference clutter
+    """
+    
+    query = document_input.query
+    
+    # Step 1: Fetch related context from different sources
+    related_entities: List[RelatedEntity] = []
+    context_items = []
+    
+    # Search weekly summaries for high-level context
+    search_result = natural_search(query, top_k=5)
+    
+    for summary in search_result.results:
+        context_items.append({
+            "type": "summary",
+            "content": summary.summary_text,
+            "sources": summary.sources
+        })
+        
+        # Get entity details from sub-entities
+        for entity_id in summary.sub_entity_ids[:10]:
+            entity_meta = get_entity_metadata(entity_id)
+            if entity_meta:
+                source = entity_meta.get("source", "")
+                
+                # Add to context based on source type
+                if source == "docs":
+                    context_items.append({
+                        "type": "existing_doc",
+                        "title": entity_meta.get("title", ""),
+                        "content": entity_meta.get("content_preview", "")[:800]
+                    })
+                elif source == "jira":
+                    context_items.append({
+                        "type": "jira",
+                        "title": entity_meta.get("title", ""),
+                        "content": entity_meta.get("content_preview", "")[:500]
+                    })
+                elif source == "slack" or source == "meetings":
+                    context_items.append({
+                        "type": "discussion",
+                        "content": entity_meta.get("content_preview", "")[:400]
+                    })
+                
+                related_entities.append(RelatedEntity(
+                    entity_id=entity_id,
+                    source=source,
+                    title=entity_meta.get("title", "")[:100],
+                    relevance="context"
+                ))
+    
+    # Fetch relevant PRs for technical details
+    pr_results = search_code_by_query(query, n_results=8)
+    for pr in pr_results.results[:5]:
+        if pr.match_score > 0.5:  # Only high-quality matches
+            context_items.append({
+                "type": "pr",
+                "pr_number": pr.pr_number,
+                "title": pr.title,
+                "description": pr.matched_content[:600],
+                "author": pr.author
+            })
+    
+    # Step 2: Detect document type from query
+    query_lower = query.lower()
+    doc_type = "overview"
+    
+    if any(kw in query_lower for kw in ["api", "endpoint", "integration", "sdk"]):
+        doc_type = "api_doc"
+    elif any(kw in query_lower for kw in ["guide", "tutorial", "how to", "setup"]):
+        doc_type = "guide"
+    elif any(kw in query_lower for kw in ["runbook", "playbook", "incident", "troubleshoot"]):
+        doc_type = "runbook"
+    elif any(kw in query_lower for kw in ["technical", "architecture", "design", "implementation"]):
+        doc_type = "technical"
+    
+    # Step 3: Generate clean documentation using LLM
+    system_message = f"""You are a technical documentation expert. Your task is to write clear, professional documentation.
+
+CRITICAL INSTRUCTIONS:
+- Write a COMPLETE, POLISHED document ready for publication
+- DO NOT include meta-commentary like "Based on the context..." or "According to PRs..."
+- DO NOT list references, sources, or PR numbers in the document
+- DO NOT show your research - only the final, clean documentation
+- Use proper markdown formatting with clear sections
+- Be concise but comprehensive
+- Write as if you are the authoritative source, not a summarizer
+
+Document Type: {doc_type}
+
+Style Guidelines:
+- {doc_type == 'api_doc' and 'Include endpoints, parameters, request/response examples, authentication'}
+- {doc_type == 'guide' and 'Step-by-step instructions, prerequisites, examples, troubleshooting'}
+- {doc_type == 'runbook' and 'Problem detection, diagnosis steps, resolution procedures, prevention'}
+- {doc_type == 'technical' and 'Architecture overview, components, data flow, design decisions'}
+- {doc_type == 'overview' and 'High-level explanation, purpose, key features, usage scenarios'}"""
+
+    # Build context for LLM (internal use only)
+    context_text = "## Background Context (For Your Understanding Only)\n\n"
+    
+    # Group context by type
+    existing_docs = [c for c in context_items if c["type"] == "existing_doc"]
+    prs = [c for c in context_items if c["type"] == "pr"]
+    jiras = [c for c in context_items if c["type"] == "jira"]
+    discussions = [c for c in context_items if c["type"] == "discussion"]
+    
+    if existing_docs:
+        context_text += "### Existing Documentation\n"
+        for doc in existing_docs[:3]:
+            context_text += f"- {doc['title']}: {doc['content'][:300]}\n"
+        context_text += "\n"
+    
+    if prs:
+        context_text += "### Recent Implementation Details\n"
+        for pr in prs[:4]:
+            context_text += f"- PR #{pr['pr_number']}: {pr['title']}\n  {pr['description'][:250]}\n"
+        context_text += "\n"
+    
+    if jiras:
+        context_text += "### Related Requirements\n"
+        for jira in jiras[:3]:
+            context_text += f"- {jira['title']}: {jira['content'][:200]}\n"
+        context_text += "\n"
+    
+    if discussions:
+        context_text += "### Team Discussions\n"
+        for disc in discussions[:3]:
+            context_text += f"- {disc['content'][:200]}\n"
+        context_text += "\n"
+    
+    prompt = f"""Write comprehensive documentation for: {query}
+
+{context_text}
+
+IMPORTANT: 
+- Write the FINAL document directly - no preamble, no meta-text
+- Start with the document title as # heading
+- Do NOT mention sources, PRs, or where information came from
+- Write authoritatively as the official documentation
+- Be practical and actionable
+
+Write the complete documentation now:"""
+
+    llm_response = await call_llm(system_message, prompt, f"document-{query[:50]}")
+    
+    # Step 4: Parse and clean the response
+    document_content = llm_response.strip()
+    
+    # Extract title from first heading or generate one
+    import re
+    title_match = re.search(r'^#\s+(.+)$', document_content, re.MULTILINE)
+    if title_match:
+        document_title = title_match.group(1).strip()
+    else:
+        document_title = query
+        # Add title if missing
+        document_content = f"# {document_title}\n\n{document_content}"
+    
+    # Count sections and words
+    sections = len(re.findall(r'^#{1,3}\s+', document_content, re.MULTILINE))
+    word_count = len(document_content.split())
+    
+    return DocumentResponse(
+        document_title=document_title,
+        document_content=document_content,
+        document_type=doc_type,
+        word_count=word_count,
+        sections_count=sections
+    )
+
+
 def _format_context_for_llm(context_data: List[Dict], related_entities: List[RelatedEntity]) -> str:
     """Format context data for LLM prompt"""
     context_text = "## Relevant Context\n\n"
