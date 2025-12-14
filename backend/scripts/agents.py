@@ -886,13 +886,25 @@ async def oncall_agent(oncall_input: OnCallInput) -> OnCallResponse:
     pr_results.results.sort(key=lambda pr: pr.timestamp, reverse=True)
     
     for pr in pr_results.results[:10]:
+        # Extract files from PR - use files_changed if available, otherwise extract from title/content
+        pr_files = pr.files_changed[:10] if pr.files_changed else []
+        
+        # If no files in metadata, try to extract file paths from title or matched content
+        if not pr_files:
+            import re
+            # Look for common file patterns in title and matched content
+            text_to_search = f"{pr.title} {pr.matched_content}"
+            # Pattern: path/to/file.ext or just filename.ext
+            file_patterns = re.findall(r'[\w/\-\.]+\.(?:py|js|jsx|ts|tsx|java|go|rb|yml|yaml|json|xml|sql|sh)', text_to_search)
+            pr_files = list(set(file_patterns))[:5]  # Unique files, max 5
+        
         related_prs.append(RelatedPR(
             pr_number=pr.pr_number,
             title=pr.title,
             author=pr.author,
             match_type="alert_related",
             match_score=pr.match_score,
-            overlapping_files=pr.files_changed[:10],
+            overlapping_files=pr_files,
             relevant_comments=[]
         ))
     
