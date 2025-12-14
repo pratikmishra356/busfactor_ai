@@ -20,7 +20,7 @@ export default function AuthCallback() {
 
     const run = async () => {
       if (!sessionId) {
-        navigate('/agents', { replace: true });
+        navigate('/', { replace: true });
         return;
       }
 
@@ -36,7 +36,7 @@ export default function AuthCallback() {
         setUser(u);
       }
 
-      navigate('/agents', { replace: true });
+      navigate('/', { replace: true });
     };
 
     run();

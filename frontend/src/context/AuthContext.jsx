@@ -12,8 +12,8 @@ export function AuthProvider({ children }) {
   const [team, setTeam] = useState(null);
   const [checking, setChecking] = useState(true);
 
-  const login = () => {
-    const redirectUrl = `${window.location.origin}/agents`;
+  const login = (redirectPath = '/') => {
+    const redirectUrl = `${window.location.origin}${redirectPath}`;
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
