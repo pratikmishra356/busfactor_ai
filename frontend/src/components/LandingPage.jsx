@@ -7,13 +7,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 
 const TOOL_BADGES = [
-  { name: 'Slack', icon: Workflow },
-  { name: 'Jira', icon: ShieldCheck },
-  { name: 'Linear', icon: Layers },
-  { name: 'GitHub', icon: GitBranch },
-  { name: 'Bitbucket', icon: GitBranch },
-  { name: 'Zoom', icon: Sparkles },
-  { name: 'Google Meet', icon: Sparkles },
+  { id: 'slack', name: 'Slack', icon: Workflow },
+  { id: 'jira', name: 'Jira', icon: ShieldCheck },
+  { id: 'linear', name: 'Linear', icon: Layers },
+  { id: 'github', name: 'GitHub', icon: GitBranch },
+  { id: 'bitbucket', name: 'Bitbucket', icon: GitBranch },
+  { id: 'zoom', name: 'Zoom', icon: Sparkles },
+  { id: 'meet', name: 'Google Meet', icon: Sparkles },
 ];
 
 const AGENT_CARDS = [
