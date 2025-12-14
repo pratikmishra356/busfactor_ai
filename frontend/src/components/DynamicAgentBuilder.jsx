@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Bot, Plus, Sparkles, MessageSquare, AlertCircle, CheckCircle, Loader2, Trash2, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { createDynamicAgent, listDynamicAgents, executeDynamicAgent } from '../services/api';
+import { useAuth } from '@/context/AuthContext';
+import { getMetricsKey, incrementAgentTask, setDynamicAgentsCount } from '@/services/metrics';
+
 
 export default function DynamicAgentBuilder() {
   const [agents, setAgents] = useState([]);
