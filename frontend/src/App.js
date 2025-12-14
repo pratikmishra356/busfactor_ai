@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import MainLayout from './components/MainLayout';
 import DynamicAgentBuilder from './components/DynamicAgentBuilder';
+import LandingPage from './components/LandingPage';
 import './App.css';
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
         <Navigation />
         <div className="flex-1 overflow-hidden">
           <Routes>
-            <Route path="/" element={<MainLayout />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/agents" element={<MainLayout />} />
             <Route path="/agent-builder" element={<DynamicAgentBuilder />} />
           </Routes>
         </div>
