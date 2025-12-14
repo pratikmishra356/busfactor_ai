@@ -125,7 +125,19 @@ export default function LandingPage() {
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                <Button
+                  className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                  onClick={(e) => {
+                    if (!isAuthenticated) {
+                      e.preventDefault();
+                      toast({
+                        title: 'Login required',
+                        description: 'Please login first to create your team.',
+                      });
+                      login();
+                    }
+                  }}
+                >
                   Create Team
                 </Button>
               </DialogTrigger>
