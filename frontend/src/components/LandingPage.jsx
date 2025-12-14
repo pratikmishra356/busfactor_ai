@@ -242,47 +242,6 @@ export default function LandingPage() {
                         );
                       })}
 
-      {/* Team Metrics */}
-      {isAuthenticated && team?.team_name && metrics && (
-        <Section className="py-10">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="font-heading font-semibold text-base md:text-lg text-slate-900">Team metrics</h2>
-              <p className="mt-1 text-sm text-slate-600">A quick view of what your agents have been doing.</p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard label="Tasks completed" value={metrics.totalTasks || 0} />
-            <StatCard
-              label="Agents available"
-              value={4 + (metrics.dynamicAgentsCount || 0)}
-            />
-            <StatCard label="Dynamic agents" value={metrics.dynamicAgentsCount || 0} />
-          </div>
-
-          <div className="mt-6 bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
-            <div className="text-sm font-semibold text-slate-900">Tasks by agent</div>
-            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {Object.entries(metrics.byAgent || {}).length === 0 ? (
-                <div className="text-sm text-slate-500">No tasks yet.</div>
-              ) : (
-                Object.entries(metrics.byAgent || {})
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([agentName, count]) => (
-                    <div
-                      key={agentName}
-                      className="rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2"
-                    >
-                      <div className="text-xs text-slate-500 truncate">{agentName}</div>
-                      <div className="text-lg font-bold text-slate-900">{count}</div>
-                    </div>
-                  ))
-              )}
-            </div>
-          </div>
-        </Section>
-      )}
 
                     </div>
                   </div>
