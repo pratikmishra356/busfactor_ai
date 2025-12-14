@@ -67,4 +67,9 @@ export const runOnCallAgent = async (oncallInput) => {
   return response.data;
 };
 
+export const runDocumentAgent = async (documentInput) => {
+  const response = await api.post('/api/agent/document', documentInput);
+  return response.data;
+};
+
 export default api;

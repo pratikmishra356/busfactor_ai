@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import CodeHealthForm from './agents/CodeHealthForm';
 import EmployeeForm from './agents/EmployeeForm';
 import OnCallForm from './agents/OnCallForm';
+import DocumentForm from './agents/DocumentForm';
 
 export default function ChatPanel({ agent, messages, addMessage, addCompletedTask, clearChat, activeTaskId }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -89,7 +90,7 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
               {agent.id === 'codehealth' && 'Analyze PRs and generate review checklists based on your codebase history.'}
               {agent.id === 'employee' && 'Get role-based assistance for engineers and managers.'}
               {agent.id === 'oncall' && 'Analyze incidents, find root causes, and identify suspect files from recent changes.'}
-              {agent.id === 'document' && 'Documentation intelligence coming soon.'}
+              {agent.id === 'document' && 'Generate clean, professional documentation from your organizational knowledge.'}
             </p>
           </div>
         ) : (
@@ -149,9 +150,11 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
           />
         )}
         {agent.id === 'document' && (
-          <div className="flex items-center justify-center py-4 text-slate-400 text-sm">
-            This agent is coming soon
-          </div>
+          <DocumentForm
+            onResponse={handleAgentResponse}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+          />
         )}
       </div>
     </div>
