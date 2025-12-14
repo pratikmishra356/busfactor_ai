@@ -275,6 +275,43 @@ async def run_employee_agent(employee_input: EmployeeInput):
     return await employee_agent(employee_input)
 
 
+@api_router.post("/agent/oncall", response_model=OnCallResponse)
+async def run_oncall_agent(oncall_input: OnCallInput):
+    """
+    OnCall Agent - Incident response assistance.
+    
+    **Input**:
+    - alert_text: The alert/incident text (e.g., error messages, stack traces, alert details)
+    - incident_id: Optional incident ID for tracking
+    
+    **Process**:
+    1. Searches for related entities and summaries based on alert
+    2. Finds related PRs that might have caused the issue
+    3. Identifies suspect files from recent changes
+    4. Generates root cause analysis using LLM
+    5. Provides recommended actions and severity assessment
+    
+    **Output**:
+    - alert_summary: Quick summary of findings
+    - related_entities: Entities related to the alert
+    - related_prs: Recent PRs that might be related
+    - suspect_files: Files suspected to have caused the issue (with confidence levels)
+    - root_cause_analysis: Detailed LLM-generated analysis
+    - recommended_actions: Specific steps to take
+    - severity: critical/high/medium/low
+    - similar_incidents: Similar past incidents found
+    
+    **Example Request**:
+    ```json
+    {
+        "alert_text": "PaymentService.process_payment failed with NullPointerException at line 245. Error rate: 15%. Users affected: 1,200",
+        "incident_id": "INC-2024-001"
+    }
+    ```
+    """
+    return await oncall_agent(oncall_input)
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
