@@ -24,9 +24,21 @@ export default function Navigation() {
       {/* Center/Right */}
       {isHome ? (
         <div className="flex items-center gap-3">
+          {team?.team_name && (
+            <Link
+              to="/agents"
+              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-white shadow-sm text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              title="Open Agents"
+            >
+              <span className="text-slate-500 mr-1">Team:</span>
+              <span className="font-semibold text-slate-900">{team.team_name}</span>
+            </Link>
+          )}
+
           {isAuthenticated && user?.name && (
             <span className="hidden sm:inline text-sm text-slate-500">{user.name}</span>
           )}
+
           <Button
             variant="outline"
             className="h-9 rounded-xl"
