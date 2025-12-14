@@ -46,7 +46,11 @@ export function AuthProvider({ children }) {
 
   const refreshTeam = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/team/me`, { credentials: 'include' });
+      const token = window.localStorage.getItem('session_token');
+      const res = await fetch(`${API_BASE}/api/team/me`, {
+        credentials: 'include',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       if (!res.ok) {
         setTeam(null);
         return;
