@@ -106,11 +106,11 @@
 ## frontend:
   - task: "Landing page (/) for busfactor AI"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/src/components/LandingPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -118,6 +118,9 @@
       - working: true
         agent: "testing"
         comment: "✅ PASSED: Landing page loads without console errors, hero section with 'busfactor AI' title is visible and centered, both CTA buttons ('Open Agents' and 'Build an Agent') are visible and functional. Page renders correctly with proper styling and layout."
+      - working: "NA"
+        agent: "main"
+        comment: "Updated landing improvements: hide nav tabs on Home, simplify hero copy (MCP line under title), replace CTAs with Create Team dialog (team name + multi-select tools required). On submit, save to localStorage and route to /agents."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
     working: true
