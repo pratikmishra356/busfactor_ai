@@ -206,8 +206,8 @@
 
   .busfactor-obstacle {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 8px;
+    transform: none;
     display: inline-flex;
     align-items: center;
     gap: 6px;
