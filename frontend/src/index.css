@@ -128,7 +128,7 @@
 
   /* Landing bus factor animation (plays once; reduced motion safe) */
   .busfactor-road {
-    @apply relative w-full max-w-3xl rounded-full border border-slate-200 bg-white/70 shadow-sm;
+    @apply relative w-full max-w-2xl rounded-full border border-slate-200 bg-white/80 shadow-sm;
     height: 44px;
   }
 
@@ -154,30 +154,31 @@
   }
 
   .busfactor-anim {
-    @apply absolute inset-0;
+    position: absolute;
+    inset: 0;
     pointer-events: none;
   }
 
   .busfactor-bus {
     position: absolute;
     left: 12px;
-    top: 6px;
+    top: -18px;
     transform: none;
-    animation: busfactor-bus-move 8s ease-in-out forwards;
+    animation: busfactor-bus-move 6.8s linear forwards;
   }
 
   .busfactor-road .busfactor-anim {
-    z-index: 2;
+    z-index: 3;
   }
 
   .busfactor-road .road-label {
-    z-index: 1;
+    z-index: 2;
   }
 
   .busfactor-stop {
     position: absolute;
     right: 14px;
-    top: 5px;
+    top: -22px;
     transform: none;
     width: 16px;
     height: 34px;
@@ -192,7 +193,7 @@
   .busfactor-stop-text {
     position: absolute;
     right: -30px;
-    top: 21px;
+    top: -5px;
     transform: rotate(90deg);
     transform-origin: center;
     font-size: 10px;
@@ -206,7 +207,7 @@
 
   .busfactor-obstacle {
     position: absolute;
-    top: 8px;
+    top: -10px;
     transform: none;
     display: inline-flex;
     align-items: center;
