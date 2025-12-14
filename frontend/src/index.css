@@ -177,8 +177,8 @@
   .busfactor-stop {
     position: absolute;
     right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 5px;
+    transform: none;
     width: 16px;
     height: 34px;
     border-radius: 10px;
