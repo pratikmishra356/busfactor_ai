@@ -48,6 +48,18 @@ from agents import (
     DocumentResponse
 )
 
+# Import Dynamic Agents
+from dynamic_agents import (
+    create_agent,
+    get_agent_by_name,
+    list_all_agents,
+    execute_dynamic_agent,
+    DynamicAgentCreate,
+    DynamicAgent,
+    DynamicAgentExecuteInput,
+    DynamicAgentResponse
+)
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -354,6 +366,122 @@ async def run_document_agent(document_input: DocumentInput):
     **Note**: The output is a clean, publication-ready document without meta-commentary or source references.
     """
     return await document_agent(document_input)
+
+
+# ============== Dynamic Agent Endpoints ==============
+
+@api_router.post("/agents/create", response_model=DynamicAgent)
+async def create_dynamic_agent(agent_input: DynamicAgentCreate):
+    """
+    Create Dynamic Agent - Build custom agents on the fly.
+    
+    **Input**:
+    - name: Unique agent name (e.g., "payment-specialist", "onboarding-helper")
+    - role: Agent's role/purpose (e.g., "Payment Systems Expert", "Onboarding Specialist")
+    - prompt: System prompt/instructions for the agent
+    
+    **Storage**: Agent is stored in SQLite database (unique by name)
+    
+    **Example Request**:
+    ```json
+    {
+        "name": "payment-specialist",
+        "role": "Payment Systems Expert",
+        "prompt": "You are an expert in payment systems. Help users understand payment issues, suggest solutions, and reference relevant PRs from the context."
+    }
+    ```
+    
+    **Returns**: Created agent with metadata
+    
+    **Error**: Returns 400 if agent with same name already exists
+    """
+    try:
+        return create_agent(agent_input)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@api_router.get("/agents/list", response_model=List[DynamicAgent])
+async def list_dynamic_agents():
+    """
+    List All Dynamic Agents - Get all created agents.
+    
+    **Returns**: List of all agents with their:
+    - name: Agent identifier
+    - role: Agent's role/purpose
+    - prompt: Agent's system instructions
+    - created_at: Timestamp of creation
+    
+    **Example Response**:
+    ```json
+    [
+        {
+            "name": "payment-specialist",
+            "role": "Payment Systems Expert",
+            "prompt": "You are an expert in payment systems...",
+            "created_at": "2024-01-15T10:30:00Z"
+        }
+    ]
+    ```
+    """
+    return list_all_agents()
+
+
+@api_router.post("/agents/execute", response_model=DynamicAgentResponse)
+async def execute_agent(execute_input: DynamicAgentExecuteInput):
+    """
+    Execute Dynamic Agent - Run an agent with a user query.
+    
+    **Input**:
+    - agent_name: Name of the agent to execute
+    - query: User's query/task for the agent
+    
+    **Process**:
+    1. Fetches agent definition from database
+    2. Uses MCP to fetch relevant context:
+       - Weekly summaries for high-level context
+       - Entity metadata for detailed information
+       - PR data for code/technical agents
+    3. Calls LLM with:
+       - Agent's role and prompt
+       - Fetched organizational context
+       - User's query
+    4. Returns AI-generated response
+    
+    **Output**:
+    - agent_name: Name of the agent executed
+    - agent_role: Role of the agent
+    - query: User's original query
+    - context_fetched: Number of context items retrieved from MCP
+    - response: AI-generated response based on context
+    - execution_time: Time taken to execute (in seconds)
+    
+    **Example Request**:
+    ```json
+    {
+        "agent_name": "payment-specialist",
+        "query": "How do we handle payment retries in our system?"
+    }
+    ```
+    
+    **Example Response**:
+    ```json
+    {
+        "agent_name": "payment-specialist",
+        "agent_role": "Payment Systems Expert",
+        "query": "How do we handle payment retries in our system?",
+        "context_fetched": 12,
+        "response": "Based on the context, our payment retry system uses exponential backoff...",
+        "execution_time": 2.34
+    }
+    ```
+    
+    **Error**: Returns 404 if agent not found
+    """
+    try:
+        return await execute_dynamic_agent(execute_input)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 # Include the router in the main app
