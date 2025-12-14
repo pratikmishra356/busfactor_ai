@@ -192,8 +192,8 @@
   .busfactor-stop-text {
     position: absolute;
     right: -30px;
-    top: 50%;
-    transform: translateY(-50%) rotate(90deg);
+    top: 21px;
+    transform: rotate(90deg);
     transform-origin: center;
     font-size: 10px;
     font-weight: 800;
