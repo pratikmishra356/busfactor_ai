@@ -229,6 +229,37 @@ class AgentAPITester:
         
         return success
 
+    def run_smoke_tests(self):
+        """Run quick smoke tests for agents-related endpoints (no auth)"""
+        print("=" * 80)
+        print("🚀 Backend Smoke Test - Agents Endpoints (No Auth)")
+        print("=" * 80)
+        print(f"Base URL: {self.base_url}")
+        print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        # Test 1: GET /api/status should return 200
+        print("\n📡 Testing GET /api/status...")
+        start_time = datetime.now()
+        status_success = self.test_status_endpoint()
+        status_latency = (datetime.now() - start_time).total_seconds()
+        print(f"   Latency: {status_latency:.3f}s")
+        
+        # Test 2: POST /api/agent/codehealth with minimal valid PR payload should return 200
+        print("\n🔧 Testing POST /api/agent/codehealth...")
+        start_time = datetime.now()
+        codehealth_success = self.test_codehealth_agent()
+        codehealth_latency = (datetime.now() - start_time).total_seconds()
+        print(f"   Latency: {codehealth_latency:.3f}s")
+        
+        # Test 3: POST /api/agent/employee with role=engineer and short task should return 200
+        print("\n👨‍💻 Testing POST /api/agent/employee (engineer)...")
+        start_time = datetime.now()
+        employee_success = self.test_employee_agent_engineer()
+        employee_latency = (datetime.now() - start_time).total_seconds()
+        print(f"   Latency: {employee_latency:.3f}s")
+        
+        return self.generate_summary()
+
     def run_all_tests(self):
         """Run comprehensive backend API tests"""
         print("=" * 80)
@@ -244,6 +275,10 @@ class AgentAPITester:
         if not basic_success:
             print("\n❌ Basic connectivity failed. Stopping tests.")
             return self.generate_summary()
+        
+        # Test Status endpoint
+        print("\n📊 Testing Status Endpoint...")
+        self.test_status_endpoint()
         
         # Test Agent APIs
         print("\n🔧 Testing CodeHealth Agent API...")
