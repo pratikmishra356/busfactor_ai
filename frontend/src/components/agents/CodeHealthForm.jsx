@@ -92,7 +92,7 @@ export default function CodeHealthForm({ onResponse, isLoading, setIsLoading }) 
           placeholder="PR Title (e.g., feat: add payment retry mechanism)"
           disabled={isLoading}
           data-testid="pr-title-input"
-          className="flex-1 h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-sm"
+          className="w-[70%] h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-sm"
         />
         <button
           type="submit"
