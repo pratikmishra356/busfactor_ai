@@ -50,7 +50,7 @@ export default function AuthCallback() {
     };
 
     run();
-  }, [location.hash, navigate, setUser]);
+  }, [location.hash, location.search, navigate, setUser]);
 
   return null;
 }
