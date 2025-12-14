@@ -116,6 +116,100 @@ class StatusCheckCreate(BaseModel):
     client_name: str
 
 # Add your routes to the router instead of directly to app
+
+# ============== Auth Endpoints (Emergent Google OAuth) ==============
+
+@api_router.post("/auth/session", response_model=UserOut)
+async def auth_session_exchange(input: SessionExchangeInput, response: Response):
+    data = await exchange_session(input.session_id)
+
+    email = data.get("email")
+    name = data.get("name") or ""
+    picture = data.get("picture")
+    session_token = data.get("session_token")
+
+    if not email or not session_token:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    user_doc = await upsert_user(db, email=email, name=name, picture=picture)
+    await create_session(db, user_id=user_doc["user_id"], session_token=session_token)
+
+    set_session_cookie(response, session_token)
+    return UserOut(**user_doc)
+
+
+@api_router.get("/auth/me", response_model=UserOut)
+async def auth_me(request: Request):
+    token = get_session_token_from_request(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    user_doc = await get_user_from_session(db, token)
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    return UserOut(**user_doc)
+
+
+@api_router.post("/auth/logout")
+async def auth_logout(request: Request, response: Response):
+    token = get_session_token_from_request(request)
+    if token:
+        await db.user_sessions.delete_one({"session_token": token})
+
+    clear_session_cookie(response)
+    return {"ok": True}
+
+
+# ============== Team Endpoints ==============
+
+async def require_user(request: Request):
+    token = get_session_token_from_request(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    user_doc = await get_user_from_session(db, token)
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    return user_doc
+
+
+@api_router.post("/team/create", response_model=TeamOut)
+async def create_team(input: TeamCreateInput, request: Request):
+    user_doc = await require_user(request)
+
+    now = datetime.now(timezone.utc).isoformat()
+    team_doc = await db.teams.find_one({"user_id": user_doc["user_id"]}, {"_id": 0})
+
+    if team_doc:
+        await db.teams.update_one(
+            {"user_id": user_doc["user_id"]},
+            {"$set": {"team_name": input.team_name, "tools": input.tools, "updated_at": now}},
+        )
+        team_doc["team_name"] = input.team_name
+        team_doc["tools"] = input.tools
+        team_doc["updated_at"] = now
+        return TeamOut(**team_doc)
+
+    new_team = {
+        "team_id": f"team_{uuid.uuid4().hex[:12]}",
+        "user_id": user_doc["user_id"],
+        "team_name": input.team_name,
+        "tools": input.tools,
+        "created_at": now,
+        "updated_at": now,
+    }
+    await db.teams.insert_one(new_team)
+    return TeamOut(**new_team)
+
+
+@api_router.get("/team/me", response_model=Optional[TeamOut])
+async def get_my_team(request: Request):
+    user_doc = await require_user(request)
+    team_doc = await db.teams.find_one({"user_id": user_doc["user_id"]}, {"_id": 0})
+    return TeamOut(**team_doc) if team_doc else None
+
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
