@@ -144,7 +144,7 @@ export default function LandingPage() {
 
               <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
-                  <DialogTitle>Create your team</DialogTitle>
+                  <DialogTitle>Create your team{user?.name ? ` — ${user.name}` : ''}</DialogTitle>
                   <DialogDescription>
                     Pick the tools you want to integrate. You can change these later.
                   </DialogDescription>
