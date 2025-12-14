@@ -82,10 +82,14 @@ export default function LandingPage() {
     };
 
     const apiBase = process.env.REACT_APP_BACKEND_URL || '';
+    const token = window.localStorage.getItem('session_token');
     const res = await fetch(`${apiBase}/api/team/create`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(payload),
     });
 
