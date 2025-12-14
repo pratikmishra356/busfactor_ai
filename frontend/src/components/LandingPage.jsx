@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { listDynamicAgents } from '@/services/api';
-import { getMetricsKey, readMetrics, setDynamicAgentsCount } from '@/services/metrics';
+import { getLastMetricsKey, readMetrics, setDynamicAgentsCount } from '@/services/metrics';
 
 function StatCard({ label, value }) {
   return (
