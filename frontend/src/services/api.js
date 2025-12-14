@@ -72,4 +72,23 @@ export const runDocumentAgent = async (documentInput) => {
   return response.data;
 };
 
+// Dynamic Agent APIs
+export const createDynamicAgent = async (agentData) => {
+  const response = await api.post('/api/agents/create', agentData);
+  return response.data;
+};
+
+export const listDynamicAgents = async () => {
+  const response = await api.get('/api/agents/list');
+  return response.data;
+};
+
+export const executeDynamicAgent = async (agentName, query) => {
+  const response = await api.post('/api/agents/execute', {
+    agent_name: agentName,
+    query: query,
+  });
+  return response.data;
+};
+
 export default api;

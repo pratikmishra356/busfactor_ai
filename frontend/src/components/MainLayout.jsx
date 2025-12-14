@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Code2, Users, Bell, FileText } from 'lucide-react';
-import Header from './Header';
 import AgentTabs from './AgentTabs';
 import ChatPanel from './ChatPanel';
 import CompletedTasks from './CompletedTasks';
@@ -32,21 +31,17 @@ export default function MainLayout() {
 
   const handleAgentChange = (agentId) => {
     setActiveAgent(agentId);
-    // Clear chat when switching agents
     setChatMessages([]);
     setActiveTaskId(null);
   };
 
   const handleTaskClick = (task) => {
-    // If clicking the same task, do nothing
     if (activeTaskId === task.id) return;
     
-    // Switch to the task's agent if different
     if (activeAgent !== task.agent) {
       setActiveAgent(task.agent);
     }
     
-    // Load the task's conversation
     setActiveTaskId(task.id);
     setChatMessages(task.messages || []);
   };
@@ -54,10 +49,7 @@ export default function MainLayout() {
   const currentAgent = AGENTS.find(a => a.id === activeAgent);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-white flex flex-col">
-      {/* Header */}
-      <Header />
-
+    <div className="h-full w-full overflow-hidden bg-white flex flex-col">
       {/* Agent Tabs */}
       <AgentTabs 
         agents={AGENTS} 
