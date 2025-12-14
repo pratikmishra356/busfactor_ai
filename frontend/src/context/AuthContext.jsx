@@ -85,7 +85,7 @@ export function AuthProvider({ children }) {
       return;
     }
     refreshTeam();
-  }, [user?.user_id]);
+  }, [user]);
 
   const value = useMemo(
     () => ({
