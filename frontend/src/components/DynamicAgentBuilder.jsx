@@ -85,6 +85,11 @@ export default function DynamicAgentBuilder() {
         executionTime: response.execution_time
       };
       setChatMessages(prev => [...prev, agentMessage]);
+
+      // Metrics: count dynamic agent tasks
+      if (user && team?.team_id) {
+        incrementAgentTask(getMetricsKey({ userId: user.user_id, teamId: team.team_id }), selectedAgent.name);
+      }
     } catch (err) {
       const errorMessage = {
         type: 'error',
