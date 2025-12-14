@@ -15,10 +15,23 @@ const AGENTS = [
 ];
 
 export default function MainLayout() {
+  const { user, team } = useAuth();
+  const metricsKey = user && team?.team_id ? getMetricsKey({ userId: user.user_id, teamId: team.team_id }) : null;
+
   const [activeAgent, setActiveAgent] = useState('codehealth');
   const [completedTasks, setCompletedTasks] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
   const [activeTaskId, setActiveTaskId] = useState(null);
+
+  // Persist chat + tasks across navigation (per user/team)
+  React.useEffect(() => {
+    if (!metricsKey) return;
+    const saved = readMetrics(metricsKey);
+    const savedChat = saved.chatByAgent?.[activeAgent] || [];
+    const savedTasks = saved.completedTasks || [];
+    setChatMessages(savedChat);
+    setCompletedTasks(savedTasks);
+  }, [metricsKey]);
 
   const addCompletedTask = (task) => {
     setCompletedTasks(prev => [task, ...prev].slice(0, 10));
