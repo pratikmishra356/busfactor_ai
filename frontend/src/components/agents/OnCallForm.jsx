@@ -38,48 +38,44 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
   };
 
   const formatOnCallResponse = (result) => {
-    let response = `## 🚨 Incident Analysis\n\n`;
-    response += `**Severity:** ${result.severity.toUpperCase()}\n\n`;
+    const severityEmoji = {
+      critical: '🔴',
+      high: '🟠',
+      medium: '🟡',
+      low: '🟢'
+    };
+    
+    let response = `## ${severityEmoji[result.severity] || '🟡'} Incident Analysis - ${result.severity.toUpperCase()} Severity\n\n`;
     response += `${result.alert_summary}\n\n`;
     
-    // Root Cause Analysis
+    // Suspect Files - show first
+    if (result.suspect_files?.length > 0) {
+      response += `### 🎯 Suspect Files\n`;
+      result.suspect_files.slice(0, 5).forEach(file => {
+        const confidenceEmoji = file.confidence === 'high' ? '🔴' : file.confidence === 'medium' ? '🟡' : '🟢';
+        response += `${confidenceEmoji} **\`${file.file_path}\`** [${file.confidence}]\n`;
+        response += `${file.reason}\n`;
+        if (file.related_pr) {
+          response += `*From PR #${file.related_pr}: ${file.pr_title}*\n`;
+        }
+        response += '\n';
+      });
+    }
+    
+    // Root Cause Analysis - cleaned up
     if (result.root_cause_analysis) {
-      response += `### Root Cause Analysis\n`;
+      response += `---\n\n`;
       response += `${result.root_cause_analysis}\n\n`;
     }
     
-    // Suspect Files
-    if (result.suspect_files?.length > 0) {
-      response += `### 🎯 Suspect Files (${result.suspect_files.length})\n`;
-      result.suspect_files.slice(0, 8).forEach(file => {
-        const confidenceEmoji = file.confidence === 'high' ? '🔴' : file.confidence === 'medium' ? '🟡' : '🟢';
-        response += `${confidenceEmoji} **\`${file.file_path}\`** [${file.confidence} confidence]\n`;
-        response += `   ${file.reason}\n`;
-        if (file.related_pr) {
-          response += `   📝 Related PR: #${file.related_pr} - ${file.pr_title}\n`;
-        }
-        response += '\n';
-      });
-    }
-    
-    // Related PRs
+    // Related PRs - only if there are some
     if (result.related_prs?.length > 0) {
-      response += `### 📋 Related PRs (${result.related_prs.length})\n`;
-      result.related_prs.slice(0, 5).forEach(pr => {
-        response += `- **PR #${pr.pr_number}**: ${pr.title}\n`;
-        response += `  Author: ${pr.author}\n`;
+      response += `### 📋 Directly Related PRs\n`;
+      result.related_prs.slice(0, 3).forEach(pr => {
+        response += `- **PR #${pr.pr_number}**: ${pr.title} (by ${pr.author})\n`;
         if (pr.overlapping_files?.length > 0) {
-          response += `  Files: ${pr.overlapping_files.slice(0, 3).join(', ')}\n`;
+          response += `  *Modified: ${pr.overlapping_files.slice(0, 2).join(', ')}*\n`;
         }
-        response += '\n';
-      });
-    }
-    
-    // Recommended Actions
-    if (result.recommended_actions?.length > 0) {
-      response += `### ✅ Recommended Actions\n`;
-      result.recommended_actions.forEach((action, i) => {
-        response += `${i + 1}. ${action}\n`;
       });
       response += '\n';
     }
@@ -87,7 +83,7 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
     // Similar Incidents
     if (result.similar_incidents?.length > 0) {
       response += `### 📚 Similar Past Incidents\n`;
-      result.similar_incidents.forEach(incident => {
+      result.similar_incidents.slice(0, 2).forEach(incident => {
         response += `- ${incident}\n`;
       });
     }
