@@ -896,14 +896,16 @@ async def oncall_agent(oncall_input: OnCallInput) -> OnCallResponse:
             relevant_comments=[]
         ))
     
-    # Filter PRs to only highly relevant ones - be aggressive with filtering
-    # Only keep PRs with match_score > 0.6 (good relevance) and limit to top 3
-    filtered_prs = [pr for pr in related_prs if pr.match_score > 0.6]
+    # Filter PRs to only highly relevant ones - be very aggressive with filtering
+    # Only keep PRs with match_score > 0.55 (good relevance threshold)
+    filtered_prs = [pr for pr in related_prs if pr.match_score > 0.55]
     filtered_prs = sorted(filtered_prs, key=lambda pr: pr.match_score, reverse=True)[:3]
     
-    # If we have less than 3 high-quality PRs, relax threshold slightly
-    if len(filtered_prs) < 3:
-        filtered_prs = sorted(related_prs, key=lambda pr: pr.match_score, reverse=True)[:3]
+    # If no PRs meet threshold, take just the top 1 if it's above 0.4
+    if not filtered_prs and related_prs:
+        top_pr = max(related_prs, key=lambda pr: pr.match_score)
+        if top_pr.match_score > 0.4:
+            filtered_prs = [top_pr]
     
     # Step 3: Identify suspect files from the most relevant PRs
     file_frequency: Dict[str, List[str]] = {}  # file_path -> [pr_numbers]
