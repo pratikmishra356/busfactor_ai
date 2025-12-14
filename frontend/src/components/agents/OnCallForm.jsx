@@ -10,7 +10,6 @@ const ALERT_EXAMPLES = [
 
 export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
   const [alertText, setAlertText] = useState('');
-  const [incidentId, setIncidentId] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +19,7 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
     
     try {
       const result = await runOnCallAgent({
-        alert_text: alertText,
-        incident_id: incidentId || undefined
+        alert_text: alertText
       });
       
       const formattedResponse = formatOnCallResponse(result);
@@ -29,7 +27,6 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
       
       // Reset form
       setAlertText('');
-      setIncidentId('');
     } catch (error) {
       onResponse(alertText, `Error: ${error.message || 'Failed to analyze alert'}`, 'oncall');
     } finally {
@@ -95,15 +92,6 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
     <form onSubmit={handleSubmit} className="space-y-3 overflow-visible" data-testid="oncall-form">
       {/* Main Input Row */}
       <div className="flex gap-2 overflow-visible">
-        <input
-          type="text"
-          value={incidentId}
-          onChange={(e) => setIncidentId(e.target.value)}
-          placeholder="Incident ID (optional)"
-          disabled={isLoading}
-          className="w-32 h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none transition-all text-sm"
-        />
-        
         <textarea
           value={alertText}
           onChange={(e) => setAlertText(e.target.value)}
