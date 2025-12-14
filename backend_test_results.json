@@ -1,0 +1,99 @@
+{
+  "summary": {
+    "total_tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "success_rate": 100.0,
+    "timestamp": "2025-12-14T07:33:42.904879"
+  },
+  "failed_tests": [],
+  "all_results": {
+    "Status Endpoint": {
+      "success": true,
+      "details": {
+        "status_code": 200,
+        "url": "https://dynamic-agent-maker.preview.emergentagent.com/api/status",
+        "params": null,
+        "response_size": 2,
+        "has_json": true,
+        "response_keys": []
+      },
+      "timestamp": "2025-12-14T07:33:23.981216"
+    },
+    "CodeHealth Agent": {
+      "success": true,
+      "details": {
+        "status_code": 200,
+        "url": "https://dynamic-agent-maker.preview.emergentagent.com/api/agent/codehealth",
+        "request_data": {
+          "pr_number": 123,
+          "title": "feat: add payment retry mechanism",
+          "description": "Implements automatic retry for failed payment transactions",
+          "author": "test-developer",
+          "author_github": "testdev",
+          "files_changed": [
+            "src/services/payment.py",
+            "src/queues/retry.py"
+          ],
+          "labels": [
+            "feature",
+            "payment"
+          ],
+          "lines_added": 150,
+          "lines_removed": 20,
+          "jira_ref": "ENG-500",
+          "comments": []
+        },
+        "response_size": 3537,
+        "has_json": true,
+        "response_keys": [
+          "pr_number",
+          "pr_title",
+          "related_prs",
+          "file_overlap_prs",
+          "checklist",
+          "summary",
+          "risk_level",
+          "total_related_comments"
+        ],
+        "has_checklist": true,
+        "has_related_prs": true,
+        "checklist_count": 11,
+        "related_prs_count": 5,
+        "risk_level": "medium"
+      },
+      "timestamp": "2025-12-14T07:33:35.010222"
+    },
+    "Employee Agent - Engineer": {
+      "success": true,
+      "details": {
+        "status_code": 200,
+        "url": "https://dynamic-agent-maker.preview.emergentagent.com/api/agent/employee",
+        "request_data": {
+          "role": "engineer",
+          "task": "implement payment retry for ENG-500"
+        },
+        "response_size": 3684,
+        "has_json": true,
+        "response_keys": [
+          "role",
+          "task",
+          "task_type",
+          "related_entities",
+          "context_summary",
+          "pr_draft",
+          "pr_review",
+          "slack_message",
+          "status_update",
+          "general_response"
+        ],
+        "role": "engineer",
+        "task_type": "create_pr",
+        "has_pr_draft": true,
+        "has_slack_message": false,
+        "has_general_response": false
+      },
+      "timestamp": "2025-12-14T07:33:42.903988"
+    }
+  }
+}
