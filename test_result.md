@@ -127,6 +127,9 @@
       - working: true
         agent: "testing"
         comment: "✅ REGRESSION TEST PASSED: Create Team dialog after nested button fix - Dialog opens correctly, Continue button properly disabled initially, Slack tool selection toggles checkbox correctly, form validation works (Continue enabled only with team name + tool selection), checkbox toggle functionality works, navigation to /agents successful, and NO nested button console warnings found. The nested button issue has been successfully resolved."
+      - working: "NA"
+        agent: "main"
+        comment: "Removed bus animation theme per user request. Updated MCP pill to be ~30% viewport width (responsive) with increased font size and clearer styling. Screenshot sanity check passed."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
     working: true
