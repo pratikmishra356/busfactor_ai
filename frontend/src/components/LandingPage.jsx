@@ -94,9 +94,46 @@ export default function LandingPage() {
               busfactor AI
             </h1>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white/70 text-xs text-slate-700 shadow-sm">
-              <Cpu className="w-4 h-4 text-blue-600" />
-              MCP Layer for indexed engineering context
+            <div className="busfactor-road" aria-label="MCP Layer for indexed engineering context">
+              <div className="road-label">
+                <Cpu className="w-4 h-4 text-blue-600" />
+                <span>MCP Layer for indexed engineering context</span>
+              </div>
+
+              <div className="busfactor-anim" aria-hidden="true">
+                <div className="busfactor-obstacle" data-kind="clickup">
+                  <span className="font-semibold">ClickUp</span>
+                </div>
+                <div className="busfactor-obstacle" data-kind="glean">
+                  <span className="font-semibold">Glean</span>
+                </div>
+                <div className="busfactor-obstacle" data-kind="engineer">
+                  <User className="w-4 h-4" />
+                  <span className="font-semibold">Engineer</span>
+                </div>
+
+                <div className="busfactor-stop" />
+                <div className="busfactor-stop-text">BUSFACTOR AI</div>
+
+                <svg
+                  className="busfactor-bus"
+                  width="64"
+                  height="28"
+                  viewBox="0 0 64 28"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect x="6" y="6" width="50" height="16" rx="4" fill="#2563EB" />
+                  <rect x="10" y="9" width="12" height="6" rx="1.5" fill="#DBEAFE" />
+                  <rect x="24" y="9" width="12" height="6" rx="1.5" fill="#DBEAFE" />
+                  <rect x="38" y="9" width="12" height="6" rx="1.5" fill="#DBEAFE" />
+                  <rect x="50" y="10" width="7" height="10" rx="2" fill="#1D4ED8" />
+                  <circle cx="18" cy="24" r="3" fill="#0F172A" />
+                  <circle cx="44" cy="24" r="3" fill="#0F172A" />
+                  <circle cx="18" cy="24" r="1.5" fill="#94A3B8" />
+                  <circle cx="44" cy="24" r="1.5" fill="#94A3B8" />
+                </svg>
+              </div>
             </div>
 
             <p className="max-w-3xl text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed">
