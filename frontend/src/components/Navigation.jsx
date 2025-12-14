@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bot, Home, Zap } from 'lucide-react';
+import { Bot, Home, LogOut, Zap } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
 
 export default function Navigation() {
   const location = useLocation();
