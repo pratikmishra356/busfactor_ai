@@ -3,6 +3,7 @@ import { Send, Loader2, Trash2, Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import CodeHealthForm from './agents/CodeHealthForm';
 import EmployeeForm from './agents/EmployeeForm';
+import OnCallForm from './agents/OnCallForm';
 
 export default function ChatPanel({ agent, messages, addMessage, addCompletedTask, clearChat, activeTaskId }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +88,7 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
             <p className="text-sm text-slate-500 max-w-md">
               {agent.id === 'codehealth' && 'Analyze PRs and generate review checklists based on your codebase history.'}
               {agent.id === 'employee' && 'Get role-based assistance for engineers and managers.'}
-              {agent.id === 'oncall' && 'Incident response assistance coming soon.'}
+              {agent.id === 'oncall' && 'Analyze incidents, find root causes, and identify suspect files from recent changes.'}
               {agent.id === 'document' && 'Documentation intelligence coming soon.'}
             </p>
           </div>
@@ -140,7 +141,14 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
             setIsLoading={setIsLoading}
           />
         )}
-        {(agent.id === 'oncall' || agent.id === 'document') && (
+        {agent.id === 'oncall' && (
+          <OnCallForm
+            onResponse={handleAgentResponse}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+          />
+        )}
+        {agent.id === 'document' && (
           <div className="flex items-center justify-center py-4 text-slate-400 text-sm">
             This agent is coming soon
           </div>
