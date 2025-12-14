@@ -75,6 +75,20 @@ from auth import (
 
 
 
+
+class TeamCreateInput(BaseModel):
+    team_name: str
+    tools: List[str]
+
+
+class TeamOut(BaseModel):
+    team_id: str
+    user_id: str
+    team_name: str
+    tools: List[str]
+    created_at: str
+    updated_at: str
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
