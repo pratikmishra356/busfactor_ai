@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Plus, Sparkles, MessageSquare, AlertCircle, CheckCircle, Loader2, Trash2 } from 'lucide-react';
+import { Bot, Plus, Sparkles, MessageSquare, AlertCircle, CheckCircle, Loader2, Trash2, User } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { createDynamicAgent, listDynamicAgents, executeDynamicAgent } from '../services/api';
 
 export default function DynamicAgentBuilder() {
@@ -284,7 +285,7 @@ export default function DynamicAgentBuilder() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 bg-slate-50/30">
                 {chatMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <MessageSquare className="w-16 h-16 mb-4" />
@@ -294,29 +295,42 @@ export default function DynamicAgentBuilder() {
                 ) : (
                   chatMessages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-3xl rounded-lg px-4 py-3 ${
-                        msg.type === 'user' 
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                          : msg.type === 'error'
-                          ? 'bg-red-50 text-red-700 border border-red-200'
-                          : 'bg-slate-100 text-slate-900'
-                      }`}>
+                      {msg.type === 'agent' && (
+                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center mr-2 flex-shrink-0">
+                          <Bot className="w-4 h-4 text-slate-600" />
+                        </div>
+                      )}
+                      <div className={msg.type === 'user' ? 'chat-bubble-user' : msg.type === 'error' ? 'bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-sm shadow-sm' : 'chat-bubble-agent'}>
                         {msg.type === 'agent' && (
-                          <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
-                            <Bot className="w-4 h-4" />
-                            <span>Context: {msg.contextFetched} items • {msg.executionTime?.toFixed(1)}s</span>
+                          <div className="flex items-center gap-2 text-xs text-slate-500 mb-2 pb-2 border-b border-slate-200">
+                            <Bot className="w-3.5 h-3.5" />
+                            <span className="font-medium">Context: {msg.contextFetched} items • {msg.executionTime?.toFixed(1)}s</span>
                           </div>
                         )}
-                        <div className="whitespace-pre-wrap">{msg.content}</div>
+                        {msg.type === 'user' || msg.type === 'error' ? (
+                          <div className="whitespace-pre-wrap">{msg.content}</div>
+                        ) : (
+                          <div className="markdown-content">
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+                        )}
                       </div>
+                      {msg.type === 'user' && (
+                        <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center ml-2 flex-shrink-0">
+                          <User className="w-4 h-4 text-white" />
+                        </div>
+                      )}
                     </div>
                   ))
                 )}
                 {executing && (
                   <div className="flex justify-start">
-                    <div className="bg-slate-100 rounded-lg px-4 py-3 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center mr-2 flex-shrink-0">
+                      <Bot className="w-4 h-4 text-slate-600" />
+                    </div>
+                    <div className="bg-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-2 shadow-sm border border-slate-200">
                       <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                      <span className="text-slate-600">Agent is thinking...</span>
+                      <span className="text-slate-600 text-sm">Agent is thinking...</span>
                     </div>
                   </div>
                 )}
