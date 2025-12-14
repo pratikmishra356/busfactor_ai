@@ -304,7 +304,7 @@ export default function DynamicAgentBuilder() {
                   <div className="flex flex-col items-center justify-center h-full text-slate-400">
                     <MessageSquare className="w-16 h-16 mb-4" />
                     <p className="text-lg font-medium">Start a conversation</p>
-                    <p className="text-sm">Ask anything about your organization's knowledge base</p>
+                    <p className="text-sm">Ask anything about your organization&apos;s knowledge base</p>
                   </div>
                 ) : (
                   chatMessages.map((msg, idx) => (
