@@ -33,6 +33,10 @@ export default function AuthCallback() {
 
       if (res.ok) {
         const u = await res.json();
+        // On localhost, cookies may not persist; use header token fallback.
+        if (u?.session_token) {
+          window.localStorage.setItem('session_token', u.session_token);
+        }
         setUser(u);
       }
 
