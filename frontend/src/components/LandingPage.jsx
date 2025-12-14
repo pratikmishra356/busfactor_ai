@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -153,7 +153,7 @@ export default function LandingPage() {
                               <Icon className="w-4 h-4 text-slate-500" />
                               <span className="text-sm text-slate-800">{t.name}</span>
                             </div>
-                            <Checkbox checked={checked} onCheckedChange={() => toggleTool(t.id)} />
+                            <Checkbox checked={checked} className="pointer-events-none" />
                           </button>
                         );
                       })}
@@ -195,7 +195,7 @@ export default function LandingPage() {
               const Icon = t.icon;
               return (
                 <div
-                  key={t.name}
+                  key={t.id}
                   className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white shadow-sm text-sm text-slate-700"
                 >
                   <Icon className="w-4 h-4 text-slate-500" />
