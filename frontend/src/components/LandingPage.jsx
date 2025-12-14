@@ -10,6 +10,15 @@ import { useToast } from '@/hooks/use-toast';
 import { listDynamicAgents } from '@/services/api';
 import { getMetricsKey, readMetrics, setDynamicAgentsCount } from '@/services/metrics';
 
+function StatCard({ label, value }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+      <div className="text-xs text-slate-500">{label}</div>
+      <div className="mt-1 text-2xl font-bold text-slate-900">{value}</div>
+    </div>
+  );
+}
+
 
 const TOOL_BADGES = [
   { id: 'slack', name: 'Slack', icon: Workflow },
