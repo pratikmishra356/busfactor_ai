@@ -35,6 +35,7 @@ from agents import (
     codehealth_agent,
     employee_agent,
     oncall_agent,
+    document_agent,
     PRInput,
     CodeHealthResponse,
     RelatedPR,
@@ -42,7 +43,9 @@ from agents import (
     EmployeeInput,
     EmployeeResponse,
     OnCallInput,
-    OnCallResponse
+    OnCallResponse,
+    DocumentInput,
+    DocumentResponse
 )
 
 
@@ -310,6 +313,47 @@ async def run_oncall_agent(oncall_input: OnCallInput):
     ```
     """
     return await oncall_agent(oncall_input)
+
+
+@api_router.post("/agent/document", response_model=DocumentResponse)
+async def run_document_agent(document_input: DocumentInput):
+    """
+    Document Agent - Writes documentation based on organizational context.
+    
+    **Input**:
+    - query: Description of what document to write (e.g., "Write API documentation for payment retry system")
+    
+    **Process**:
+    1. Understands the type of document needed (API doc, guide, runbook, technical doc, overview)
+    2. Fetches related context from docs, PRs, Jira, messages, and meetings
+    3. Generates a clean, professional document using LLM
+    4. Returns polished documentation without reference clutter
+    
+    **Output**:
+    - document_title: Generated title for the document
+    - document_content: Complete markdown-formatted documentation
+    - document_type: Type of document (api_doc, guide, runbook, technical, overview)
+    - word_count: Total words in the document
+    - sections_count: Number of major sections
+    
+    **Document Types Auto-Detected**:
+    - **api_doc**: For API/endpoint/integration documentation
+    - **guide**: For tutorials, how-to guides, setup instructions
+    - **runbook**: For incident response, troubleshooting playbooks
+    - **technical**: For architecture, design, implementation details
+    - **overview**: For general explanations and feature descriptions
+    
+    **Example Requests**:
+    ```json
+    {"query": "Write API documentation for the payment retry system"}
+    {"query": "Create a setup guide for new developers"}
+    {"query": "Write a runbook for handling database connection failures"}
+    {"query": "Document the authentication architecture"}
+    ```
+    
+    **Note**: The output is a clean, publication-ready document without meta-commentary or source references.
+    """
+    return await document_agent(document_input)
 
 
 # Include the router in the main app
