@@ -164,6 +164,15 @@
     top: 50%;
     transform: translateY(-50%);
     animation: busfactor-bus-move 8s ease-in-out forwards;
+
+  .busfactor-road .busfactor-anim {
+    z-index: 2;
+  }
+
+  .busfactor-road .road-label {
+    z-index: 1;
+  }
+
   }
 
   .busfactor-stop {
