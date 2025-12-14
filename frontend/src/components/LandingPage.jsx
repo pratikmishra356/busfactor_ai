@@ -270,7 +270,7 @@ export default function LandingPage() {
                 <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
                   <Workflow className="w-5 h-5 text-blue-600" />
                 </div>
-                <h3 className="font-heading font-semibold text-slate-900">1) Connect</h3>
+                <h3 className="font-heading font-semibold text-slate-900">Connect</h3>
               </div>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                 Ingest engineering signals from chat, ticketing, repos, and meetings—without changing your workflows.
@@ -284,7 +284,7 @@ export default function LandingPage() {
                 <div className="w-10 h-10 rounded-xl bg-violet-50 border border-violet-200 flex items-center justify-center">
                   <Database className="w-5 h-5 text-violet-600" />
                 </div>
-                <h3 className="font-heading font-semibold text-slate-900">2) Index + RAG</h3>
+                <h3 className="font-heading font-semibold text-slate-900">Index + RAG</h3>
               </div>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                 Build an indexed knowledge base and retrieval layer that preserves source links, recency, and intent.
@@ -298,7 +298,7 @@ export default function LandingPage() {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
                   <Boxes className="w-5 h-5 text-emerald-600" />
                 </div>
-                <h3 className="font-heading font-semibold text-slate-900">3) Build agents</h3>
+                <h3 className="font-heading font-semibold text-slate-900">Build agents</h3>
               </div>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                 Deploy org-specific agents for oncall, dev, PM, and docs—powered by the same trusted context layer.
@@ -342,16 +342,7 @@ export default function LandingPage() {
         </div>
       </Section>
 
-      {/* Benefits */}
       <Section className="py-12">
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 sm:p-8">
-          <h2 className="font-heading font-semibold text-base md:text-lg text-slate-900">Make engineering operations faster and safer</h2>
-          <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
-            Reduce time-to-context during incidents, improve onboarding, and keep decisions grounded in your org’s real history—
-            not tribal memory.
-          </p>
-        </div>
-
         <div className="py-8 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} busfactor AI. All rights reserved.
         </div>
