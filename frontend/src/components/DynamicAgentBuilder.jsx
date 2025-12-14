@@ -3,11 +3,17 @@ import { Bot, Plus, Sparkles, MessageSquare, AlertCircle, CheckCircle, Loader2, 
 import ReactMarkdown from 'react-markdown';
 import { createDynamicAgent, listDynamicAgents, executeDynamicAgent } from '../services/api';
 import { useAuth } from '@/context/AuthContext';
-import { getMetricsKey, incrementAgentTask, setDynamicAgentsCount } from '@/services/metrics';
+import { getMetricsKey, incrementAgentTask, setDynamicAgentsCount, setLastMetricsKey } from '@/services/metrics';
 
 
 export default function DynamicAgentBuilder() {
   const { user, team } = useAuth();
+  const metricsKey = user && team?.team_id ? getMetricsKey({ userId: user.user_id, teamId: team.team_id }) : null;
+
+  useEffect(() => {
+    if (metricsKey) setLastMetricsKey(metricsKey);
+  }, [metricsKey]);
+
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -87,8 +93,8 @@ export default function DynamicAgentBuilder() {
       setChatMessages(prev => [...prev, agentMessage]);
 
       // Metrics: count dynamic agent tasks
-      if (user && team?.team_id) {
-        incrementAgentTask(getMetricsKey({ userId: user.user_id, teamId: team.team_id }), selectedAgent.name);
+      if (metricsKey) {
+        incrementAgentTask(metricsKey, selectedAgent.name);
       }
     } catch (err) {
       const errorMessage = {

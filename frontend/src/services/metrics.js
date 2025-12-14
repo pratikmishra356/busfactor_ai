@@ -4,6 +4,22 @@ export function getMetricsKey({ userId, teamId }) {
   return `busfactor_metrics_v${METRICS_VERSION}_${userId || 'anon'}_${teamId || 'noteam'}`;
 }
 
+export function setLastMetricsKey(key) {
+  if (key) window.localStorage.setItem('busfactor_last_metrics_key', key);
+}
+
+export function getLastMetricsKey() {
+  return window.localStorage.getItem('busfactor_last_metrics_key');
+}
+
+export function setLastTeamName(teamName) {
+  if (teamName) window.localStorage.setItem('busfactor_last_team_name', teamName);
+}
+
+export function getLastTeamName() {
+  return window.localStorage.getItem('busfactor_last_team_name');
+}
+
 export function readMetrics(key) {
   try {
     const raw = window.localStorage.getItem(key);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { getMetricsKey, incrementAgentTask, readMetrics, setChatForAgent, setCompletedTasks as persistCompletedTasks } from '@/services/metrics';
+import { getMetricsKey, incrementAgentTask, readMetrics, setChatForAgent, setCompletedTasks as persistCompletedTasks, setLastMetricsKey } from '@/services/metrics';
 
 import { Code2, Users, Bell, FileText } from 'lucide-react';
 import AgentTabs from './AgentTabs';
@@ -17,6 +17,9 @@ const AGENTS = [
 export default function MainLayout() {
   const { user, team } = useAuth();
   const metricsKey = user && team?.team_id ? getMetricsKey({ userId: user.user_id, teamId: team.team_id }) : null;
+  React.useEffect(() => {
+    if (metricsKey) setLastMetricsKey(metricsKey);
+  }, [metricsKey]);
 
   const [activeAgent, setActiveAgent] = useState('codehealth');
   const [completedTasks, setCompletedTasks] = useState([]);
