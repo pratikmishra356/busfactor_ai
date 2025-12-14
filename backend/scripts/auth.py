@@ -19,6 +19,9 @@ class UserOut(BaseModel):
     email: str
     name: str
     picture: str | None = None
+    # For localhost/dev where cookies may be blocked (cross-site), we optionally return the token
+    # so the frontend can use Authorization: Bearer <token>.
+    session_token: str | None = None
 
 
 async def exchange_session(session_id: str):
