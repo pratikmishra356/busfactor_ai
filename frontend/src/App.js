@@ -13,7 +13,7 @@ function AppRouter() {
   const location = useLocation();
 
   // CRITICAL: Handle session_id during render to avoid race conditions
-  if (location.hash?.includes('session_id=')) {
+  if (location.hash?.includes('session_id=') || location.search?.includes('session_id=')) {
     return <AuthCallback />;
   }
 

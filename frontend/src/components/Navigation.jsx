@@ -27,10 +27,10 @@ export default function Navigation() {
           {team?.team_name && (
             <Link
               to="/agents"
-              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-white shadow-sm text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-white shadow-sm text-sm text-slate-700 hover:bg-slate-50 transition-colors"
               title="Open Agents"
             >
-              <span className="text-slate-500 mr-1">Team:</span>
+              <span className="text-slate-500 mr-1">Team</span>
               <span className="font-semibold text-slate-900">{team.team_name}</span>
             </Link>
           )}

@@ -68,9 +68,13 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    // CRITICAL: If we are returning from Emergent auth, the URL fragment contains session_id.
-    // In that case, AuthCallback will exchange the session and set user. Avoid racing it.
-    if (window.location.hash?.includes('session_id=')) {
+    // CRITICAL: If we are returning from Emergent auth, the URL may contain session_id
+    // (either as hash or querystring). In that case, AuthCallback will exchange the session
+    // and set user. Avoid racing it.
+    if (
+      window.location.hash?.includes('session_id=') ||
+      window.location.search?.includes('session_id=')
+    ) {
       setChecking(false);
       return;
     }

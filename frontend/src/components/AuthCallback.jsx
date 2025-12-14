@@ -16,7 +16,13 @@ export default function AuthCallback() {
 
     const hash = location.hash || '';
     const match = hash.match(/session_id=([^&]+)/);
-    const sessionId = match ? decodeURIComponent(match[1]) : null;
+
+    const search = location.search || '';
+    const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
+
+    const sessionId = match
+      ? decodeURIComponent(match[1])
+      : (params.get('session_id') ? decodeURIComponent(params.get('session_id')) : null);
 
     const run = async () => {
       if (!sessionId) {
