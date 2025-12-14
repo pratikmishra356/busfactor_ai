@@ -104,6 +104,17 @@
 ## user_problem_statement: "Build a theme-aligned landing page for busfactor AI (org/teams), make it the / route, and route existing agent tabs UI to /agents. Add nav Home/Agents/Agent Builder."
 ## backend: []
 ## frontend:
+  - task: "Team creation stored server-side"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added /api/team/create (upsert by user_id) and /api/team/me. Frontend create-team dialog now posts to backend and shows team name in navbar after refreshTeam()."
   - task: "Emergent Google Auth (login/logout/me + session exchange)"
     implemented: true
     working: "NA"
