@@ -126,6 +126,144 @@
   }
 }
 
+  /* Landing bus factor animation (plays once; reduced motion safe) */
+  .busfactor-road {
+    @apply relative w-full max-w-3xl rounded-full border border-slate-200 bg-white/70 shadow-sm;
+    height: 44px;
+  }
+
+  .busfactor-road::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 2px;
+    background-image: linear-gradient(to right, #cbd5e1 0 20px, transparent 20px 34px);
+    background-size: 34px 2px;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  .busfactor-road .road-label {
+    @apply absolute inset-0 flex items-center justify-center text-xs text-slate-700 font-medium;
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+
+  .busfactor-anim {
+    @apply absolute inset-0;
+    pointer-events: none;
+  }
+
+  .busfactor-bus {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: busfactor-bus-move 8s ease-in-out forwards;
+  }
+
+  .busfactor-stop {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #0ea5e9, #6366f1);
+    box-shadow: 0 6px 16px rgba(2, 6, 23, 0.12);
+    animation: busfactor-stop-rise 0.8s ease-out forwards;
+    animation-delay: 6.1s;
+    opacity: 0;
+  }
+
+  .busfactor-stop-text {
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #0f172a;
+    animation: busfactor-stop-text-in 0.5s ease-out forwards;
+    animation-delay: 6.2s;
+    opacity: 0;
+  }
+
+  .busfactor-obstacle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 9999px;
+    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+    font-size: 12px;
+    color: #334155;
+    opacity: 1;
+  }
+
+  .busfactor-obstacle[data-kind="clickup"] { left: 44%; }
+  .busfactor-obstacle[data-kind="glean"] { left: 56%; }
+  .busfactor-obstacle[data-kind="engineer"] { left: 68%; }
+
+  .busfactor-obstacle[data-kind="clickup"] {
+    animation: busfactor-vanish 0.35s ease-out forwards;
+    animation-delay: 3.2s;
+  }
+  .busfactor-obstacle[data-kind="glean"] {
+    animation: busfactor-vanish 0.35s ease-out forwards;
+    animation-delay: 4.2s;
+  }
+  .busfactor-obstacle[data-kind="engineer"] {
+    animation: busfactor-vanish 0.35s ease-out forwards;
+    animation-delay: 5.2s;
+  }
+
+  @keyframes busfactor-bus-move {
+    0% { left: 12px; }
+    40% { left: 38%; }
+    55% { left: 50%; }
+    70% { left: 62%; }
+    85% { left: 74%; }
+    100% { left: calc(100% - 86px); }
+  }
+
+  @keyframes busfactor-vanish {
+    0% { opacity: 1; transform: translateY(-50%) scale(1); filter: blur(0px); }
+    100% { opacity: 0; transform: translateY(-50%) scale(0.75); filter: blur(2px); }
+  }
+
+  @keyframes busfactor-stop-rise {
+    0% { opacity: 0; transform: translateY(-30%) scaleY(0.6); }
+    100% { opacity: 1; transform: translateY(-50%) scaleY(1); }
+  }
+
+  @keyframes busfactor-stop-text-in {
+    0% { opacity: 0; transform: translateY(-50%) rotate(90deg) translateX(8px); }
+    100% { opacity: 1; transform: translateY(-50%) rotate(90deg) translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .busfactor-bus,
+    .busfactor-obstacle,
+    .busfactor-stop,
+    .busfactor-stop-text {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
