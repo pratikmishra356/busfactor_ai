@@ -13,6 +13,8 @@ export function AuthProvider({ children }) {
   const [checking, setChecking] = useState(true);
 
   const login = (redirectPath = '/') => {
+    // Force a clean session exchange each time we login.
+    window.localStorage.removeItem('session_token');
     const redirectUrl = `${window.location.origin}${redirectPath}`;
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
