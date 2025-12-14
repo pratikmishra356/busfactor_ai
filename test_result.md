@@ -140,11 +140,11 @@
         comment: "✅ PASSED: Routing works correctly. Landing page loads at /, /agents shows MainLayout with agent tabs UI, /agent-builder loads DynamicAgentBuilder. All navigation transitions work smoothly."
   - task: "Navigation update (Home/Agents/Agent Builder)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/Navigation.jsx"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -152,6 +152,9 @@
       - working: "NA"
         agent: "main"
         comment: "Updated navbar behavior: hide nav tabs on / (landing), show tabs on /agents and /agent-builder."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Navigation behavior works perfectly - tabs are hidden on landing page (/) showing only brand/logo, and all navigation tabs (Home, Agents, Agent Builder) are visible and functional on /agents page. Navigation links work correctly and routing is smooth."
   - task: "Dynamic agent builder markdown rendering"
     implemented: true
     working: "NA"
