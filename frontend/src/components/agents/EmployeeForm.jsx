@@ -208,7 +208,7 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
           placeholder={`What do you need help with as ${currentRole.label.toLowerCase()}?`}
           disabled={isLoading}
           data-testid="task-input"
-          className="flex-1 h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-sm"
+          className="flex-1 max-w-[60%] h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-sm"
         />
 
         {/* Submit */}
