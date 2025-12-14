@@ -53,6 +53,9 @@ function Card({ children }) {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, login, refreshTeam, user } = useAuth();
+  const { toast } = useToast();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [selectedTools, setSelectedTools] = useState(() => new Set());
