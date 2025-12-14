@@ -7,6 +7,7 @@ import { getMetricsKey, incrementAgentTask, setDynamicAgentsCount } from '@/serv
 
 
 export default function DynamicAgentBuilder() {
+  const { user, team } = useAuth();
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
