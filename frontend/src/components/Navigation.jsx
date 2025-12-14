@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 export default function Navigation() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { isAuthenticated, user, team, login, logout } = useAuth();
 
   const isActive = (path) => location.pathname === path;
 
