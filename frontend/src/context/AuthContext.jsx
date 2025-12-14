@@ -72,6 +72,7 @@ export function AuthProvider({ children }) {
       return;
     }
     refreshTeam();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.user_id]);
 
   const value = useMemo(
