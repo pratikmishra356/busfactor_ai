@@ -120,7 +120,7 @@ class StatusCheckCreate(BaseModel):
 # ============== Auth Endpoints (Emergent Google OAuth) ==============
 
 @api_router.post("/auth/session", response_model=UserOut)
-async def auth_session_exchange(input: SessionExchangeInput, response: Response):
+async def auth_session_exchange(input: SessionExchangeInput, request: Request, response: Response):
     data = await exchange_session(input.session_id)
 
     email = data.get("email")
@@ -134,7 +134,14 @@ async def auth_session_exchange(input: SessionExchangeInput, response: Response)
     user_doc = await upsert_user(db, email=email, name=name, picture=picture)
     await create_session(db, user_id=user_doc["user_id"], session_token=session_token)
 
-    set_session_cookie(response, session_token)
+    proto = (request.headers.get("x-forwarded-proto") or "").lower()
+    is_https = proto == "https" or request.url.scheme == "https"
+    set_session_cookie(
+        response,
+        session_token,
+        secure=is_https,
+        samesite="none" if is_https else "lax",
+    )
     return UserOut(**user_doc)
 
 
@@ -609,13 +616,23 @@ async def execute_agent(execute_input: DynamicAgentExecuteInput):
 # Include the router in the main app
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+cors_origins_env = os.environ.get('CORS_ORIGINS', '*')
+origins = [o.strip() for o in cors_origins_env.split(',') if o.strip()]
+
+cors_kwargs = {
+    "allow_credentials": True,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
+
+# If env uses wildcard, prefer regex so credentials work (browser rejects '*' with credentials)
+if origins == ["*"]:
+    cors_kwargs["allow_origin_regex"] = ".*"
+    cors_kwargs["allow_origins"] = []
+else:
+    cors_kwargs["allow_origins"] = origins
+
+app.add_middleware(CORSMiddleware, **cors_kwargs)
 
 # Configure logging
 logging.basicConfig(

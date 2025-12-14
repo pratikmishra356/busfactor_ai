@@ -23,13 +23,23 @@ export default function Navigation() {
 
       {/* Center/Right */}
       {isHome ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {isAuthenticated && user?.name && (
+            <span className="hidden sm:inline text-sm text-slate-500">{user.name}</span>
+          )}
           <Button
             variant="outline"
             className="h-9 rounded-xl"
-            onClick={() => login()}
+            onClick={() => (isAuthenticated ? logout() : login())}
           >
-            Login
+            {isAuthenticated ? (
+              <>
+                <LogOut className="w-4 h-4" />
+                Logout
+              </>
+            ) : (
+              'Login'
+            )}
           </Button>
         </div>
       ) : (

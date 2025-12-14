@@ -102,13 +102,19 @@ def get_session_token_from_request(request: Request) -> str | None:
     return None
 
 
-def set_session_cookie(response: Response, session_token: str):
+def set_session_cookie(
+    response: Response,
+    session_token: str,
+    *,
+    secure: bool,
+    samesite: str,
+):
     response.set_cookie(
         key="session_token",
         value=session_token,
         httponly=True,
-        secure=True,
-        samesite="none",
+        secure=secure,
+        samesite=samesite,
         path="/",
         max_age=7 * 24 * 60 * 60,
     )
