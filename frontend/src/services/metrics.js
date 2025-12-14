@@ -89,10 +89,3 @@ export function setCompletedTasks(key, tasks) {
     completedTasks: (tasks || []).slice(0, 10),
   });
 }
-
-  const metrics = readMetrics(key);
-  writeMetrics(key, {
-    ...metrics,
-    dynamicAgentsCount: count,
-  });
-}
