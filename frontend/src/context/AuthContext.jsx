@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
+
+// API base must come from env; all backend endpoints are prefixed with /api.
+
 const AuthContext = createContext(null);
 
 const API_BASE = process.env.REACT_APP_BACKEND_URL || '';
