@@ -222,6 +222,9 @@
       - working: true
         agent: "testing"
         comment: "✅ PASSED: Navigation behavior works perfectly - tabs are hidden on landing page (/) showing only brand/logo, and all navigation tabs (Home, Agents, Agent Builder) are visible and functional on /agents page. Navigation links work correctly and routing is smooth."
+      - working: true
+        agent: "testing"
+        comment: "✅ REGRESSION TEST PASSED: Navigation fix on home page verified comprehensively. Authenticated state correctly shows user name + Logout button + 'Open Agents'/'Team Name' link in top-right. Clicking the link successfully navigates to /agents. Create Team dialog opens without login redirect when authenticated. AuthCallback works with session_id/sessionId/session_token in hash/querystring formats. All navigation requirements working as expected."
   - task: "Dynamic agent builder markdown rendering"
     implemented: true
     working: "NA"
