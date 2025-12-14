@@ -208,7 +208,17 @@ export default function LandingPage() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={handleCreateTeam}
+                    onClick={async () => {
+                      try {
+                        await handleCreateTeam();
+                        await refreshTeam();
+                      } catch {
+                        toast({
+                          title: 'Could not create team',
+                          description: 'Please try again.',
+                        });
+                      }
+                    }}
                     disabled={!canSubmit}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
