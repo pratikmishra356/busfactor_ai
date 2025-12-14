@@ -12,8 +12,16 @@ import './App.css';
 function AppRouter() {
   const location = useLocation();
 
-  // CRITICAL: Handle session_id during render to avoid race conditions
-  if (location.hash?.includes('session_id=') || location.search?.includes('session_id=')) {
+  // CRITICAL: Handle auth callback during render to avoid race conditions
+  const isAuthCallback =
+    location.hash?.includes('session_id=') ||
+    location.search?.includes('session_id=') ||
+    location.hash?.toLowerCase().includes('sessionid=') ||
+    location.search?.toLowerCase().includes('sessionid=') ||
+    location.hash?.includes('session_token=') ||
+    location.search?.includes('session_token=');
+
+  if (isAuthCallback) {
     return <AuthCallback />;
   }
 

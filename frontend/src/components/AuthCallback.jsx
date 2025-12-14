@@ -14,15 +14,24 @@ export default function AuthCallback() {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
-    const hash = location.hash || '';
-    const match = hash.match(/session_id=([^&]+)/);
-
     const search = location.search || '';
-    const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
+    const searchParams = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
 
-    const sessionId = match
-      ? decodeURIComponent(match[1])
-      : (params.get('session_id') ? decodeURIComponent(params.get('session_id')) : null);
+    const hash = (location.hash || '').replace(/^#/, '');
+    const hashParams = new URLSearchParams(hash);
+
+    const keys = ['session_id', 'sessionId', 'session_token', 'sid', 'session'];
+
+    const pick = (params) => {
+      for (const k of keys) {
+        const v = params.get(k);
+        if (v) return v;
+      }
+      return null;
+    };
+
+    const raw = pick(hashParams) || pick(searchParams);
+    const sessionId = raw ? decodeURIComponent(raw) : null;
 
     const run = async () => {
       if (!sessionId) {
