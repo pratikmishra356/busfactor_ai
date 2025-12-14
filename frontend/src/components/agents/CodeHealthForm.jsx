@@ -84,7 +84,7 @@ export default function CodeHealthForm({ onResponse, isLoading, setIsLoading }) 
   return (
     <form onSubmit={handleSubmit} className="space-y-3" data-testid="codehealth-form">
       {/* Main Input Row */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-center">
         <input
           type="text"
           value={title}

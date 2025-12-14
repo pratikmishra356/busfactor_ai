@@ -162,7 +162,7 @@ export default function EmployeeForm({ onResponse, isLoading, setIsLoading }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 overflow-visible" data-testid="employee-form">
       {/* Role Selector + Task Input */}
-      <div className="flex gap-2 overflow-visible">
+      <div className="flex gap-2 overflow-visible justify-center">
         {/* Role Dropdown */}
         <div className="relative overflow-visible" ref={dropdownRef}>
           <button

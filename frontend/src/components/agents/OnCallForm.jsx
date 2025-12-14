@@ -91,7 +91,7 @@ export default function OnCallForm({ onResponse, isLoading, setIsLoading }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 overflow-visible" data-testid="oncall-form">
       {/* Main Input Row */}
-      <div className="flex gap-2 overflow-visible">
+      <div className="flex gap-2 overflow-visible justify-center">
         <textarea
           value={alertText}
           onChange={(e) => setAlertText(e.target.value)}
