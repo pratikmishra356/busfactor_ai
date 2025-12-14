@@ -31,6 +31,11 @@ export default function DynamicAgentBuilder() {
     loadAgents();
   }, []);
 
+  useEffect(() => {
+    if (!user || !team?.team_id) return;
+    setDynamicAgentsCount(getMetricsKey({ userId: user.user_id, teamId: team.team_id }), agents.length);
+  }, [agents.length, team?.team_id, user?.user_id]);
+
   const loadAgents = async () => {
     try {
       setLoading(true);
