@@ -106,15 +106,18 @@
 ## frontend:
   - task: "Landing page (/) for busfactor AI"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/LandingPage.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented new LandingPage with centered hero focusing on MCP layer, tool connector badges, how-it-works, agent examples, and CTA buttons to /agents and /agent-builder. Screenshot sanity check passed."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Landing page loads without console errors, hero section with 'busfactor AI' title is visible and centered, both CTA buttons ('Open Agents' and 'Build an Agent') are visible and functional. Page renders correctly with proper styling and layout."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
     working: "NA"
