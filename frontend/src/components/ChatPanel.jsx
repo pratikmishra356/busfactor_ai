@@ -50,7 +50,7 @@ export default function ChatPanel({ agent, messages, addMessage, addCompletedTas
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden relative">
       {/* Chat Header */}
       <div className="h-12 border-b border-slate-100 flex items-center justify-between px-4 bg-white">
         <div className="flex items-center gap-2">
