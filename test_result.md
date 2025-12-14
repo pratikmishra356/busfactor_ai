@@ -120,15 +120,18 @@
         comment: "✅ PASSED: Landing page loads without console errors, hero section with 'busfactor AI' title is visible and centered, both CTA buttons ('Open Agents' and 'Build an Agent') are visible and functional. Page renders correctly with proper styling and layout."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated routes so landing is default / and original agent tabs UI moved to /agents."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Routing works correctly. Landing page loads at /, /agents shows MainLayout with agent tabs UI, /agent-builder loads DynamicAgentBuilder. All navigation transitions work smoothly."
   - task: "Navigation update (Home/Agents/Agent Builder)"
     implemented: true
     working: "NA"
