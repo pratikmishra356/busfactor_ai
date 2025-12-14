@@ -896,36 +896,58 @@ async def oncall_agent(oncall_input: OnCallInput) -> OnCallResponse:
             relevant_comments=[]
         ))
     
-    # Step 3: Identify suspect files from recent PRs
-    file_frequency: Dict[str, List[str]] = {}  # file_path -> [pr_numbers]
+    # Filter PRs to only highly relevant ones - be aggressive with filtering
+    # Only keep PRs with match_score > 0.6 (good relevance) and limit to top 3
+    filtered_prs = [pr for pr in related_prs if pr.match_score > 0.6]
+    filtered_prs = sorted(filtered_prs, key=lambda pr: pr.match_score, reverse=True)[:3]
     
-    for pr in related_prs[:5]:  # Focus on most recent/relevant PRs
+    # If we have less than 3 high-quality PRs, relax threshold slightly
+    if len(filtered_prs) < 3:
+        filtered_prs = sorted(related_prs, key=lambda pr: pr.match_score, reverse=True)[:3]
+    
+    # Step 3: Identify suspect files from the most relevant PRs
+    file_frequency: Dict[str, List[str]] = {}  # file_path -> [pr_numbers]
+    file_to_pr_info: Dict[str, tuple] = {}  # file_path -> (pr_number, pr_title, match_score)
+    
+    # Build suspect files from filtered PRs only
+    for pr in filtered_prs:
         for file_path in pr.overlapping_files:
             if file_path not in file_frequency:
                 file_frequency[file_path] = []
+                file_to_pr_info[file_path] = (pr.pr_number, pr.title, pr.match_score)
             file_frequency[file_path].append(pr.pr_number)
     
-    # Files changed in multiple recent PRs are more suspicious
-    for file_path, pr_numbers in sorted(file_frequency.items(), key=lambda x: len(x[1]), reverse=True)[:10]:
-        confidence = "high" if len(pr_numbers) >= 3 else "medium" if len(pr_numbers) == 2 else "low"
+    # Add files from the TOP PR (highest match score) even if they appear only once
+    if filtered_prs:
+        top_pr = filtered_prs[0]
+        for file_path in top_pr.overlapping_files[:5]:  # Top 5 files from best PR
+            if file_path not in file_frequency:
+                file_frequency[file_path] = [top_pr.pr_number]
+                file_to_pr_info[file_path] = (top_pr.pr_number, top_pr.title, top_pr.match_score)
+    
+    # Build suspect files list with proper confidence
+    for file_path, pr_numbers in sorted(file_frequency.items(), key=lambda x: len(x[1]), reverse=True):
+        pr_num, pr_title, match_score = file_to_pr_info.get(file_path, ("", "", 0))
         
-        # Get the most recent PR that touched this file
-        most_recent_pr = related_prs[0] if related_prs else None
-        for pr in related_prs:
-            if file_path in pr.overlapping_files:
-                most_recent_pr = pr
-                break
+        # Confidence based on both frequency and PR match score
+        if len(pr_numbers) >= 3 or match_score > 0.8:
+            confidence = "high"
+        elif len(pr_numbers) == 2 or match_score > 0.6:
+            confidence = "medium"
+        else:
+            confidence = "low"
+        
+        reason = f"Modified in PR(s): {', '.join([f'#{pn}' for pn in pr_numbers])}"
+        if match_score > 0:
+            reason += f" (match score: {match_score:.2f})"
         
         suspect_files.append(SuspectFile(
             file_path=file_path,
-            reason=f"Modified in {len(pr_numbers)} recent PR(s): {', '.join([f'#{pn}' for pn in pr_numbers[:3]])}",
+            reason=reason,
             confidence=confidence,
-            related_pr=most_recent_pr.pr_number if most_recent_pr else None,
-            pr_title=most_recent_pr.title if most_recent_pr else None
+            related_pr=pr_num if pr_num else None,
+            pr_title=pr_title if pr_title else None
         ))
-    
-    # Filter PRs to only highly relevant ones (top 5 with best scores)
-    filtered_prs = sorted(related_prs, key=lambda pr: pr.match_score, reverse=True)[:5]
     
     # Step 4: Generate root cause analysis using LLM
     system_message = """You are an experienced SRE/DevOps engineer analyzing production incidents.
@@ -1027,18 +1049,26 @@ Do NOT include severity assessment in your response."""
     else:
         severity = "low"
     
-    # Generate alert summary
-    alert_summary = f"Incident analysis complete. Identified {len(suspect_files)} suspect file(s) across {len(filtered_prs)} directly related PR(s)."
+    # Generate alert summary with accurate counts
+    num_suspect = min(len(suspect_files), 5)  # We'll return max 5
+    num_prs = len(filtered_prs)  # Actual PRs we're returning
+    
+    if num_suspect > 0 and num_prs > 0:
+        alert_summary = f"Analysis complete. Found {num_suspect} suspect file(s) in {num_prs} highly relevant PR(s)."
+    elif num_prs > 0:
+        alert_summary = f"Analysis complete. Found {num_prs} highly relevant PR(s). No specific suspect files identified."
+    else:
+        alert_summary = f"Analysis complete. No directly related PRs found with high confidence."
     
     return OnCallResponse(
         alert_summary=alert_summary,
         related_entities=related_entities[:10],
-        related_prs=filtered_prs[:5],  # Only return the most relevant PRs
-        suspect_files=suspect_files[:5],  # Limit to top 5 suspect files
+        related_prs=filtered_prs,  # Return only filtered PRs (max 3)
+        suspect_files=suspect_files[:5],  # Top 5 suspect files
         root_cause_analysis=root_cause_analysis,
         recommended_actions=recommended_actions,
         severity=severity,
-        similar_incidents=similar_incidents[:3]
+        similar_incidents=similar_incidents[:2]  # Limit to 2 most relevant
     )
     
     return context_text
