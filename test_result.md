@@ -104,6 +104,17 @@
 ## user_problem_statement: "Build a theme-aligned landing page for busfactor AI (org/teams), make it the / route, and route existing agent tabs UI to /agents. Add nav Home/Agents/Agent Builder."
 ## backend: []
 ## frontend:
+  - task: "Emergent Google Auth (login/logout/me + session exchange)"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Emergent Google auth flow: /api/auth/session exchanges session_id for user + httpOnly cookie, /api/auth/me verifies session, /api/auth/logout clears. Added cookie/header token support and CORS fix for credentials. Frontend: Login button on landing, user name + logout in navbar, AuthCallback handles #session_id."
   - task: "Landing page (/) for busfactor AI"
     implemented: true
     working: true
