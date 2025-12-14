@@ -21,8 +21,18 @@ export default function Navigation() {
         <span className="font-heading font-bold text-lg text-slate-900">busfactor AI</span>
       </div>
 
-      {/* Hide tabs on Home (Landing) */}
-      {!isHome && (
+      {/* Center/Right */}
+      {isHome ? (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="h-9 rounded-xl"
+            onClick={() => login()}
+          >
+            Login
+          </Button>
+        </div>
+      ) : (
         <>
           {/* Center - Navigation Links */}
           <div className="flex items-center gap-1">
@@ -65,15 +75,37 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Right - Tagline */}
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="text-sm text-slate-500">MCP + RAG for Engineering Ops</span>
+          {/* Right - User */}
+          <div className="hidden sm:flex items-center gap-3">
+            {team?.team_name && (
+              <span className="text-sm text-slate-600">Team: <span className="font-semibold text-slate-900">{team.team_name}</span></span>
+            )}
+            {isAuthenticated && user?.name && (
+              <span className="text-sm text-slate-500">{user.name}</span>
+            )}
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-xl"
+                onClick={() => logout()}
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-xl"
+                onClick={() => login()}
+              >
+                Login
+              </Button>
+            )}
           </div>
         </>
       )}
-
-      {/* Spacer to keep logo left when home */}
-      {isHome && <div className="w-8" />}
     </nav>
   );
 }
