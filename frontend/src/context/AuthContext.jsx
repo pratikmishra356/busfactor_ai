@@ -26,6 +26,19 @@ export function AuthProvider({ children }) {
     setTeam(null);
   };
 
+  const refreshUser = async () => {
+    const res = await fetch(`${API_BASE}/api/auth/me`, {
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      setUser(null);
+      return null;
+    }
+    const u = await res.json();
+    setUser(u);
+    return u;
+  };
+
   const refreshTeam = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/team/me`, { credentials: 'include' });
@@ -84,6 +97,7 @@ export function AuthProvider({ children }) {
       checking,
       login,
       logout,
+      refreshUser,
       refreshTeam,
       isAuthenticated: !!user,
     }),
