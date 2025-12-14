@@ -102,6 +102,28 @@ export default function LandingPage() {
       method: 'POST',
       credentials: 'include',
       headers: {
+
+  React.useEffect(() => {
+    if (!metricsKey) {
+      setMetrics(null);
+      return;
+    }
+
+    const m = readMetrics(metricsKey);
+    setMetrics(m);
+
+    // Also keep dynamic agent count in sync (best-effort)
+    (async () => {
+      try {
+        const agents = await listDynamicAgents();
+        setDynamicAgentsCount(metricsKey, agents.length);
+        setMetrics(readMetrics(metricsKey));
+      } catch {
+        // ignore
+      }
+    })();
+  }, [metricsKey]);
+
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
