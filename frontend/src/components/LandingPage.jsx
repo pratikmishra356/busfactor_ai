@@ -89,15 +89,15 @@ export default function LandingPage() {
         <div className="absolute -bottom-24 left-[-140px] w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-sky-200/60 to-blue-200/60 blur-3xl" />
 
         <Section className="relative py-16 sm:py-20">
-          <div className="text-center flex flex-col items-center gap-6">
+          <div className="text-center flex flex-col items-center gap-4">
+            <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-slate-900">
+              busfactor AI
+            </h1>
+
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white/70 text-xs text-slate-700 shadow-sm">
               <Cpu className="w-4 h-4 text-blue-600" />
               MCP Layer for indexed engineering context
             </div>
-
-            <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-slate-900">
-              busfactor AI
-            </h1>
 
             <p className="max-w-3xl text-sm sm:text-base md:text-lg text-slate-600 leading-relaxed">
               Increase your team’s bus factor by turning fragmented engineering operations knowledge into a deployable,
