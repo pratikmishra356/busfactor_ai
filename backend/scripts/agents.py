@@ -798,6 +798,224 @@ def _format_context_for_llm(context_data: List[Dict], related_entities: List[Rel
         context_text += "\n## Related Entities\n"
         for entity in related_entities[:8]:
             context_text += f"- [{entity.source}] {entity.title[:60]}\n"
+
+
+# ============== OnCall Agent ==============
+
+class OnCallInput(BaseModel):
+    """Input for OnCall Agent"""
+    alert_text: str  # The alert/incident text
+    incident_id: str = ""  # Optional incident ID
+
+
+class SuspectFile(BaseModel):
+    """File suspected to have caused the issue"""
+    file_path: str
+    reason: str
+    confidence: str  # "high", "medium", "low"
+    related_pr: Optional[str] = None
+    pr_title: Optional[str] = None
+
+
+class OnCallResponse(BaseModel):
+    """Response from OnCall Agent"""
+    alert_summary: str
+    related_entities: List[RelatedEntity]
+    related_prs: List[RelatedPR]
+    suspect_files: List[SuspectFile]
+    root_cause_analysis: str
+    recommended_actions: List[str]
+    severity: str  # "critical", "high", "medium", "low"
+    similar_incidents: List[str]
+
+
+async def oncall_agent(oncall_input: OnCallInput) -> OnCallResponse:
+    """
+    OnCall Agent - Incident response assistance.
+    
+    Steps:
+    1. Parse alert text and search for related entities/summaries
+    2. Find related PRs that might have caused the issue
+    3. Identify suspect files from recent changes
+    4. Generate root cause analysis using LLM
+    5. Provide recommended actions
+    """
+    
+    alert_text = oncall_input.alert_text
+    related_entities: List[RelatedEntity] = []
+    related_prs: List[RelatedPR] = []
+    suspect_files: List[SuspectFile] = []
+    similar_incidents: List[str] = []
+    
+    # Step 1: Search for related entities and summaries
+    search_result = natural_search(alert_text, top_k=5)
+    
+    for summary in search_result.results:
+        # Get entity details from sub-entities
+        for entity_id in summary.sub_entity_ids[:10]:
+            entity_meta = get_entity_metadata(entity_id)
+            if entity_meta:
+                related_entities.append(RelatedEntity(
+                    entity_id=entity_id,
+                    source=entity_meta.get("source", ""),
+                    title=entity_meta.get("title", "")[:100],
+                    relevance="alert_related"
+                ))
+                
+                # Check if it's a similar incident
+                if entity_meta.get("source") == "meetings" and "incident" in entity_meta.get("title", "").lower():
+                    similar_incidents.append(f"{entity_meta.get('title', '')}: {entity_meta.get('content_preview', '')[:100]}")
+    
+    # Step 2: Find related PRs using code audit
+    pr_results = search_code_by_query(alert_text, n_results=10)
+    
+    # Also search for error messages or stack traces if present
+    error_keywords = []
+    for word in alert_text.lower().split():
+        if any(kw in word for kw in ["error", "exception", "failed", "timeout", "null", "undefined"]):
+            error_keywords.append(word)
+    
+    if error_keywords:
+        for keyword in error_keywords[:3]:
+            comment_results = search_code_by_comment(keyword, n_results=5)
+            for pr in comment_results.results:
+                if pr.pr_number not in [rp.pr_number for rp in related_prs]:
+                    pr_results.results.append(pr)
+    
+    # Sort PRs by recency (most recent first)
+    pr_results.results.sort(key=lambda pr: pr.timestamp, reverse=True)
+    
+    for pr in pr_results.results[:10]:
+        related_prs.append(RelatedPR(
+            pr_number=pr.pr_number,
+            title=pr.title,
+            author=pr.author,
+            match_type="alert_related",
+            match_score=pr.match_score,
+            overlapping_files=pr.files_changed[:10],
+            relevant_comments=[]
+        ))
+    
+    # Step 3: Identify suspect files from recent PRs
+    file_frequency: Dict[str, List[str]] = {}  # file_path -> [pr_numbers]
+    
+    for pr in related_prs[:5]:  # Focus on most recent/relevant PRs
+        for file_path in pr.overlapping_files:
+            if file_path not in file_frequency:
+                file_frequency[file_path] = []
+            file_frequency[file_path].append(pr.pr_number)
+    
+    # Files changed in multiple recent PRs are more suspicious
+    for file_path, pr_numbers in sorted(file_frequency.items(), key=lambda x: len(x[1]), reverse=True)[:10]:
+        confidence = "high" if len(pr_numbers) >= 3 else "medium" if len(pr_numbers) == 2 else "low"
+        
+        # Get the most recent PR that touched this file
+        most_recent_pr = related_prs[0] if related_prs else None
+        for pr in related_prs:
+            if file_path in pr.overlapping_files:
+                most_recent_pr = pr
+                break
+        
+        suspect_files.append(SuspectFile(
+            file_path=file_path,
+            reason=f"Modified in {len(pr_numbers)} recent PR(s): {', '.join([f'#{pn}' for pn in pr_numbers[:3]])}",
+            confidence=confidence,
+            related_pr=most_recent_pr.pr_number if most_recent_pr else None,
+            pr_title=most_recent_pr.title if most_recent_pr else None
+        ))
+    
+    # Step 4: Generate root cause analysis using LLM
+    system_message = """You are an experienced SRE/DevOps engineer analyzing production incidents.
+Based on the alert and related context, provide:
+1. A clear root cause analysis
+2. Severity assessment (critical/high/medium/low)
+3. Specific recommended actions to resolve the incident
+4. Prevention measures for the future
+
+Be specific, actionable, and reference actual files/PRs when possible."""
+
+    context_text = f"""## Alert/Incident
+{alert_text}
+
+## Related PRs (Recent Changes)
+"""
+    
+    for pr in related_prs[:5]:
+        context_text += f"\n**PR #{pr.pr_number}**: {pr.title}\n"
+        context_text += f"  - Author: {pr.author}\n"
+        context_text += f"  - Files changed: {', '.join(pr.overlapping_files[:5])}\n"
+    
+    context_text += "\n## Suspect Files\n"
+    for sf in suspect_files[:8]:
+        context_text += f"- `{sf.file_path}` [{sf.confidence} confidence] - {sf.reason}\n"
+    
+    if similar_incidents:
+        context_text += "\n## Similar Past Incidents\n"
+        for incident in similar_incidents[:3]:
+            context_text += f"- {incident}\n"
+    
+    prompt = f"""{context_text}
+
+Based on the above analysis, provide:
+1. ROOT CAUSE: What likely caused this alert?
+2. SEVERITY: critical/high/medium/low
+3. IMMEDIATE ACTIONS: What should be done right now? (3-5 specific steps)
+4. PREVENTION: How to prevent this in the future?
+
+Format your response clearly with these sections."""
+
+    llm_response = await call_llm(system_message, prompt, f"oncall-{oncall_input.incident_id or 'alert'}")
+    
+    # Parse LLM response
+    root_cause_analysis = llm_response
+    severity = "medium"  # default
+    recommended_actions = []
+    
+    try:
+        import re
+        
+        # Extract severity
+        severity_match = re.search(r'SEVERITY:\s*(critical|high|medium|low)', llm_response, re.IGNORECASE)
+        if severity_match:
+            severity = severity_match.group(1).lower()
+        
+        # Extract recommended actions
+        actions_match = re.search(r'IMMEDIATE ACTIONS?:(.+?)(?:PREVENTION:|$)', llm_response, re.DOTALL | re.IGNORECASE)
+        if actions_match:
+            actions_text = actions_match.group(1)
+            # Extract bullet points or numbered items
+            actions = re.findall(r'(?:[-*•]|\d+\.)\s*(.+)', actions_text)
+            recommended_actions = [action.strip() for action in actions if action.strip()][:5]
+        
+        if not recommended_actions:
+            recommended_actions = [
+                "Review recent PRs and deployments",
+                "Check application logs for errors",
+                "Monitor system metrics and resource usage",
+                "Rollback recent changes if necessary"
+            ]
+            
+    except Exception as e:
+        print(f"Error parsing oncall response: {e}")
+        recommended_actions = [
+            "Review recent PRs and deployments",
+            "Check application logs for errors",
+            "Monitor system metrics"
+        ]
+    
+    # Generate alert summary
+    alert_summary = f"Alert analysis complete. Found {len(related_prs)} related PRs and {len(suspect_files)} suspect files."
+    
+    return OnCallResponse(
+        alert_summary=alert_summary,
+        related_entities=related_entities[:10],
+        related_prs=related_prs[:10],
+        suspect_files=suspect_files[:8],
+        root_cause_analysis=root_cause_analysis,
+        recommended_actions=recommended_actions,
+        severity=severity,
+        similar_incidents=similar_incidents[:5]
+    )
     
     return context_text
 
