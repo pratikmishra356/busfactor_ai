@@ -67,12 +67,15 @@ function Card({ children }) {
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, login, refreshTeam, refreshUser, user } = useAuth();
+  const { isAuthenticated, login, refreshTeam, refreshUser, user, team } = useAuth();
   const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [selectedTools, setSelectedTools] = useState(() => new Set());
+  const [metrics, setMetrics] = useState(null);
+
+  const metricsKey = user && team?.team_id ? getMetricsKey({ userId: user.user_id, teamId: team.team_id }) : null;
 
   const tools = useMemo(() => TOOL_BADGES, []);
   const canSubmit = teamName.trim().length > 0 && selectedTools.size > 0;
