@@ -69,13 +69,25 @@ export default function LandingPage() {
     });
   };
 
-  const handleCreateTeam = () => {
+  const handleCreateTeam = async () => {
+    // Team creation is now stored server-side after login
     const payload = {
-      createdAt: new Date().toISOString(),
-      teamName: teamName.trim(),
+      team_name: teamName.trim(),
       tools: Array.from(selectedTools),
     };
-    window.localStorage.setItem('busfactor_team', JSON.stringify(payload));
+
+    const apiBase = process.env.REACT_APP_BACKEND_URL || '';
+    const res = await fetch(`${apiBase}/api/team/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to create team');
+    }
+
     setDialogOpen(false);
     navigate('/agents');
   };
