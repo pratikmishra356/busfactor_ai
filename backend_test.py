@@ -102,6 +102,10 @@ class AgentAPITester:
     def test_basic_connectivity(self):
         """Test basic API connectivity"""
         return self.test_api_endpoint("Basic API Connectivity", "", expected_status=200)
+    
+    def test_status_endpoint(self):
+        """Test GET /api/status endpoint"""
+        return self.test_api_endpoint("Status Endpoint", "status", expected_status=200)
 
     def test_post_endpoint(self, name: str, endpoint: str, data: Dict, expected_status: int = 200, timeout: int = 30) -> tuple:
         """Test a POST endpoint"""
