@@ -147,9 +147,10 @@
   }
 
   .busfactor-road .road-label {
-    @apply absolute inset-0 flex items-center justify-center text-xs text-slate-700 font-medium;
-    padding-left: 80px;
-    padding-right: 80px;
+    @apply absolute inset-0 flex items-center justify-center gap-2 text-xs text-slate-700 font-semibold;
+    padding-left: 120px;
+    padding-right: 120px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.85);
   }
 
   .busfactor-anim {
