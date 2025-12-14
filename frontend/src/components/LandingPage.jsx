@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
+import { Boxes, Cpu, Database, GitBranch, Layers, ShieldCheck, Sparkles, User, Workflow } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
