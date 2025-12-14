@@ -105,22 +105,81 @@ export default function LandingPage() {
               {' '}Connect your tools, build a RAG-powered knowledge base, and ship AI agents that work the way your org works.
             </p>
 
-            <div className="flex items-center gap-3">
-              <Link
-                to="/agents"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-sm hover:bg-blue-700 transition-colors"
-              >
-                Open Agents
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/agent-builder"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white border border-slate-200 text-slate-800 text-sm font-semibold shadow-sm hover:bg-slate-50 transition-colors"
-              >
-                Build an Agent
-                <Boxes className="w-4 h-4" />
-              </Link>
-            </div>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                  Create Team
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-xl">
+                <DialogHeader>
+                  <DialogTitle>Create your team</DialogTitle>
+                  <DialogDescription>
+                    Pick the tools you want to integrate. You can change these later.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium text-slate-900">Team name</label>
+                    <Input
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      placeholder="e.g. Platform Engineering"
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-slate-900">Integrate tools</span>
+                      <span className="text-xs text-slate-500">Select 1+ tools</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {tools.map((t) => {
+                        const Icon = t.icon;
+                        const checked = selectedTools.has(t.id);
+                        return (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => toggleTool(t.id)}
+                            className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left shadow-sm transition-colors ${
+                              checked
+                                ? 'border-blue-300 bg-blue-50'
+                                : 'border-slate-200 bg-white hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Icon className="w-4 h-4 text-slate-500" />
+                              <span className="text-sm text-slate-800">{t.name}</span>
+                            </div>
+                            <Checkbox checked={checked} onCheckedChange={() => toggleTool(t.id)} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleCreateTeam}
+                    disabled={!canSubmit}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Continue
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </Section>
       </div>
