@@ -125,14 +125,18 @@ export default function LandingPage() {
 
             <Dialog
               open={dialogOpen}
-              onOpenChange={(open) => {
-                if (open && !isAuthenticated) {
-                  toast({
-                    title: 'Login required',
-                    description: 'Please login first to create your team.',
-                  });
-                  login('/');
-                  return;
+              onOpenChange={async (open) => {
+                if (open) {
+                  // Always re-check session server-side to avoid stale auth state
+                  const u = await refreshUser();
+                  if (!u) {
+                    toast({
+                      title: 'Login required',
+                      description: 'Please login first to create your team.',
+                    });
+                    login('/');
+                    return;
+                  }
                 }
                 setDialogOpen(open);
               }}
