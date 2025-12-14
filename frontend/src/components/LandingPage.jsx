@@ -89,20 +89,6 @@ export default function LandingPage() {
     });
   };
 
-  const handleCreateTeam = async () => {
-    // Team creation is now stored server-side after login
-    const payload = {
-      team_name: teamName.trim(),
-      tools: Array.from(selectedTools),
-    };
-
-    const apiBase = process.env.REACT_APP_BACKEND_URL || '';
-    const token = window.localStorage.getItem('session_token');
-    const res = await fetch(`${apiBase}/api/team/create`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-
   React.useEffect(() => {
     if (!metricsKey) {
       setMetrics(null);
@@ -124,6 +110,19 @@ export default function LandingPage() {
     })();
   }, [metricsKey]);
 
+  const handleCreateTeam = async () => {
+    // Team creation is now stored server-side after login
+    const payload = {
+      team_name: teamName.trim(),
+      tools: Array.from(selectedTools),
+    };
+
+    const apiBase = process.env.REACT_APP_BACKEND_URL || '';
+    const token = window.localStorage.getItem('session_token');
+    const res = await fetch(`${apiBase}/api/team/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
