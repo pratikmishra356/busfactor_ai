@@ -55,7 +55,7 @@ function Card({ children }) {
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, login, refreshTeam, user } = useAuth();
+  const { isAuthenticated, login, refreshTeam, refreshUser, user } = useAuth();
   const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
