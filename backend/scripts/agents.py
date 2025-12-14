@@ -924,60 +924,67 @@ async def oncall_agent(oncall_input: OnCallInput) -> OnCallResponse:
             pr_title=most_recent_pr.title if most_recent_pr else None
         ))
     
+    # Filter PRs to only highly relevant ones (top 5 with best scores)
+    filtered_prs = sorted(related_prs, key=lambda pr: pr.match_score, reverse=True)[:5]
+    
     # Step 4: Generate root cause analysis using LLM
     system_message = """You are an experienced SRE/DevOps engineer analyzing production incidents.
-Based on the alert and related context, provide:
-1. A clear root cause analysis
-2. Severity assessment (critical/high/medium/low)
-3. Specific recommended actions to resolve the incident
-4. Prevention measures for the future
 
-Be specific, actionable, and reference actual files/PRs when possible."""
+CRITICAL INSTRUCTIONS:
+- Be DEFINITIVE and CONFIDENT in your analysis (avoid words like "likely", "might", "possibly", "could be")
+- State findings as facts based on the evidence
+- Reference specific files and PRs with certainty
+- Be direct and actionable
+- Do NOT mention severity in the root cause section - it will be handled separately"""
 
     context_text = f"""## Alert/Incident
 {alert_text}
 
-## Related PRs (Recent Changes)
+## Most Relevant PRs (Direct Connection Only)
 """
     
-    for pr in related_prs[:5]:
+    # Only show top 3 most relevant PRs
+    for pr in filtered_prs[:3]:
         context_text += f"\n**PR #{pr.pr_number}**: {pr.title}\n"
         context_text += f"  - Author: {pr.author}\n"
-        context_text += f"  - Files changed: {', '.join(pr.overlapping_files[:5])}\n"
+        context_text += f"  - Match Score: {pr.match_score:.2f}\n"
+        context_text += f"  - Key Files: {', '.join(pr.overlapping_files[:3])}\n"
     
-    context_text += "\n## Suspect Files\n"
-    for sf in suspect_files[:8]:
+    context_text += "\n## Suspect Files (Ordered by Confidence)\n"
+    for sf in suspect_files[:5]:
         context_text += f"- `{sf.file_path}` [{sf.confidence} confidence] - {sf.reason}\n"
     
     if similar_incidents:
         context_text += "\n## Similar Past Incidents\n"
-        for incident in similar_incidents[:3]:
+        for incident in similar_incidents[:2]:
             context_text += f"- {incident}\n"
     
     prompt = f"""{context_text}
 
-Based on the above analysis, provide:
-1. ROOT CAUSE: What likely caused this alert?
-2. SEVERITY: critical/high/medium/low
-3. IMMEDIATE ACTIONS: What should be done right now? (3-5 specific steps)
-4. PREVENTION: How to prevent this in the future?
+Provide a definitive incident analysis in this EXACT format:
 
-Format your response clearly with these sections."""
+ROOT CAUSE:
+[State the root cause with certainty. Reference specific files/PRs. Be direct - this IS what caused it, not what "might have" caused it.]
+
+IMMEDIATE ACTIONS:
+1. [First action - be specific about file/service]
+2. [Second action - include exact commands or steps if applicable]
+3. [Third action]
+4. [Fourth action if needed]
+
+PREVENTION:
+[2-3 sentences on how to prevent this. Reference specific improvements to code/infrastructure.]
+
+Do NOT include severity assessment in your response."""
 
     llm_response = await call_llm(system_message, prompt, f"oncall-{oncall_input.incident_id or 'alert'}")
     
     # Parse LLM response
     root_cause_analysis = llm_response
-    severity = "medium"  # default
     recommended_actions = []
     
     try:
         import re
-        
-        # Extract severity
-        severity_match = re.search(r'SEVERITY:\s*(critical|high|medium|low)', llm_response, re.IGNORECASE)
-        if severity_match:
-            severity = severity_match.group(1).lower()
         
         # Extract recommended actions
         actions_match = re.search(r'IMMEDIATE ACTIONS?:(.+?)(?:PREVENTION:|$)', llm_response, re.DOTALL | re.IGNORECASE)
@@ -985,26 +992,43 @@ Format your response clearly with these sections."""
             actions_text = actions_match.group(1)
             # Extract bullet points or numbered items
             actions = re.findall(r'(?:[-*•]|\d+\.)\s*(.+)', actions_text)
-            recommended_actions = [action.strip() for action in actions if action.strip()][:5]
+            recommended_actions = [action.strip() for action in actions if action.strip()][:6]
         
         if not recommended_actions:
             recommended_actions = [
-                "Review recent PRs and deployments",
-                "Check application logs for errors",
-                "Monitor system metrics and resource usage",
-                "Rollback recent changes if necessary"
+                "Review the suspect files identified above",
+                "Check application logs for stack traces",
+                "Verify database connection pool settings",
+                "Monitor error rates and system metrics"
             ]
             
     except Exception as e:
         print(f"Error parsing oncall response: {e}")
         recommended_actions = [
-            "Review recent PRs and deployments",
-            "Check application logs for errors",
+            "Review the suspect files identified above",
+            "Check application logs for detailed error information",
             "Monitor system metrics"
         ]
     
+    # Determine severity based on error rate and keywords in alert
+    severity = "medium"  # default
+    alert_lower = alert_text.lower()
+    
+    # Critical indicators
+    if any(kw in alert_lower for kw in ["critical", "down", "outage", "crash", "cannot connect", "total failure", "100%"]):
+        severity = "critical"
+    # High severity indicators
+    elif any(kw in alert_lower for kw in ["high error rate", "timeout", "degraded", "50%", "60%", "70%", "80%", "90%"]):
+        severity = "high"
+    # Medium severity indicators  
+    elif any(kw in alert_lower for kw in ["error", "exception", "failed", "warning", "15%", "20%", "30%", "40%"]):
+        severity = "medium"
+    # Low severity
+    else:
+        severity = "low"
+    
     # Generate alert summary
-    alert_summary = f"Alert analysis complete. Found {len(related_prs)} related PRs and {len(suspect_files)} suspect files."
+    alert_summary = f"Incident analysis complete. Identified {len(suspect_files)} suspect file(s) across {len(filtered_prs)} directly related PR(s)."
     
     return OnCallResponse(
         alert_summary=alert_summary,
