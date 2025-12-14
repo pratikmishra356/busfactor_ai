@@ -60,6 +60,20 @@ from dynamic_agents import (
     DynamicAgentResponse
 )
 
+# Emergent Google Auth helpers
+from auth import (
+    SessionExchangeInput,
+    UserOut,
+    clear_session_cookie,
+    create_session,
+    exchange_session,
+    get_session_token_from_request,
+    get_user_from_session,
+    set_session_cookie,
+    upsert_user,
+)
+
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
