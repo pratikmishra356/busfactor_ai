@@ -31,7 +31,19 @@ export default function MainLayout() {
     const savedTasks = saved.completedTasks || [];
     setChatMessages(savedChat);
     setCompletedTasks(savedTasks);
-  }, [metricsKey]);
+  }, [metricsKey, activeAgent]);
+
+  // Save current agent chat whenever it changes
+  React.useEffect(() => {
+    if (!metricsKey) return;
+    setChatForAgent(metricsKey, activeAgent, chatMessages);
+  }, [metricsKey, activeAgent, chatMessages]);
+
+  // Save completed tasks whenever they change
+  React.useEffect(() => {
+    if (!metricsKey) return;
+    setCompletedTasks(metricsKey, completedTasks);
+  }, [metricsKey, completedTasks]);
 
   const addCompletedTask = (task) => {
     setCompletedTasks(prev => [task, ...prev].slice(0, 10));
