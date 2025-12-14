@@ -55,7 +55,7 @@ export default function DocumentForm({ onResponse, isLoading, setIsLoading }) {
           placeholder="What document would you like me to write? (e.g., API docs, setup guide, runbook)"
           disabled={isLoading}
           data-testid="document-query-input"
-          className="w-[70%] h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-sm"
+          className="w-[70%] h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-sm"
         />
         
         <button
