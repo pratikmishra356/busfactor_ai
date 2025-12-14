@@ -124,6 +124,9 @@
       - working: true
         agent: "testing"
         comment: "✅ PASSED: All updated requirements verified - navbar correctly hides tabs on landing (only brand visible), MCP line positioned under title, short paragraph present, Create Team dialog works with proper validation (team name + tool selection required), Continue button correctly disabled/enabled based on form state, navigation to /agents works perfectly. Minor: Console warning about nested button elements in dialog (HTML validation issue but doesn't affect functionality)."
+      - working: true
+        agent: "testing"
+        comment: "✅ REGRESSION TEST PASSED: Create Team dialog after nested button fix - Dialog opens correctly, Continue button properly disabled initially, Slack tool selection toggles checkbox correctly, form validation works (Continue enabled only with team name + tool selection), checkbox toggle functionality works, navigation to /agents successful, and NO nested button console warnings found. The nested button issue has been successfully resolved."
   - task: "Routing update: / -> landing, /agents -> MainLayout"
     implemented: true
     working: true
